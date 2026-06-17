@@ -19,11 +19,39 @@
   // Gallery videos use the native <video controls> player. No custom JS.
 
   // Copy buttons
+  // navigator.clipboard only exists in secure contexts (https / localhost), so on a
+  // phone hitting the dev server over http:// we fall back to execCommand('copy').
+  const legacyCopy = (text) => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '0';
+    ta.style.left = '0';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, text.length); // iOS Safari needs an explicit range
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  };
+
   document.querySelectorAll('.copy[data-copy]').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const text = btn.dataset.copy || '';
-      try {
-        await navigator.clipboard.writeText(text);
+      let ok = false;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          ok = true;
+        } catch { /* fall through to legacy path */ }
+      }
+      if (!ok) ok = legacyCopy(text);
+
+      if (ok) {
         btn.dataset.state = 'copied';
         const orig = btn.textContent;
         btn.textContent = 'copied';
@@ -31,8 +59,8 @@
           btn.dataset.state = '';
           btn.textContent = orig;
         }, 1600);
-      } catch {
-        // fallback: select inside the <pre>
+      } else {
+        // last resort: select the command so the user can copy it manually
         const pre = btn.closest('.install');
         if (pre) {
           const range = document.createRange();
