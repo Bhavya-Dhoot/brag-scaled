@@ -1,6 +1,8 @@
-# /brag — Agent-Agnostic Skill
+# /brag
 
-Turn any project website or app into a short, polished, shareable launch video powered by [Hyperframes](https://hyperframes.heygen.com/).
+You built it. Now let's brag about it.
+
+`/brag` turns the current project website or app into a short, polished, shareable launch video using Hyperframes. It is narrow, opinionated, and fun.
 
 **This file is the single source of truth for the /brag workflow.** It is written for any AI coding agent (opencode, Claude Code, Codex, Cursor, Aider, or any LLM that can execute CLI commands and read files). No plugin-system-specific assumptions.
 
@@ -71,6 +73,8 @@ When music is selected, include a compact `Music cue guidance` section: read the
 ---
 
 ## Step 3: Hand off to Hyperframes
+
+**Prerequisite:** Hyperframes CLI must be installed (`npx hyperframes doctor`).
 
 **Read:** `skills/brag/references/step-3-compose.md`
 **Read:** `skills/brag/references/audio.md`
