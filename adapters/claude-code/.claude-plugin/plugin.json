@@ -1,0 +1,13 @@
+{
+  "name": "brag",
+  "description": "Turn the current project into a short, polished, shareable launch video using Hyperframes.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Anukul (adapted from Shunit Haviv / latent-spaces)",
+    "url": "https://github.com/anukulKun/brag-cli"
+  },
+  "homepage": "https://github.com/anukulKun/brag-cli",
+  "repository": "https://github.com/anukulKun/brag-cli",
+  "keywords": ["video", "launch", "hyperframes", "skill"],
+  "skill": "AGENT.md"
+}
