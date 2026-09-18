@@ -103,3 +103,13 @@ You get a `brag-output/` folder with the plan, a composition brief, share copy, 
 ## Contributing
 
 Contributions, ideas, and new demo brags are welcome — open an issue or a PR.
+
+## Star History
+
+<a href="https://www.star-history.com/#latent-spaces/brag&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=latent-spaces/brag&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=latent-spaces/brag&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=latent-spaces/brag&type=Date" />
+  </picture>
+</a>
