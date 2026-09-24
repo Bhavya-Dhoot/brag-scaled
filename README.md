@@ -8,14 +8,34 @@
 
 The looping video on the [launch site](https://latent-spaces.github.io/brag/) was made by `/brag` on this very repo. 
 
-## Install
+## New: `/brag-slim`
+
+**The same /brag, rebuilt lean for Opus 5.5.**
+
+A smooth launch video, designed for your specific project, with its own soundtrack and share copy.
+
+No Hyperframes, no bundled assets, same creative rules.
+
+Just tell Opus 5.5: *let's /brag about this.*
+
+On Opus 5.5, `/brag` switches to `/brag-slim` automatically. Run `/brag --full` to keep the classic Hyperframes workflow.
+
+**Install just `/brag-slim`:**
+
+```bash
+npx skills add https://github.com/latent-spaces/brag --skill brag-slim
+```
+
+Already have the `/brag` plugin? `/brag-slim` is included from version 0.4.0. Run `claude plugin update brag` to get it.
+
+## Install /brag
 
 ```bash
 /plugin marketplace add latent-spaces/brag
 /plugin install brag@brag
 ```
 
-Then run `/brag` inside any project.
+Then run `/brag` inside any project. The plugin includes `/brag-slim` too.
 
 **Any other agent** — one command via the [`skills`](https://github.com/vercel-labs/skills) CLI (Cursor, Codex, Copilot, Gemini CLI, opencode, and more):
 
@@ -30,6 +50,7 @@ Add `-g` to install globally (available in every project); drop it to scope to t
 
 ```bash
 rsync -a --exclude '.DS_Store' skills/brag/ ~/.claude/skills/brag/
+rsync -a --exclude '.DS_Store' skills/brag-slim/ ~/.claude/skills/brag-slim/  # optional: the /brag-slim command
 ```
 
 Restart Claude Code after copying.
@@ -87,6 +108,7 @@ You get a `brag-output/` folder with the plan, a composition brief, share copy, 
 ## What's in this repo
 
 - `skills/brag/` — the skill, references, and bundled music + SFX
+- `skills/brag-slim/` — `/brag-slim`, the single-file skill for Claude Opus 5.5
 - `examples/` — fake product sites used as a benchmark suite
 - `docs/` — the launch site (GitHub Pages)
 - `.claude-plugin/` — plugin manifest + marketplace catalog

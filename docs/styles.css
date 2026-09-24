@@ -711,6 +711,225 @@ button { font: inherit; cursor: pointer; }
   .outro-actions { justify-items: start; }
 }
 
+/* === /brag-slim announcement === */
+
+/* Topbar pill: first-viewport pointer to the #slim section */
+.slim-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px 6px 6px;
+  border-radius: 999px;
+  background: var(--hero-ink);
+  color: var(--hero-tint);
+  text-decoration: none;
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  align-self: center;
+  box-shadow: 0 8px 24px -12px oklch(20% 0.08 var(--hue) / 0.6);
+  transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+}
+.slim-pill-tag {
+  background: var(--hero-bg);
+  color: var(--hero-ink);
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.slim-pill-text { font-weight: 700; white-space: nowrap; }
+.slim-pill-sep { opacity: 0.5; font-weight: 400; }
+.slim-pill-tagline { font-weight: 400; color: oklch(84% 0.04 var(--hue)); }
+.slim-pill-arrow { width: 14px; height: 14px; flex: 0 0 14px; color: oklch(72% 0.18 var(--hue)); transition: transform 220ms var(--ease-out); }
+.slim-pill:hover,
+.slim-pill:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px -14px oklch(20% 0.08 var(--hue) / 0.75);
+}
+.slim-pill:hover .slim-pill-arrow,
+.slim-pill:focus-visible .slim-pill-arrow { transform: translateY(2px); }
+.slim-pill:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 3px; }
+
+/* Section: a paper band between the orange hero and the dark gallery */
+.slim {
+  background: var(--hero-tint);
+  color: var(--hero-ink);
+  padding: clamp(72px, 10vw, 150px) clamp(20px, 3vw, 40px);
+  scroll-margin-top: 0;
+}
+.slim ::selection,
+.slim::selection { background: var(--hero-bg); color: var(--hero-ink); }
+.slim-inner {
+  max-width: var(--max-page);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: clamp(48px, 7vw, 120px);
+  align-items: center;
+}
+.slim-copy { min-width: 0; container-type: inline-size; }
+
+.slim-title { margin: 0; font-weight: 900; }
+.slim-name {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: clamp(24px, 2.6vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: clamp(18px, 2vw, 28px);
+}
+.slim-new {
+  display: inline-block;
+  background: var(--hero-bg);
+  color: var(--hero-ink);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 10px 5px;
+  border-radius: var(--radius-sm);
+  transform: rotate(-6deg);
+}
+.slim-tagline {
+  display: block;
+  font-family: "Geist", system-ui, sans-serif;
+  font-size: clamp(40px, 6.4vw, 108px);
+  font-size: clamp(32px, 10.4cqi, 100px); /* sized so the knockout line holds one line */
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  text-transform: lowercase;
+  text-wrap: balance;
+}
+.slim-tagline em {
+  font-style: italic;
+  background: var(--hero-ink);
+  color: var(--hero-bg);
+  display: inline-block;
+  margin-top: 0.14em; /* clear the descenders of "brag," above */
+  padding: 0.02em 0.08em 0.06em 0.04em;
+  line-height: 0.9;
+  white-space: nowrap;
+}
+
+.slim-ask {
+  margin: clamp(36px, 4vw, 56px) 0 0;
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+.slim-ask-lead {
+  font-size: clamp(18px, 1.6vw, 22px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--hero-ink-soft);
+}
+.slim-prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  max-width: 100%;
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: clamp(18px, 2vw, 28px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  background: var(--hero-ink);
+  color: var(--hero-tint);
+  padding: 0.62em 0.9em;
+  border-radius: var(--radius-md);
+  transform: rotate(-1deg);
+  box-shadow: 0 18px 40px -22px oklch(20% 0.08 var(--hue) / 0.7);
+}
+.slim-prompt .prompt { color: oklch(72% 0.18 var(--hue)); }
+.slim-caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  margin-left: -0.3em;
+  background: var(--hero-bg);
+  animation: slim-blink 1.1s steps(1, end) infinite;
+}
+@keyframes slim-blink { 50% { opacity: 0; } }
+
+.slim-lede {
+  margin: clamp(32px, 3.4vw, 44px) 0 0;
+  max-width: 46ch;
+  font-size: clamp(18px, 1.5vw, 21px);
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  color: var(--hero-ink-soft);
+}
+.slim-lede strong { color: var(--hero-ink); font-weight: 600; }
+.slim-switch,
+.slim-update {
+  margin: 16px 0 0;
+  max-width: 52ch;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--hero-ink-soft);
+}
+.slim-switch code,
+.slim-update code {
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 0.92em;
+  color: var(--hero-ink);
+  background: oklch(90% 0.04 var(--hue));
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.slim-install { margin-top: clamp(32px, 3.4vw, 44px); }
+.slim-install .install { padding-right: 76px; } /* keep "brag-slim" clear of the copy button */
+.slim-install .install code { white-space: pre-wrap; overflow-wrap: anywhere; } /* wrap, never hide the skill name */
+.slim-install .slim-update { margin-top: 4px; font-size: 14px; }
+
+/* Media: the /brag-slim video */
+.slim-media {
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+}
+.slim-screen {
+  width: 100%;
+  max-width: 460px;
+  border-radius: var(--radius-md);
+  background: var(--hero-ink);
+  color: var(--hero-tint);
+  overflow: hidden;
+  transform: rotate(-2deg);
+  box-shadow: 0 30px 80px -24px oklch(20% 0.08 var(--hue) / 0.5);
+}
+.slim-media.has-video .slim-screen { max-width: 560px; aspect-ratio: var(--slim-ratio, 16 / 9); }
+.slim-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--hero-ink);
+}
+
+@media (max-width: 900px) {
+  .slim-inner { grid-template-columns: minmax(0, 1fr); }
+  .slim-screen { transform: rotate(-1.5deg); }
+}
+@media (max-width: 720px) {
+  .slim-pill { align-self: flex-start; }
+}
+@media (max-width: 480px) {
+  .slim-pill-sep, .slim-pill-tagline { display: none; }
+  .slim-prompt { transform: none; }
+}
+
 /* === Reduced motion === */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
