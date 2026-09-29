@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; } .hud-grid { background-size: 120px 120px; background-image: linear-gradient(to right, #1c1b1b 1px, transparent 1px), linear-gradient(to bottom, #1c1b1b 1px, transparent 1px); }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-highest": "#353534", "surface-bright": "#3a3939", "surface-dim": "#131313", "primary-fixed": "#c0f500", "error-container": "#93000a", "outline-variant": "#434933", "primary": "#ffffff", "outline": "#8e9479", "on-primary-fixed": "#161f00", "on-tertiary": "#1f333f", "on-secondary-container": "#b5b5b5", "primary-fixed-dim": "#a8d700", "tertiary-fixed": "#d0e5f5", "secondary-fixed-dim": "#c7c6c6", "surface-variant": "#353534", "inverse-primary": "#4f6600", "surface-container": "#201f1f", "secondary": "#c7c6c6", "on-secondary-fixed": "#1b1c1c", "on-surface-variant": "#c4caac", "surface-container-low": "#1c1b1b", "inverse-on-surface": "#313030", "surface-container-lowest": "#0e0e0e", "background": "#131313", "primary-container": "#c0f500", "on-primary-fixed-variant": "#3b4d00", "tertiary-container": "#d0e5f5", "on-secondary-fixed-variant": "#464747", "on-tertiary-fixed-variant": "#364956", "on-tertiary-fixed": "#081e29", "tertiary": "#ffffff", "tertiary-fixed-dim": "#b5c9d9", "on-error-container": "#ffdad6", "on-surface": "#e5e2e1", "on-tertiary-container": "#536774", "on-error": "#690005", "on-primary": "#273500", "on-primary-container": "#546d00", "error": "#ffb4ab", "on-background": "#e5e2e1", "on-secondary": "#303031", "secondary-fixed": "#e3e2e2", "surface": "#131313", "surface-container-high": "#2a2a2a", "inverse-surface": "#e5e2e1", "secondary-container": "#464747", "surface-tint": "#a8d700" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-lg": "24px", "gutter": "0px", "margin": "16px", "margin-desktop": "32px", "space-md": "16px", "gutter-desktop": "16px", "space-sm": "8px", "space-xs": "4px", "space-xl": "32px" }, "fontFamily": { "headline-lg-mobile": [ "Space Grotesk" ], "metric-huge-mobile": [ "JetBrains Mono" ], "body-lg": [ "JetBrains Mono" ], "headline-lg": [ "Space Grotesk" ], "headline-md": [ "Space Grotesk" ], "metric-huge": [ "JetBrains Mono" ], "display-xl": [ "Space Grotesk" ], "label-mono-sm": [ "JetBrains Mono" ], "display-xl-mobile": [ "Space Grotesk" ], "label-mono-lg": [ "JetBrains Mono" ], "body-md": [ "JetBrains Mono" ] }, "fontSize": { "headline-lg-mobile": [ "28px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "metric-huge-mobile": [ "38px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-lg": [ "16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "400" } ], "headline-lg": [ "40px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "headline-md": [ "24px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "metric-huge": [ "64px", { "lineHeight": "64px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "display-xl": [ "56px", { "lineHeight": "60px", "letterSpacing": "-0.04em", "fontWeight": "700" } ], "label-mono-sm": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.12em", "fontWeight": "500" } ], "display-xl-mobile": [ "36px", { "lineHeight": "40px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "label-mono-lg": [ "14px", { "lineHeight": "18px", "letterSpacing": "0.08em", "fontWeight": "700" } ], "body-md": [ "13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" } ] } } } };</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+</head><body class="bg-surface-container-lowest text-on-surface font-body-md text-body-md min-h-screen selection:bg-primary-container selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest border-r-2 border-surface-container-high z-50 flex flex-col justify-between p-space-md"><div class="flex flex-col gap-space-lg"><div class="flex flex-col gap-space-xs border-b-2 border-surface-container-high pb-space-md"><div class="flex items-center justify-between"><span class="font-label-mono-lg text-label-mono-lg text-primary-fixed uppercase tracking-wider">[NEXUS] // TRM</span><span class="font-label-mono-sm text-label-mono-sm text-primary-fixed bg-surface-container-high px-1.5 py-0.5 border border-primary-fixed-dim">L3</span></div><span class="font-label-mono-sm text-label-mono-sm text-secondary uppercase">SYS.VER 4.8.2 // RECV: OK</span></div><nav class="flex flex-col gap-space-xs" data-active-classes="bg-primary-container text-on-primary-container font-bold border-l-2 border-primary-fixed"><a class="flex items-center justify-between px-space-sm py-space-sm border border-surface-container-high text-secondary hover:border-primary-fixed hover:text-primary-fixed transition-none" data-path="overview-telemetry" href="#"><span class="font-label-mono-sm text-label-mono-sm uppercase">// TELEMETRY_FLOW</span><span class="font-label-mono-sm text-label-mono-sm">01</span></a><a class="flex items-center justify-between px-space-sm py-space-sm border border-surface-container-high text-secondary hover:border-primary-fixed hover:text-primary-fixed transition-none" data-path="order-book-matrix" href="#"><span class="font-label-mono-sm text-label-mono-sm uppercase">// ORDER_BOOK_DMA</span><span class="font-label-mono-sm text-label-mono-sm">02</span></a><a aria-current="page" class="flex items-center justify-between px-space-sm py-space-sm transition-none bg-primary-container text-on-primary-container font-bold border-l-2 border-primary-fixed" data-path="algo-execution" href="#"><span class="font-label-mono-sm text-label-mono-sm uppercase">// ALGO_ROUTER</span><span class="font-label-mono-sm text-label-mono-sm">03</span></a><a class="flex items-center justify-between px-space-sm py-space-sm border border-surface-container-high text-secondary hover:border-primary-fixed hover:text-primary-fixed transition-none" data-path="risk-exposure" href="#"><span class="font-label-mono-sm text-label-mono-sm uppercase">// VOL_RISK_L2</span><span class="font-label-mono-sm text-label-mono-sm">04</span></a></nav></div><div class="border-t-2 border-surface-container-high pt-space-md flex flex-col gap-space-xs"><span class="font-label-mono-sm text-label-mono-sm text-secondary uppercase">CORE_KERNEL // ACTIVE</span><div class="h-1.5 w-full bg-surface-container-high"><div class="h-full bg-primary-fixed w-3/4"></div></div><div class="flex justify-between font-label-mono-sm text-label-mono-sm text-secondary"><span>LOAD: 74.2%</span><span>TPS: 184K</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest border-b-2 border-surface-container-high z-40 px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-md font-label-mono-sm text-label-mono-sm text-secondary uppercase"><span>FRAME_INDEX: [16:9_WIDE]</span><span class="text-primary-fixed">COORD: [X:1920 // Y:1080]</span></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><span class="w-2 h-2 rounded-full bg-primary-fixed inline-block animate-ping"></span><span class="font-label-mono-sm text-label-mono-sm text-primary-fixed uppercase">NYC 09:29:58.42 UTC-4 // LSE 14:29:58 // HKG 21:29:58</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 bg-surface-container-lowest hud-grid min-h-[calc(100vh-48px)] p-space-lg"><div class="flex flex-col w-full font-body-md text-on-surface select-none">
+<!-- 16:9 RATIO BOUNDARY CANVAS -->
+<div class="relative w-full aspect-[16/9] bg-surface-container-lowest border-2 border-surface-container-high overflow-hidden flex flex-col justify-between p-space-md">
+<!-- CORNER TECHNICAL TICKS -->
+<div class="absolute top-2 left-2 font-label-mono-sm text-label-mono-sm text-outline-variant pointer-events-none">+ [00,00]</div>
+<div class="absolute top-2 right-2 font-label-mono-sm text-label-mono-sm text-outline-variant pointer-events-none">+ [1920,00]</div>
+<div class="absolute bottom-2 left-2 font-label-mono-sm text-label-mono-sm text-outline-variant pointer-events-none">+ [00,1080]</div>
+<div class="absolute bottom-2 right-2 font-label-mono-sm text-label-mono-sm text-outline-variant pointer-events-none">+ [1920,1080]</div>
+<!-- INNER HUD TOP STRIP -->
+<header class="w-full flex items-center justify-between border-b-2 border-surface-container-high pb-space-sm z-10">
+<div class="flex items-center gap-space-md">
+<span class="font-label-mono-lg text-label-mono-lg text-primary-fixed uppercase tracking-wider">[NEXUS // TERMINAL]</span>
+<span class="text-surface-container-highest">/</span>
+<span class="font-label-mono-sm text-label-mono-sm text-secondary uppercase tracking-widest">LAYER_3_VERIFICATION_MATRIX</span>
+</div>
+<div class="flex items-center gap-space-lg">
+<div class="flex items-center gap-space-xs font-label-mono-sm text-label-mono-sm text-primary-fixed">
+<span class="w-1.5 h-1.5 bg-primary-fixed inline-block"></span>
+<span>DETERMINISTIC_LOCK: ENGAGED</span>
+</div>
+<div class="font-label-mono-lg text-label-mono-lg text-on-surface uppercase tracking-widest">11:15:40.092 EST</div>
+</div>
+</header>
+<!-- CORE 2-COLUMN VIEWPORT CONTENT -->
+<main class="grid grid-cols-12 gap-0 my-auto w-full items-stretch border-2 border-surface-container-high">
+<!-- LEFT DOMINANT COLUMN: COLOSSAL STAT METRIC -->
+<section class="col-span-12 xl:col-span-6 bg-surface-container-lowest p-space-lg border-b-2 xl:border-b-0 xl:border-r-2 border-surface-container-high flex flex-col justify-between relative">
+<div class="flex items-center justify-between font-label-mono-sm text-label-mono-sm text-secondary">
+<span class="text-primary-fixed uppercase tracking-widest">[PRIMARY_METRIC // TELEMETRY]</span>
+<span class="tracking-widest">SAMPLE: 1,400,000,000 OPS</span>
+</div>
+<!-- COLOSSAL VALUE -->
+<div class="my-space-md">
+<div class="font-metric-huge text-primary-fixed tracking-tighter leading-none" style="font-size: clamp(68px, 9vw, 138px); line-height: 0.9;">
+            99.999%
+          </div>
+<div class="mt-space-md pt-space-sm border-t-2 border-surface-container-high flex flex-col gap-space-xs">
+<span class="font-label-mono-lg text-label-mono-lg text-on-surface uppercase tracking-wider">
+              DETERMINISTIC EXECUTION GUARANTEE
+            </span>
+<span class="font-label-mono-sm text-label-mono-sm text-secondary uppercase tracking-widest">
+              // 0 UNMATCHED FILLS OVER 1.4B TRANSACTIONS [ZERO JITTER]
+            </span>
+</div>
+</div>
+<!-- SECONDARY AUDIT BADGES & HARDWARE ATTESTATION -->
+<div class="flex flex-col gap-space-xs pt-space-md border-t-2 border-surface-container-high">
+<div class="flex items-center justify-between border-2 border-surface-container-high bg-surface-container px-space-md py-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="text-primary-fixed font-label-mono-sm text-label-mono-sm">■</span>
+<span class="font-label-mono-sm text-label-mono-sm text-on-surface uppercase tracking-wider">PROVENANCE: SOC2 TYPE II &amp; AS6081 HARDWARE VERIFIED</span>
+</div>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed bg-surface-container-lowest px-1.5 py-0.5 border border-primary-fixed">ATTESTED</span>
+</div>
+<div class="flex items-center justify-between text-secondary font-label-mono-sm text-label-mono-sm px-space-xs">
+<span>CHIPSET: FPGA-XILINX-ULTRASCALE+</span>
+<span>CLOCK-SOURCE: CESIUM BEAM (ATOMIC)</span>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN: 18/18 DETERMINISTIC AUDIT CHECKS -->
+<section class="col-span-12 xl:col-span-6 bg-surface-container-lowest p-space-lg flex flex-col justify-between">
+<!-- SECTION TITLE -->
+<div class="flex items-center justify-between border-b-2 border-surface-container-high pb-space-sm mb-space-md">
+<span class="font-label-mono-lg text-label-mono-lg text-on-surface uppercase tracking-wider">
+            INDEPENDENT COMPLIANCE &amp; RISK SAFETY AUDIT CHECKS
+          </span>
+<span class="font-label-mono-sm text-label-mono-sm text-on-primary-fixed bg-primary-fixed px-space-sm py-0.5 font-bold uppercase tracking-wider">
+            [18/18 PASS]
+          </span>
+</div>
+<!-- 18 AUDIT CELLS MATRIX (3 COLUMNS X 6 ROWS) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 border-2 border-surface-container-high">
+<!-- CELL 1 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">L3 TICK INTEGRITY</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 2 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">SUB-NS CLOCK SYNC</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 3 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">ZERO MEMORY LEAK</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 4 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">KERNEL BYPASS DMA</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 5 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">FIX / ITCH CONFORMANCE</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 6 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">PRE-TRADE RISK GATE</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 7 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">CIRCUIT BREAKER TRIP</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 8 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">CROSS-EXCHANGE ARB</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 9 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">DARK POOL ROUTING</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 10 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">CO-LOCATION EQUIDIST</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 11 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">HARDWARE CRYPTO RNG</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 12 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">SOC2 REAL-TIME LEDGER</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 13 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">FLASH CRASH ISOLATE</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 14 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">P99.99 TAIL LATENCY</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 15 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">SEC RULE 15c3-5</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 16 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">FINRA CAT REPORTING</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 17 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">MULTI-JURIS FAILOVER</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+<!-- CELL 18 -->
+<div class="border border-surface-container-high bg-surface-container-low p-2 flex items-center justify-between hover:border-primary-fixed group transition-none">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary truncate group-hover:text-on-surface">ZERO BUFFER OVERFLOW</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed ml-1 font-bold">[✓]</span>
+</div>
+</div>
+<!-- BOTTOM TELEMETRY BAR WITHIN MODULE -->
+<div class="mt-space-md pt-space-xs flex items-center justify-between font-label-mono-sm text-label-mono-sm text-secondary border-t border-surface-container-high">
+<span>ROOT_HASH: 0x88f4b23a9c72e18</span>
+<span class="text-primary-fixed">ATTESTATION: CONTINUOUS (1000 HZ)</span>
+</div>
+</section>
+</main>
+<!-- INNER HUD BOTTOM STRIP -->
+<footer class="w-full flex items-center justify-between border-t-2 border-surface-container-high pt-space-sm z-10">
+<div class="flex items-center gap-space-md font-label-mono-sm text-label-mono-sm text-secondary">
+<span class="text-primary-fixed">AUDIT LOG:</span>
+<span class="uppercase tracking-wider">CONTINUOUS ON-CHAIN &amp; HARDWARE L3 PROOFS</span>
+<span class="text-surface-container-highest">|</span>
+<span>LATENCY: 842ps (P99.9)</span>
+</div>
+<div class="flex items-center gap-space-md font-label-mono-sm text-label-mono-sm">
+<span class="text-secondary tracking-widest">[STORYBOARD_FRAME_TARGET]</span>
+<span class="border-2 border-primary-fixed bg-surface-container-high px-space-sm py-0.5 text-primary-fixed font-bold tracking-widest uppercase">
+          SCENE 03 / 04
+        </span>
+</div>
+</footer>
+</div>
+</div></main><footer class="fixed bottom-0 left-64 right-0 h-12 bg-surface-container-lowest border-t-2 border-surface-container-high z-40 px-space-lg flex items-center justify-between font-label-mono-sm text-label-mono-sm"><div class="text-secondary uppercase">[FEED: NASDAQ L3 ULTRA-LOW LATENCY // ORDER ROUTER: DIRECT DMA]</div><div class="border-2 border-primary-fixed px-space-sm py-0.5 text-primary-fixed font-bold uppercase tracking-wider bg-surface-container-lowest">SCENE // 04.9A</div></footer></div></body></html>

@@ -17,6 +17,7 @@ Usage: `/brag-slim [input] [options]`. Options (flags or plain language):
 | `--format landscape\|vertical\|square` | landscape (1920×1080; vertical 1080×1920, square 1080×1080), 30fps |
 | `--duration <s>` | about 20s |
 | `--voice [voice]` | off; narration with the `narrate` skill (default voice `af_heart`) |
+| `--style <set>` | none; one of 18 art-directed looks from the `brag-styles` skill (quant terminal, riso, arcade, Mughal court, Versailles, …) |
 
 Write the deliverables to `brag-output/` in the current directory (timestamped `brag-output-YYYY-MM-DD-HHmmss/` if it already exists). Keep every intermediate file (frames, downloads, scripts, stems) in a `work/` subfolder inside it.
 
@@ -58,6 +59,8 @@ Write `brag-plan.md`: the angle, the hook, 2–3 highlights, the punchline, tone
 If the user points at one part — a new version, a new feature, one angle — make this the focus of the video.
 
 **Shape:** Hook (2–3s) → Reveal (2–4s) → 2–3 sharp highlights → Punchline/outro (2–4s). A starting shape, not a template.
+
+**Style.** When `--style` is given or the user names a look, use the `brag-styles` skill beside this one (`../brag-styles/`). Read only that set's `set.md`, and let it set palette, type, texture, signature move and sound, while the project supplies every word and number. If `brag-styles` isn't installed, say so and design from the project itself.
 
 ## Creative laws
 

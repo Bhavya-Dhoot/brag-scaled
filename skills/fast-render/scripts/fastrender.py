@@ -166,6 +166,7 @@ def main():
             d = pathlib.Path(a.still_dir); d.mkdir(parents=True, exist_ok=True)
             for t in a.stills:
                 (d / f"t{t:07.2f}.png").write_bytes(grab(cdp, t, "png"))
+                print(f"still t={t}s -> {d / f't{t:07.2f}.png'}")
         b.close()
     print(f"renderer: {rend}")
     if "SwiftShader" in rend:
@@ -177,7 +178,8 @@ def main():
         sys.exit("no duration: pass --duration or set window.DURATION")
 
     encoder = pick_encoder(ff, a.encoder)
-    n = int(round(dur * a.fps)); W = max(1, min(a.workers, n)); step = -(-n // W)
+    # a browser costs ~2 s to start, so give each one 60+ frames
+    n = int(round(dur * a.fps)); W = max(1, min(a.workers, n // 60)); step = -(-n // W)
     tmp = pathlib.Path(tempfile.mkdtemp(prefix="fastrender_", dir=pathlib.Path(a.out).resolve().parent))
     jobs = [(url, a.width, a.height, a.fps, a.capture, lo, min(n, lo + step), str(tmp / f"seg{k:03d}.mkv"),
              a.poster if k == 0 else None, ff, gpu) for k, lo in enumerate(range(0, n, step))]

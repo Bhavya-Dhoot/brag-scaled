@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_blank" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.crt-scanlines{background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.45) 50%);background-size:100% 4px;pointer-events:none;}.crt-vignette{box-shadow:inset 0 0 80px rgba(0,0,0,0.9),inset 0 0 20px rgba(0,0,0,0.95);pointer-events:none;}.crt-bloom{text-shadow:0 0 2px #34f5ff,0 0 8px rgba(52,245,255,0.65);}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"error-container":"#93000a","primary-container":"#34f5ff","on-primary":"#003739","on-secondary-container":"#ffe6ed","surface-bright":"#393841","outline-variant":"#3b494a","on-tertiary-fixed":"#211b00","on-error-container":"#ffdad6","surface-container":"#1f1f26","tertiary-fixed-dim":"#e2c633","tertiary":"#fffaf7","tertiary-fixed":"#ffe256","on-background":"#e4e1ec","on-surface-variant":"#bacaca","error":"#ffb4ab","on-error":"#690005","inverse-surface":"#e4e1ec","surface-container-high":"#2a2931","inverse-primary":"#00696e","on-secondary-fixed-variant":"#8c0054","on-primary-container":"#006d72","surface":"#13131a","on-surface":"#e4e1ec","surface-container-highest":"#34343c","inverse-on-surface":"#303038","on-primary-fixed-variant":"#004f53","surface-dim":"#13131a","surface-tint":"#00dce5","secondary":"#ffb0ce","secondary-container":"#cd017e","on-secondary-fixed":"#3e0022","secondary-fixed":"#ffd9e5","outline":"#849494","primary":"#edfeff","primary-fixed":"#67f6ff","on-tertiary-container":"#726100","on-secondary":"#63003a","on-tertiary-fixed-variant":"#534600","surface-variant":"#34343c","surface-container-low":"#1b1b22","on-tertiary":"#393000","secondary-fixed-dim":"#ffb0ce","primary-fixed-dim":"#00dce5","surface-container-lowest":"#0e0e15","on-primary-fixed":"#002021","tertiary-container":"#fcde4a","background":"#13131a"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"margin":"1.5rem","space-xs":"0.25rem","space-xl":"2rem","space-sm":"0.5rem","gutter":"1rem","space-lg":"1.5rem","space-md":"1rem"},"fontFamily":{"headline-sm":["Space Mono"],"display-lg":["Space Mono"],"label-lg":["JetBrains Mono"],"headline-lg":["Space Mono"],"label-md":["JetBrains Mono"],"body-md":["Space Mono"],"body-sm":["Space Mono"],"headline-md":["Space Mono"],"display-lg-mobile":["Space Mono"],"body-lg":["Space Mono"],"label-sm":["JetBrains Mono"]},"fontSize":{"headline-sm":["15px",{"lineHeight":"20px","letterSpacing":"0.02em","fontWeight":"700"}],"display-lg":["32px",{"lineHeight":"40px","letterSpacing":"0.1em","fontWeight":"700"}],"label-lg":["13px",{"lineHeight":"16px","letterSpacing":"0.06em","fontWeight":"700"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"0.05em","fontWeight":"700"}],"label-md":["11px",{"lineHeight":"14px","letterSpacing":"0.05em","fontWeight":"500"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0","fontWeight":"400"}],"headline-md":["18px",{"lineHeight":"24px","letterSpacing":"0.04em","fontWeight":"700"}],"display-lg-mobile":["20px",{"lineHeight":"28px","letterSpacing":"0.08em","fontWeight":"700"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"0.02em","fontWeight":"400"}],"label-sm":["10px",{"lineHeight":"12px","letterSpacing":"0.08em","fontWeight":"500"}]}}}};</script></head><body class="bg-surface-container-lowest text-on-surface font-body-md text-body-md select-none"><div class="min-h-screen bg-surface-container-lowest p-space-md lg:p-margin flex flex-col items-center justify-center"><div class="w-full max-w-[1920px] aspect-[16/9] bg-surface rounded-xl overflow-hidden relative shadow-[0_0_0_12px_#0e0e15,0_0_0_16px_#2a2931,0_24px_48px_rgba(0,0,0,0.9)] flex items-center justify-center"><main class="w-full h-full bg-surface relative z-10 flex items-center justify-center p-space-lg"><div class="flex flex-col w-full h-full justify-between select-none">
+<!-- TOP ARCADE HUD STRIP -->
+<header class="w-full bg-surface-container-lowest p-space-sm shadow-md flex items-center justify-between z-20">
+<div class="flex items-center space-x-gutter">
+<!-- Player Profile / Level -->
+<div class="flex items-center space-x-space-xs bg-surface-container-high px-space-sm py-space-xs">
+<span class="w-2.5 h-2.5 bg-secondary-container inline-block"></span>
+<span class="font-headline-sm text-headline-sm text-secondary tracking-widest">LVL 02: KERNEL BYPASS</span>
+</div>
+<!-- Score Telemetry -->
+<div class="flex items-baseline space-x-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant">SCORE:</span>
+<span class="font-headline-sm text-headline-sm text-tertiary-fixed tracking-wider crt-bloom" id="arcade-score">042000</span>
+</div>
+<!-- Microsecond Latency Clock -->
+<div class="flex items-baseline space-x-space-xs bg-surface-container px-space-sm py-space-xs">
+<span class="font-label-sm text-label-sm text-primary-fixed-dim">LATENCY:</span>
+<span class="font-headline-sm text-headline-sm text-primary-container tracking-wider" id="arcade-timer">840ns</span>
+</div>
+</div>
+<!-- Center Status Indicator -->
+<div class="hidden xl:flex items-center space-x-space-sm bg-surface-container px-space-md py-space-xs">
+<span class="w-2 h-2 bg-primary-container animate-pulse"></span>
+<span class="font-label-md text-label-md text-primary">BUS: PCIE_GEN5_X16 // DIRECT_DMA_ACTIVE</span>
+</div>
+<!-- Right HUD: Lives & Sound / Coin -->
+<div class="flex items-center space-x-gutter">
+<div class="flex items-center space-x-space-xs">
+<span class="font-label-sm text-label-sm text-secondary-fixed-dim mr-1">CORES:</span>
+<div class="flex space-x-1">
+<!-- Pixel Heart 1 -->
+<svg class="w-4 h-4 text-secondary inline-block" fill="currentColor" viewbox="0 0 8 8">
+<path d="M1 1h2v1H1zM5 1h2v1H5zM0 2h8v2H0zM1 4h6v1H1zM2 5h4v1H2zM3 6h2v1H3z"></path>
+</svg>
+<!-- Pixel Heart 2 -->
+<svg class="w-4 h-4 text-secondary inline-block" fill="currentColor" viewbox="0 0 8 8">
+<path d="M1 1h2v1H1zM5 1h2v1H5zM0 2h8v2H0zM1 4h6v1H1zM2 5h4v1H2zM3 6h2v1H3z"></path>
+</svg>
+<!-- Pixel Heart 3 -->
+<svg class="w-4 h-4 text-secondary inline-block" fill="currentColor" viewbox="0 0 8 8">
+<path d="M1 1h2v1H1zM5 1h2v1H5zM0 2h8v2H0zM1 4h6v1H1zM2 5h4v1H2zM3 6h2v1H3z"></path>
+</svg>
+</div>
+</div>
+<div class="bg-surface-container-highest px-space-sm py-space-xs text-on-surface font-label-sm text-label-sm">
+        CREDITS: 02
+      </div>
+</div>
+</header>
+<!-- MAIN PLAYFIELD & RADAR SPLIT -->
+<div class="relative w-full flex-1 flex overflow-hidden my-space-xs gap-space-sm">
+<!-- 8-BIT PLATFORMER PLAYFIELD (CIRCUIT DUNGEON) -->
+<div class="relative flex-1 bg-surface-container-lowest overflow-hidden flex flex-col justify-between p-space-md">
+<!-- Background Circuit Trace Matrix -->
+<div class="absolute inset-0 opacity-15 pointer-events-none">
+<svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="48" id="circuit-grid" patternunits="userSpaceOnUse" width="48">
+<path d="M 0 24 L 24 24 L 32 32 L 48 32 M 24 0 L 24 16 L 36 28 M 12 48 L 12 36 L 4 28" fill="none" stroke="#34f5ff" stroke-width="2"></path>
+<rect fill="#34f5ff" height="4" width="4" x="22" y="22"></rect>
+<rect fill="#ffb0ce" height="4" width="4" x="30" y="30"></rect>
+</pattern>
+</defs>
+<rect fill="url(#circuit-grid)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<!-- Playfield Upper Track: NIC INGRESS BUS -->
+<div class="relative z-10 w-full flex items-center justify-between">
+<!-- Route Segment Marker -->
+<div class="bg-surface-container-high px-space-sm py-space-xs flex items-center space-x-space-xs">
+<span class="font-label-sm text-label-sm text-primary-container">ROUTE 0x00FF88 // INGRESS</span>
+<span class="w-2 h-2 bg-tertiary-fixed animate-ping"></span>
+</div>
+<!-- Collectible: FPGA CORE -->
+<div class="flex items-center space-x-space-xs bg-surface-container px-space-sm py-space-xs transform hover:scale-105 transition-transform">
+<svg class="w-6 h-6 text-tertiary-fixed" fill="currentColor" viewbox="0 0 16 16">
+<path d="M3 3h10v10H3z M5 5h6v6H5z M1 5h1v1H1z M1 7h1v1H1z M1 9h1v1H1z M14 5h1v1h-1z M14 7h1v1h-1z M14 9h1v1h-1z M5 1h1v1H5z M7 1h1v1H7z M9 1h1v1H9z M5 14h1v1H5z M7 14h1v1H7z M9 14h1v1H9z"></path>
+</svg>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-tertiary-fixed">FPGA CORE</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">+500ns SPEED</span>
+</div>
+</div>
+<!-- Collectible: PTP ATOMIC CLOCK -->
+<div class="flex items-center space-x-space-xs bg-surface-container px-space-sm py-space-xs">
+<svg class="w-6 h-6 text-primary-fixed" fill="currentColor" viewbox="0 0 16 16">
+<path d="M7 1h2v2H7z M6 4h4v1H6z M4 5h8v2H4z M3 7h10v6H3z M5 13h6v1H5z M7 14h2v1H7z M7 8h2v3H7z M9 9h2v1H9z"></path>
+</svg>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary-fixed">PTP SYNC</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">±1ns JITTER</span>
+</div>
+</div>
+</div>
+<!-- MIDDLE PLATFORM LAYER & ACTION ZONE -->
+<div class="relative z-10 w-full my-auto py-space-lg flex flex-col justify-center">
+<!-- Overhead Suspended Bus Rail -->
+<div class="w-full h-2 bg-surface-container-highest relative flex items-center overflow-hidden">
+<div class="absolute h-full w-24 bg-primary-container opacity-80 animate-[slide_2s_linear_infinite]"></div>
+<div class="absolute h-full w-12 bg-secondary opacity-60 animate-[slide_1.5s_linear_infinite_reverse]"></div>
+</div>
+<!-- The Circuit Dungeon Action Field -->
+<div class="relative h-64 w-full flex items-center justify-between px-space-xl">
+<!-- HERO SPRITE: PACKET-01 -->
+<div class="relative flex flex-col items-center group cursor-pointer transition-transform duration-75" id="hero-packet" style="transform: translateY(-8px);">
+<!-- Label Flag -->
+<div class="bg-primary-container text-on-primary font-label-sm text-label-sm px-1 py-0.5 mb-2 shadow-sm font-bold animate-bounce">
+              PACKET-01 [DMA]
+            </div>
+<!-- 8-Bit Pixel Jet / Data Packet Sprite -->
+<div class="w-16 h-16 bg-surface-container-high p-1 shadow-[4px_4px_0_#000]">
+<svg class="w-full h-full text-primary-container crt-bloom" fill="currentColor" viewbox="0 0 16 16">
+<!-- Data Packet Hull -->
+<path d="M12 2h2v12h-2z M10 4h2v8h-2z M8 5h2v6H8z M6 6h2v4H6z M2 7h4v2H2z"></path>
+<!-- Engine Exhaust Blasts (Hot Magenta & Amber) -->
+<rect fill="#cd017e" height="2" width="2" x="0" y="7"></rect>
+<rect fill="#ffe256" height="1" width="2" x="4" y="5"></rect>
+<rect fill="#ffe256" height="1" width="2" x="4" y="10"></rect>
+<!-- Core Memory Bit -->
+<rect fill="#fffaf7" height="2" width="2" x="10" y="7"></rect>
+</svg>
+</div>
+<div class="font-label-sm text-label-sm text-primary-fixed mt-1">PCIe 5.0 BAR-0</div>
+</div>
+<!-- Collectible DMA GEM floating in path -->
+<div class="relative flex flex-col items-center animate-pulse">
+<svg class="w-10 h-10 text-tertiary-fixed crt-bloom" fill="currentColor" viewbox="0 0 16 16">
+<path d="M6 2h4v2H6z M4 4h8v2H4z M2 6h12v3H2z M4 9h8v2H4z M6 11h4v2H6z M7 13h2v1H7z"></path>
+<rect fill="#fffaf7" height="3" width="4" x="6" y="5"></rect>
+</svg>
+<span class="font-label-sm text-label-sm text-tertiary-fixed mt-1">DMA GEM</span>
+</div>
+<!-- ENEMY HAZARD 1: "KERNEL OVERHEAD" SLUG -->
+<div class="relative flex flex-col items-center">
+<div class="bg-error-container text-on-error-container font-label-sm text-label-sm px-1 py-0.5 mb-2">
+              SLOW: IRQ_HANDLER
+            </div>
+<div class="w-16 h-16 bg-surface-container-high p-1 shadow-[4px_4px_0_#000]">
+<svg class="w-full h-full text-secondary" fill="currentColor" viewbox="0 0 16 16">
+<!-- Glitch Slug Body -->
+<path d="M4 6h8v2H4z M2 8h12v4H2z M1 12h14v2H1z"></path>
+<!-- Glitch eyes / tentacles -->
+<rect fill="#ffdad6" height="2" width="2" x="3" y="4"></rect>
+<rect fill="#ffdad6" height="2" width="2" x="11" y="4"></rect>
+<rect fill="#690005" height="2" width="6" x="5" y="9"></rect>
+</svg>
+</div>
+<span class="font-label-sm text-label-sm text-secondary-fixed mt-1">+12.4μs PENALTY</span>
+</div>
+<!-- ENEMY HAZARD 2: "TCP CONGESTION" GLITCH -->
+<div class="relative flex flex-col items-center">
+<div class="bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm px-1 py-0.5 mb-2">
+              SYS_CALL LOCK
+            </div>
+<div class="w-16 h-16 bg-surface-container-high p-1 shadow-[4px_4px_0_#000]">
+<svg class="w-full h-full text-secondary-container" fill="currentColor" viewbox="0 0 16 16">
+<path d="M2 2h4v4H2z M10 2h4v4h-4z M6 6h4v4H6z M2 10h4v4H2z M10 10h4v4h-4z"></path>
+<rect fill="#ffe256" height="2" width="2" x="7" y="7"></rect>
+</svg>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface mt-1">CONTEXT_SWITCH</span>
+</div>
+</div>
+<!-- LOWER STEPPED PIXEL PLATFORMS (BRICK / BUS RAILS) -->
+<div class="w-full grid grid-cols-12 gap-2 mt-4">
+<!-- Stepped Block 1 -->
+<div class="col-span-3 h-8 bg-surface-container-high relative overflow-hidden shadow-[4px_4px_0_#0e0e15]">
+<div class="h-2 w-full bg-primary-container"></div>
+<div class="p-1 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>RING_BUF_0</span>
+<span class="text-primary-fixed">0x7FA0</span>
+</div>
+</div>
+<!-- Stepped Gap (Drop Hazard) -->
+<div class="col-span-1 flex flex-col items-center justify-center">
+<span class="font-label-sm text-label-sm text-secondary tracking-widest animate-pulse">&gt;&gt;</span>
+</div>
+<!-- Stepped Block 2 (Elevated Main Platform) -->
+<div class="col-span-5 h-8 bg-surface-container relative overflow-hidden -mt-2 shadow-[4px_4px_0_#0e0e15]">
+<div class="h-2 w-full bg-tertiary-fixed"></div>
+<div class="p-1 flex items-center justify-between text-on-surface font-label-sm text-label-sm">
+<span class="text-tertiary-fixed">ZERO-COPY DIRECT MMAP SEGMENT</span>
+<span class="text-primary">4096 KB</span>
+</div>
+</div>
+<!-- Stepped Gap -->
+<div class="col-span-1 flex flex-col items-center justify-center">
+<span class="font-label-sm text-label-sm text-secondary tracking-widest animate-pulse">&gt;&gt;</span>
+</div>
+<!-- Stepped Block 3 (Terminal Exit Port) -->
+<div class="col-span-2 h-8 bg-surface-container-high relative overflow-hidden shadow-[4px_4px_0_#0e0e15]">
+<div class="h-2 w-full bg-secondary"></div>
+<div class="p-1 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>TX_EGRESS</span>
+<span class="text-secondary-fixed">READY</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Playfield Ground Matrix Ribbon -->
+<div class="relative z-10 w-full bg-surface-container-high p-space-xs flex items-center justify-between">
+<div class="flex items-center space-x-space-md">
+<span class="font-label-sm text-label-sm text-primary-container">STATUS: HIGH_FREQUENCY_PIPELINE_OK</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">AF_XDP SOCKET: POLLING</span>
+</div>
+<div class="flex items-center space-x-space-sm text-tertiary-fixed font-label-sm text-label-sm">
+<span>TX: 14.8M PPS</span>
+<span class="text-on-surface-variant">|</span>
+<span>RX: 14.8M PPS</span>
+</div>
+</div>
+</div>
+<!-- SIDE TELEMETRY RADAR / MINIMAP COCKPIT (4-Column Monospace HUD) -->
+<aside class="w-80 bg-surface-container flex flex-col justify-between p-space-md shadow-lg">
+<!-- Telemetry Header -->
+<div class="space-y-space-xs">
+<div class="bg-surface-container-lowest p-space-xs flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-primary tracking-wide">TELEMETRY</span>
+<span class="w-2 h-2 bg-primary-container animate-ping"></span>
+</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">DEVICE: MELLANOX_CX6_DX</div>
+</div>
+<!-- Chunky 8-Bit Radar Grid -->
+<div class="my-space-md flex flex-col items-center">
+<div class="relative w-48 h-48 bg-surface-container-lowest p-2 shadow-[4px_4px_0_#000]">
+<!-- Grid lines -->
+<div class="w-full h-full relative grid grid-cols-4 grid-rows-4">
+<!-- Scan Ray (Rotational Sweep Simulation) -->
+<div class="absolute inset-0 bg-gradient-to-tr from-transparent via-primary-container/10 to-transparent pointer-events-none"></div>
+<!-- Radar Reticle Rings -->
+<div class="absolute inset-2 bg-surface-container-low/40"></div>
+<div class="absolute inset-8 bg-surface-container/60"></div>
+<div class="absolute inset-16 bg-surface-container-highest"></div>
+<!-- Target Blips -->
+<!-- Hero Blip -->
+<div class="absolute top-1/2 left-1/3 w-2 h-2 bg-primary-container crt-bloom animate-ping"></div>
+<div class="absolute top-1/2 left-1/3 w-2 h-2 bg-primary-container"></div>
+<!-- Kernel Obstacle Blip 1 -->
+<div class="absolute top-1/4 right-1/4 w-2 h-2 bg-secondary animate-pulse"></div>
+<!-- Kernel Obstacle Blip 2 -->
+<div class="absolute bottom-1/3 right-1/3 w-2 h-2 bg-secondary"></div>
+<!-- DMA GEM Blip -->
+<div class="absolute top-1/3 left-1/2 w-1.5 h-1.5 bg-tertiary-fixed"></div>
+<!-- Coordinate readouts -->
+<span class="absolute top-1 left-1 font-label-sm text-label-sm text-outline">Q1</span>
+<span class="absolute top-1 right-1 font-label-sm text-label-sm text-outline">Q2</span>
+<span class="absolute bottom-1 left-1 font-label-sm text-label-sm text-outline">Q3</span>
+<span class="absolute bottom-1 right-1 font-label-sm text-label-sm text-outline">Q4</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-primary-fixed mt-2">ACTIVE RADAR SWEEP (50μs)</span>
+</div>
+<!-- Real-time Diagnostic Counters -->
+<div class="space-y-space-xs font-label-md text-label-md">
+<div class="bg-surface-container-low p-space-xs flex justify-between items-center">
+<span class="text-on-surface-variant">TICK-TO-TRADE:</span>
+<span class="text-tertiary-fixed font-bold">840 ns</span>
+</div>
+<div class="bg-surface-container-low p-space-xs flex justify-between items-center">
+<span class="text-on-surface-variant">DMA RING BUFFER:</span>
+<span class="text-primary-container font-bold">0% FULL</span>
+</div>
+<div class="bg-surface-container-low p-space-xs flex justify-between items-center">
+<span class="text-on-surface-variant">PACKET LOSS:</span>
+<span class="text-primary-fixed-dim font-bold">0.0000%</span>
+</div>
+<div class="bg-surface-container-low p-space-xs flex justify-between items-center">
+<span class="text-on-surface-variant">CPU AFFINITY:</span>
+<span class="text-secondary font-bold">CORE_04_ISOL</span>
+</div>
+<div class="bg-surface-container-low p-space-xs flex justify-between items-center">
+<span class="text-on-surface-variant">JITTER MAX:</span>
+<span class="text-tertiary-fixed font-bold">±3 ns</span>
+</div>
+</div>
+<!-- Action Key Prompt -->
+<div class="mt-space-sm pt-space-xs bg-surface-container-high p-space-xs text-center">
+<button class="w-full bg-primary-container text-on-primary py-space-xs font-headline-sm text-headline-sm shadow-[4px_4px_0_#000] active:translate-x-1 active:translate-y-1 transition-all" id="bypass-btn">
+          SPACE: DMA BURST
+        </button>
+</div>
+</aside>
+</div>
+<!-- RPG / ARCADE DIALOGUE SPEECH BOX (Bottom Ribbon) -->
+<footer class="w-full bg-surface-container-low p-space-md shadow-xl flex items-center space-x-space-md z-20">
+<!-- Speaker Portrait (Pixelated 8-Bit Cyber Architect) -->
+<div class="w-16 h-16 bg-surface-container-lowest p-1 shadow-[4px_4px_0_#000] flex-shrink-0 flex items-center justify-center">
+<svg class="w-full h-full text-primary-fixed" fill="currentColor" viewbox="0 0 16 16">
+<!-- Visor / Face Pixel Silhouette -->
+<path d="M4 2h8v2H4z M2 4h12v3H2z M1 7h14v5H1z M3 12h10v2H3z"></path>
+<!-- Neon Cyber Eyewear -->
+<rect fill="#cd017e" height="2" width="10" x="3" y="6"></rect>
+<rect fill="#fffaf7" height="1" width="3" x="5" y="6"></rect>
+<rect fill="#fffaf7" height="1" width="2" x="10" y="6"></rect>
+<!-- Throat Comm Unit -->
+<rect fill="#34f5ff" height="2" width="4" x="6" y="12"></rect>
+</svg>
+</div>
+<!-- Speech Dialogue Text Area -->
+<div class="flex-1 bg-surface-container p-space-sm shadow-[4px_4px_0_#000] relative flex items-center justify-between">
+<div class="flex flex-col pr-space-md">
+<div class="flex items-center space-x-space-xs mb-1">
+<span class="font-headline-sm text-headline-sm text-secondary tracking-wider">CHIEF ARCHITECT:</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">// MSG_ID: 0x840N</span>
+</div>
+<p class="font-body-md text-body-md text-primary leading-relaxed" id="dialogue-text">
+          "BYPASSING LINUX KERNEL STACK! DIRECT DMA REGISTERS ENGAGED AT 840 NANOSECONDS. ZERO JITTER ACHIEVED! PREPARE TO PURGE BUFFER BLOAT."
+        </p>
+</div>
+<!-- Flashing Blinking Prompt Arrow -->
+<div class="flex-shrink-0 flex flex-col items-center justify-center pl-space-sm">
+<svg class="w-6 h-6 text-tertiary-fixed animate-bounce" fill="currentColor" viewbox="0 0 8 8">
+<path d="M1 2h6v2H1z M2 4h4v1H2z M3 5h2v1H3z M3 6h2v1H3z"></path>
+</svg>
+<span class="font-label-sm text-label-sm text-tertiary-fixed">PRESS ↵</span>
+</div>
+</div>
+</footer>
+</div>
+<script>
+  (function() {
+    // Dynamic score and timer ticks
+    let score = 42000;
+    let latency = 840;
+    const scoreEl = document.getElementById('arcade-score');
+    const timerEl = document.getElementById('arcade-timer');
+    const heroPacket = document.getElementById('hero-packet');
+    const bypassBtn = document.getElementById('bypass-btn');
+    const dialogueEl = document.getElementById('dialogue-text');
+
+    const phrases = [
+      '"BYPASSING LINUX KERNEL STACK! DIRECT DMA REGISTERS ENGAGED AT 840 NANOSECONDS. ZERO JITTER ACHIEVED!"',
+      '"HARDWARE TIMESTAMP APPLIED VIA PTP! ZERO-COPY PACKET PIPELINE AT FULL LINE RATE."',
+      '"NIC RING BUFFER DRAINING DIRECTLY INTO L3 CACHE. PACKET DROP RATE: ZERO PERCENT."',
+      '"INTERRUPT MITIGATION LEVEL 9: POLLING MODE ENGAGED. TICKS DOWN TO 812 NANOSECONDS!"'
+    ];
+    let phraseIdx = 0;
+
+    setInterval(() => {
+      score += 10;
+      scoreEl.innerText = score.toString().padStart(6, '0');
+    }, 400);
+
+    function triggerBurst() {
+      // Microsecond drop jitter animation
+      latency = Math.floor(810 + Math.random() * 35);
+      timerEl.innerText = latency + 'ns';
+      
+      // Sprite jump
+      heroPacket.style.transform = 'translateY(-24px) scale(1.1)';
+      setTimeout(() => {
+        heroPacket.style.transform = 'translateY(-8px) scale(1)';
+      }, 180);
+
+      // Rotate phrase
+      phraseIdx = (phraseIdx + 1) % phrases.length;
+      dialogueEl.innerText = phrases[phraseIdx];
+    }
+
+    if (bypassBtn) {
+      bypassBtn.addEventListener('click', triggerBurst);
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        triggerBurst();
+      }
+    });
+  })();
+</script></main><div class="absolute inset-0 crt-scanlines z-30 pointer-events-none"></div><div class="absolute inset-0 crt-vignette z-30 pointer-events-none rounded-xl"></div></div></div></body></html>

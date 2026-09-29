@@ -12,6 +12,7 @@
 | `/brag` | The classic workflow, which builds and renders through [Hyperframes](https://hyperframes.heygen.com/). |
 | `fast-render` | Renders any `window.render(t)` page to MP4 on the GPU with parallel browsers. `/brag-slim` uses it for stills and the final render. |
 | `narrate` | Offline voiceover with a bundled 82M-parameter TTS model (Kokoro). It gives exact line timings and ducks the music under the voice. |
+| `brag-styles` | 18 art-directed looks, each with a signature motion trick and a matching sound palette (quant terminal, riso zine, blueprint, newsprint, arcade, receipt, transit map, and royal sets from Mughal court to Maharaja Deco). |
 
 ## Why it's fast
 
@@ -85,7 +86,11 @@ Steer the tone, or add narration:
 /brag --tone "fake Series A launch from 2016"
 /brag-slim --voice
 /brag-slim --voice bf_emma
+/brag-slim --style shahi-darbar
+/brag-slim --style the-receipt --tone deadpan
 ```
+
+The set list, with what each is best for, is in [`skills/brag-styles/SKILL.md`](skills/brag-styles/SKILL.md). Each set has reference frames, and a Stitch prompt for regenerating it (`sets/<slug>/stitch.md`). Import a new Stitch export with `python scripts/import_stitch.py <export-dir>`.
 
 You get a `brag-output/` folder with the plan, share copy, and the rendered `brag.mp4` with its poster frame.
 
@@ -100,6 +105,8 @@ You get a `brag-output/` folder with the plan, share copy, and the rendered `bra
 - `skills/brag-slim/`: the single-file skill
 - `skills/fast-render/`: the GPU renderer (`scripts/fastrender.py`)
 - `skills/narrate/`: offline narration (`scripts/narrate.py`)
+- `skills/brag-styles/`: the 18 visual systems. Each has a `set.md`, which is all a run reads, plus reference frames, `DESIGN.md` tokens and reference markup.
+- `scripts/import_stitch.py`: turns a Google Stitch export into sanitised sets
 - `skills/brag/`: the classic workflow, with its references and bundled music and SFX
 - `examples/`: fake product sites used as a benchmark suite
 - `docs/`: the launch site

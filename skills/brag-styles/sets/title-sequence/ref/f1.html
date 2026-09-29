@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_blank" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&amp;family=Oswald:wght@600;700&amp;family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-secondary":"#ffffff","surface-dim":"#e3d9c3","secondary-fixed":"#ffdea8","on-secondary-fixed-variant":"#5e4200","inverse-primary":"#ffb4a6","tertiary-container":"#767474","tertiary-fixed":"#e5e2e1","on-primary-container":"#fffbff","on-error":"#ffffff","outline":"#8f706a","surface-container-low":"#fdf3dc","inverse-on-surface":"#faf0d9","outline-variant":"#e4beb7","on-tertiary-container":"#f7feff","on-primary-fixed":"#3f0300","error-container":"#ffdad6","surface":"#fff8ef","tertiary-fixed-dim":"#c8c6c5","surface-variant":"#ece2cb","tertiary":"#5d5c5b","background":"#fff8ef","primary":"#b41f09","surface-bright":"#fff8ef","surface-container-lowest":"#ffffff","primary-fixed":"#ffdad4","on-tertiary-fixed":"#1c1b1b","on-tertiary":"#ffffff","secondary-container":"#fdbf40","on-secondary-container":"#6f4e00","surface-container":"#f7edd6","secondary-fixed-dim":"#fabc3e","inverse-surface":"#353021","on-primary-fixed-variant":"#900e00","primary-fixed-dim":"#ffb4a6","surface-tint":"#b7210c","surface-container-highest":"#ece2cb","on-primary":"#ffffff","secondary":"#7c5800","on-background":"#201b0d","on-secondary-fixed":"#271900","on-tertiary-fixed-variant":"#474646","on-surface-variant":"#5b403b","on-error-container":"#93000a","primary-container":"#d83922","on-surface":"#201b0d","error":"#ba1a1a","surface-container-high":"#f1e7d0"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"gutter":"1.5rem","margin":"2rem","space-xs":"0.25rem","space-lg":"2rem","space-xl":"3.5rem","space-sm":"0.5rem","space-md":"1rem"},"fontFamily":{"display-hero":["Oswald"],"headline-md":["Oswald"],"label-md":["JetBrains Mono"],"body-sm":["Space Grotesk"],"label-sm":["JetBrains Mono"],"body-lg":["Space Grotesk"],"headline-lg":["Oswald"],"display-hero-mobile":["Oswald"],"headline-lg-mobile":["Oswald"],"headline-sm":["Oswald"],"label-lg":["JetBrains Mono"],"body-md":["Space Grotesk"]},"fontSize":{"display-hero":["96px",{"lineHeight":"96px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-md":["28px",{"lineHeight":"32px","letterSpacing":"0.02em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"500"}],"body-sm":["13px",{"lineHeight":"18px","fontWeight":"400"}],"label-sm":["10px",{"lineHeight":"12px","letterSpacing":"0.1em","fontWeight":"500"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-lg":["48px",{"lineHeight":"52px","letterSpacing":"0em","fontWeight":"700"}],"display-hero-mobile":["52px",{"lineHeight":"54px","letterSpacing":"-0.01em","fontWeight":"700"}],"headline-lg-mobile":["32px",{"lineHeight":"36px","letterSpacing":"0em","fontWeight":"700"}],"headline-sm":["20px",{"lineHeight":"24px","letterSpacing":"0.04em","fontWeight":"600"}],"label-lg":["14px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"body-md":["15px",{"lineHeight":"22px","fontWeight":"400"}]}}}};</script></head><body class="bg-inverse-surface text-on-surface font-body-md text-body-md min-h-screen flex items-center justify-center p-0 m-0"><main class="w-full flex items-center justify-center p-0"><div class="flex flex-col w-full items-center justify-center p-0 select-none">
+<!-- 16:9 Cinema Aspect Canvas (Full 1920x1080 Frame Simulation) -->
+<div class="relative w-full max-w-[1920px] aspect-[16/9] overflow-hidden bg-primary shadow-2xl flex flex-col justify-between" id="cinema-frame">
+<!-- Paper Grain Noise Overlay (Simulating 80lb Archival Matte Heavyweight Paper) -->
+<svg class="pointer-events-none absolute inset-0 w-full h-full opacity-35 mix-blend-multiply z-40" xmlns="http://www.w3.org/2000/svg">
+<filter id="saul-paper-grain">
+<feturbulence basefrequency="0.85" numoctaves="4" stitchtiles="stitch" type="fractalNoise"></feturbulence>
+<fecolormatrix type="matrix" values="0 0 0 0 0.15   0 0 0 0 0.13   0 0 0 0 0.08  0 0 0 0.75 0"></fecolormatrix>
+</filter>
+<rect filter="url(#saul-paper-grain)" height="100%" width="100%"></rect>
+</svg>
+<!-- Top Production Registration Bar & Metadata Slate -->
+<header class="relative z-30 flex items-start justify-between px-10 pt-8 text-surface font-label-md tracking-widest uppercase">
+<div class="flex flex-col gap-1">
+<span class="inline-block bg-inverse-surface text-surface px-3 py-1 font-label-lg tracking-widest text-label-md">
+          A TITAN ARCHIVAL PRODUCTION
+        </span>
+<span class="font-label-sm tracking-widest text-surface-container opacity-80 pl-1">
+          REEL 01 / FORM-FACTOR 35MM / CALIBRATION 00:00:01:00
+        </span>
+</div>
+<!-- Center Registration Crosshairs (Mid-Century Title Cue Markings) -->
+<div class="hidden md:flex items-center gap-6 opacity-75">
+<div class="w-8 h-0.5 bg-inverse-surface"></div>
+<div class="font-label-sm tracking-widest text-surface bg-inverse-surface px-2 py-0.5">
+          ASPECT 1.77:1 • SOUND OPTICAL STEREO
+        </div>
+<div class="w-8 h-0.5 bg-inverse-surface"></div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="inline-block bg-surface text-inverse-surface px-3 py-1 font-label-lg font-bold">
+          SCENE 01 // OVERTURE
+        </span>
+<span class="font-label-sm tracking-widest text-surface-container opacity-80 pr-1">
+          DETERMINISTIC LATENCY ZERO
+        </span>
+</div>
+</header>
+<!-- Abstract Cut-Paper Graphic Construction Canvas (Vectors with Scissor-Cut Notches) -->
+<div class="absolute inset-0 w-full h-full z-10 pointer-events-none">
+<svg class="w-full h-full preserve-3d" fill="none" viewbox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+<!-- Organic Cut-Paper "Sun" / Focal Convergence Disk -->
+<!-- Sliced with slight irregular edges reminiscent of hand-turned scissors -->
+<path class="fill-surface" d="M 1480,260 
+                 C 1560,252 1650,285 1695,350 
+                 C 1745,420 1730,515 1675,585 
+                 C 1620,650 1515,690 1430,670 
+                 C 1345,650 1280,570 1275,485 
+                 C 1270,390 1340,305 1420,270 
+                 Z"></path>
+<!-- Interior Scissor Cut inside the Sun (Negative Void revealing Vermilion) -->
+<polygon class="fill-primary" points="1440,360 1520,380 1485,510 1390,460"></polygon>
+<!-- Massive Angular Cut-Paper Black Slashing Struts (Traversing the Composition) -->
+<!-- Strut 1: Low-Left Monolith rising toward the Sun -->
+<polygon class="fill-inverse-surface" points="-40,1120 420,1120 1340,540 1280,480 -40,780"></polygon>
+<!-- Strut 2: Extreme Top-Left Diagonal Piercing Dart -->
+<polygon class="fill-inverse-surface" points="-50,40 180,-30 1420,440 1360,520 -50,180"></polygon>
+<!-- Strut 3: Steep Low-Angle Scissor Blade through Center -->
+<polygon class="fill-inverse-surface" points="560,1120 740,1120 1540,580 1490,520 490,1120"></polygon>
+<!-- Secondary Mustard Yellow (#e0a526) Wedge Slicing Against Black Momentum -->
+<!-- Aggressive counter-angle creating mid-century graphic tension -->
+<polygon class="fill-secondary-container" points="980,-40 1190,-40 820,1120 690,1120 1110,380"></polygon>
+<!-- Jagged Cut Silhouette Fragment: The "Snipped" Barb -->
+<polygon class="fill-inverse-surface" points="1130,590 1260,630 1190,750 1100,720"></polygon>
+<!-- Secondary Yellow Splinter near Convergence Center -->
+<polygon class="fill-secondary-container" points="1350,290 1440,240 1380,390"></polygon>
+<!-- Small Black Sharp Debris Shards (Stop-Motion Paper Artifacts) -->
+<polygon class="fill-inverse-surface" points="1580,210 1620,190 1600,240"></polygon>
+<polygon class="fill-inverse-surface" points="1260,680 1300,740 1230,730"></polygon>
+<polygon class="fill-inverse-surface" points="1680,620 1740,650 1710,700 1660,660"></polygon>
+</svg>
+</div>
+<!-- Center Stage: Monumental Scissor-Hewn Saul Bass Title Typography -->
+<div class="relative z-20 w-full px-12 md:px-24 my-auto flex flex-col justify-center">
+<!-- Eyebrow Tag: Hand-Cut Paper Block Marker -->
+<div class="flex items-center gap-3 mb-2">
+<div class="bg-inverse-surface text-surface font-label-md px-3 py-1 font-bold tracking-widest inline-flex items-center gap-2">
+<span class="w-2 h-2 bg-secondary-container inline-block"></span>
+          SYS.FRAME // 001.QUANT
+        </div>
+<div class="bg-surface text-inverse-surface font-label-sm px-2.5 py-1 tracking-widest font-semibold uppercase">
+          TAPE READ: OPTIMAL
+        </div>
+</div>
+<!-- Monumental "NEXUS" Custom Cut Letters with Irregular Baselines & Notches -->
+<div class="flex items-end font-display-hero uppercase select-none leading-none tracking-normal">
+<!-- N: Cut Bar, Angled Baseline, Top Notch -->
+<div class="relative inline-block transition-transform duration-75 hover:-translate-y-2">
+<div class="bg-inverse-surface text-surface px-5 sm:px-8 pt-6 pb-4 [clip-path:polygon(0%_4%,92%_0%,100%_96%,8%_100%)]">
+<span class="text-[90px] sm:text-[140px] md:text-[210px] lg:text-[270px] font-bold block leading-[0.8] tracking-tighter">N</span>
+</div>
+<div class="absolute -top-3 -right-2 w-5 h-8 bg-primary"></div>
+</div>
+<!-- E: Lower Baseline, Overlapping Red Core, Slightly Shifted -->
+<div class="relative inline-block -ml-3 sm:-ml-6 -mb-4 transition-transform duration-75 hover:-translate-y-2">
+<div class="bg-surface text-inverse-surface px-4 sm:px-7 pt-9 pb-3 [clip-path:polygon(6%_0%,100%_8%,94%_100%,0%_92%)]">
+<span class="text-[85px] sm:text-[135px] md:text-[200px] lg:text-[255px] font-bold block leading-[0.8] tracking-tighter">E</span>
+</div>
+<div class="absolute bottom-2 right-1 w-6 h-4 bg-inverse-surface"></div>
+</div>
+<!-- X: The Violent Intersection / Slanted Yellow Splice Backing -->
+<div class="relative inline-block -ml-2 sm:-ml-5 mb-2 transition-transform duration-75 hover:-translate-y-2 z-10">
+<div class="bg-secondary-container text-inverse-surface px-5 sm:px-9 pt-5 pb-5 [clip-path:polygon(0%_0%,96%_4%,100%_94%,4%_100%)]">
+<span class="text-[96px] sm:text-[150px] md:text-[225px] lg:text-[285px] font-bold block leading-[0.8] tracking-tight">X</span>
+</div>
+<!-- Angular cut slash accent -->
+<div class="absolute -left-2 top-1/2 w-4 h-10 bg-primary [clip-path:polygon(0_0,100%_20%,80%_100%,0_80%)]"></div>
+</div>
+<!-- U: Heavyweight Black Block Cut with Inner Vermilion Notch -->
+<div class="relative inline-block -ml-3 sm:-ml-7 -mb-2 transition-transform duration-75 hover:-translate-y-2">
+<div class="bg-inverse-surface text-surface px-4 sm:px-8 pt-7 pb-4 [clip-path:polygon(4%_6%,100%_0%,92%_100%,0%_95%)]">
+<span class="text-[88px] sm:text-[138px] md:text-[205px] lg:text-[265px] font-bold block leading-[0.8] tracking-tighter">U</span>
+</div>
+<div class="absolute top-1 left-2 w-4 h-4 bg-secondary-container"></div>
+</div>
+<!-- S: Towering Terminal Letter, Sliced Spine -->
+<div class="relative inline-block -ml-2 sm:-ml-5 mb-5 transition-transform duration-75 hover:-translate-y-2">
+<div class="bg-surface text-inverse-surface px-5 sm:px-8 pt-4 pb-6 [clip-path:polygon(0%_2%,95%_0%,100%_98%,5%_92%)]">
+<span class="text-[92px] sm:text-[145px] md:text-[215px] lg:text-[275px] font-bold block leading-[0.8] tracking-tighter">S</span>
+</div>
+<div class="absolute bottom-1 -left-2 w-5 h-7 bg-primary"></div>
+</div>
+</div>
+<!-- Supporting Hand-Cut Modular Monospace Title Ribbon -->
+<div class="mt-4 flex flex-wrap items-center gap-3">
+<div class="bg-inverse-surface text-surface px-4 py-2 font-headline-md tracking-wider uppercase text-headline-sm">
+          DETERMINISTIC QUANT ENGINE
+        </div>
+<div class="bg-surface text-inverse-surface px-3 py-2 font-label-md tracking-widest font-bold uppercase">
+          // ZERO ARBITRARY STATE
+        </div>
+<div class="bg-secondary-container text-on-secondary-fixed px-3 py-2 font-label-md tracking-widest font-bold">
+          LATENCY: 420ns
+        </div>
+</div>
+</div>
+<!-- Interactive Storyboard Controls Bar (Stop-Motion Frame Stepper) -->
+<div class="relative z-30 px-10 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<!-- Left: Director & Architectural Crediting -->
+<div class="flex flex-col gap-2 max-w-md">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 bg-inverse-surface inline-block"></span>
+<p class="font-label-lg uppercase tracking-wider text-surface">
+            DIRECTED BY DETERMINISTIC LOGIC
+          </p>
+</div>
+<p class="font-body-sm text-surface-container opacity-90 leading-tight">
+          Visual sequence translated from algorithmic execution blocks. Physical paper collage aesthetic programmed for ultra-high-frequency automated trading narratives.
+        </p>
+<div class="flex gap-4 pt-1 font-label-sm text-surface-dim">
+<span>RUN: #8492-AX</span>
+<span>GATE: PREDICATE_TRUE</span>
+<span>FEED: NASDAQ_OMX_ITCH</span>
+</div>
+</div>
+<!-- Center: Cut-Paper Metric Slates -->
+<div class="flex items-stretch gap-2 self-start md:self-end">
+<div class="bg-inverse-surface text-surface p-3 flex flex-col justify-between min-w-[120px]">
+<span class="font-label-sm tracking-widest text-surface-variant">VOLATILITY</span>
+<span class="font-headline-sm font-bold text-secondary-container">99.98%</span>
+</div>
+<div class="bg-surface text-inverse-surface p-3 flex flex-col justify-between min-w-[120px]">
+<span class="font-label-sm tracking-widest opacity-70">EXECUTION</span>
+<span class="font-headline-sm font-bold text-primary">FIX/FAST</span>
+</div>
+<div class="bg-inverse-surface text-surface p-3 flex flex-col justify-between min-w-[120px]">
+<span class="font-label-sm tracking-widest text-surface-variant">FRAME NO.</span>
+<span class="font-headline-sm font-bold text-surface">01 // 12</span>
+</div>
+</div>
+<!-- Right: Stop-Motion Cut Transport Controls -->
+<div class="flex items-center gap-3">
+<button class="bg-inverse-surface hover:bg-secondary-container text-surface hover:text-inverse-surface px-4 py-3 font-headline-sm uppercase tracking-wider transition-none flex items-center gap-1 active:translate-x-1 active:translate-y-1" id="btn-prev">
+<span class="material-symbols-outlined text-[18px]">skip_previous</span>
+<span>REV</span>
+</button>
+<button class="bg-surface hover:bg-secondary-container text-inverse-surface px-6 py-3 font-headline-sm font-bold uppercase tracking-widest transition-none flex items-center gap-2 active:translate-x-1 active:translate-y-1" id="btn-cut">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>SPLICE CUT</span>
+</button>
+<button class="bg-inverse-surface hover:bg-secondary-container text-surface hover:text-inverse-surface px-4 py-3 font-headline-sm uppercase tracking-wider transition-none flex items-center gap-1 active:translate-x-1 active:translate-y-1" id="btn-next">
+<span>FWD</span>
+<span class="material-symbols-outlined text-[18px]">skip_next</span>
+</button>
+</div>
+</div>
+<!-- Mechanical Cut-Marker Rule Along Bottom Border -->
+<div class="relative z-30 w-full h-2 bg-inverse-surface flex items-center justify-between px-2 overflow-hidden">
+<div class="flex gap-4">
+<div class="w-1.5 h-1 bg-surface"></div>
+<div class="w-1.5 h-1 bg-surface"></div>
+<div class="w-1.5 h-1 bg-surface"></div>
+<div class="w-1.5 h-1 bg-surface"></div>
+<div class="w-1.5 h-1 bg-surface"></div>
+</div>
+<span class="font-label-sm text-surface text-[8px] tracking-[0.3em]">CRAWL CELL 1960.01.24 // BASS MATTE MATRIX</span>
+<div class="flex gap-4">
+<div class="w-1.5 h-1 bg-surface"></div>
+<div class="w-1.5 h-1 bg-surface"></div>
+<div class="w-1.5 h-1 bg-surface"></div>
+<div class="w-1.5 h-1 bg-surface"></div>
+<div class="w-1.5 h-1 bg-surface"></div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const cutBtn = document.getElementById('btn-cut');
+    const cinemaFrame = document.getElementById('cinema-frame');
+    let inverted = false;
+
+    // Direct, abrupt, zero-transition stop-motion jump cut typical of Title Cell switches
+    if (cutBtn && cinemaFrame) {
+      cutBtn.addEventListener('click', function() {
+        inverted = !inverted;
+        if (inverted) {
+          cinemaFrame.classList.remove('bg-primary');
+          cinemaFrame.classList.add('bg-inverse-surface');
+          cutBtn.classList.add('bg-secondary-container');
+        } else {
+          cinemaFrame.classList.remove('bg-inverse-surface');
+          cinemaFrame.classList.add('bg-primary');
+          cutBtn.classList.remove('bg-secondary-container');
+        }
+      });
+    }
+  })();
+</script></main></body></html>

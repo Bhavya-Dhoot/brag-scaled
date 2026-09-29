@@ -1,0 +1,230 @@
+{
+ "exchange-floor": {
+  "frames": [
+   "frame_1_market_open_title",
+   "frame_2_microsecond_routing_feature",
+   "frame_3_deterministic_proofs_stat",
+   "frame_4_the_market_does_not_wait_end_card"
+  ],
+  "extras": [],
+  "images_localised": 0,
+  "fixes": [
+   "2x placeholder links must not point at a registrable domain",
+   "added the Space Grotesk + JetBrains Mono links the frame referenced but never loaded"
+  ]
+ },
+ "riso-zine": {
+  "frames": [
+   "frame_1_stacked_title_halftone_burst_riso_zine",
+   "frame_2_zine_spread_feature_callouts_riso_zine",
+   "frame_3_giant_halftone_stat_ink_strip_riso_zine",
+   "frame_4_back_cover_stamped_box_tear_off_coupon_riso_zine"
+  ],
+  "extras": [],
+  "images_localised": 0,
+  "fixes": []
+ },
+ "patent-office": {
+  "frames": [
+   "frame_1_exploded_terminal_apparatus_patent_blueprint",
+   "frame_2_microsecond_routing_flow_schematic_patent_blueprint",
+   "frame_3_invariance_stat_dimensioned_bracket_patent_blueprint",
+   "frame_4_approval_stamp_allowed_claims_patent_blueprint"
+  ],
+  "extras": [],
+  "images_localised": 0,
+  "fixes": [
+   "1x no real government office",
+   "3x no real government office"
+  ]
+ },
+ "stop-motion-collage": {
+  "frames": [
+   "frame_1_cut_paper_title_polaroid_tagline_stop_motion_collage",
+   "frame_2_taped_terminal_screen_sticky_note_callouts_stop_motion_collage",
+   "frame_3_giant_tomato_cutout_stat_confetti_burst_stop_motion_collage",
+   "frame_4_luggage_tag_url_rubber_stamp_end_card_stop_motion_collage"
+  ],
+  "extras": [],
+  "images_localised": 1,
+  "fixes": [
+   "1x font link returned 400",
+   "2x placeholder links must not point at a registrable domain"
+  ]
+ },
+ "extra-extra": {
+  "frames": [
+   "frame_1_extra_front_page_banner_headline_broadsheet",
+   "frame_2_feature_column_halftone_telemetry_broadsheet",
+   "frame_3_infographic_box_five_nines_stat_broadsheet",
+   "frame_4_classifieds_section_boxed_display_ad_broadsheet"
+  ],
+  "extras": [],
+  "images_localised": 2,
+  "fixes": [
+   "2x placeholder links must not point at a registrable domain"
+  ]
+ },
+ "insert-coin": {
+  "frames": [
+   "frame_1_attract_screen_insert_coin_8_bit_arcade",
+   "frame_2_gameplay_kernel_bypass_level_8_bit_arcade",
+   "frame_3_level_up_99.999_score_8_bit_arcade",
+   "frame_4_high_scores_continue_countdown_8_bit_arcade"
+  ],
+  "extras": [],
+  "images_localised": 0,
+  "fixes": []
+ },
+ "the-receipt": {
+  "frames": [
+   "frame_1_store_header_terminal_initialization_thermal_receipt",
+   "frame_2_line_items_highlighted_feature_thermal_receipt",
+   "frame_3_total_stat_thermal_barcode_thermal_receipt",
+   "frame_4_footer_url_qr_tear_edge_thermal_receipt"
+  ],
+  "extras": [],
+  "images_localised": 0,
+  "fixes": []
+ },
+ "transit-map": {
+  "frames": [
+   "frame_1_nexus_line_route_map_transit_map",
+   "frame_2_platform_sign_next_train_now_transit_map",
+   "frame_3_timetable_key_reliability_stat_transit_map",
+   "frame_4_terminus_sign_all_change_end_card_transit_map"
+  ],
+  "extras": [],
+  "images_localised": 0,
+  "fixes": [
+   "1x no transit-authority roundel"
+  ]
+ },
+ "title-sequence": {
+  "frames": [
+   "frame_1_jagged_bars_converging_sun_title_saul_bass",
+   "frame_2_terminal_silhouette_vertical_block_saul_bass",
+   "frame_3_giant_cream_stat_stabbing_arrow_saul_bass",
+   "frame_4_the_production_credits_terminal_url_saul_bass"
+  ],
+  "extras": [],
+  "images_localised": 0,
+  "fixes": []
+ },
+ "museum-placard": {
+  "frames": [
+   "frame_1_the_hero_screen_in_white_cube_gallery_deadpan",
+   "frame_2_feature_detail_deadpan_curator_s_note_gallery_deadpan",
+   "frame_3_plinth_with_engraved_brass_plaque_stat_gallery_deadpan",
+   "frame_4_gift_shop_exit_sign_terminal_url_gallery_deadpan"
+  ],
+  "extras": [],
+  "images_localised": 1,
+  "fixes": []
+ },
+ "shahi-darbar": {
+  "frames": [
+   "frame_1_imperial_proclamation_farman_jharokha_arch_mughal_miniature",
+   "frame_2_court_chamber_fresco_sub_microsecond_cartouche_mughal_miniature",
+   "frame_3_royal_golden_lotus_medallion_stat_mughal_miniature",
+   "frame_4_gilded_palace_gates_sovereign_terminal_url_mughal_miniature"
+  ],
+  "extras": [],
+  "images_localised": 0,
+  "fixes": []
+ },
+ "jaipur-block-print": {
+  "frames": [
+   "frame_1_hand_block_printed_title_carved_sheesham_block_jaipur_pink_city",
+   "frame_2_pink_sandstone_facade_jharokha_terminal_window_jaipur_pink_city",
+   "frame_3_stamped_paisley_medallion_99.999_invariance_jaipur_pink_city",
+   "frame_4_stitched_textile_tag_terminal_url_jaipur_pink_city"
+  ],
+  "extras": [],
+  "images_localised": 0,
+  "fixes": []
+ },
+ "court-of-versailles": {
+  "frames": [
+   "frame_1_royal_blue_velvet_drapes_gilt_cartouche_court_of_versailles",
+   "frame_2_gilt_framed_terminal_masterpiece_brass_plaque_court_of_versailles",
+   "frame_3_the_hall_of_mirrors_infinite_stat_reflection_court_of_versailles",
+   "frame_4_gilt_edged_royal_invitation_wax_seal_url_court_of_versailles"
+  ],
+  "extras": [],
+  "images_localised": 4,
+  "fixes": [
+   "1x placeholder links must not point at a registrable domain"
+  ]
+ },
+ "illuminated-manuscript": {
+  "frames": [
+   "frame_1_opening_folio_gilded_drop_cap_n_tudor_manuscript",
+   "frame_2_miniature_painting_of_the_terminal_feature_marginalia_tudor_manuscript",
+   "frame_3_dual_numerals_roundel_99.999_invariance_tudor_manuscript",
+   "frame_4_scribe_s_colophon_sovereign_terminal_url_tudor_manuscript"
+  ],
+  "extras": [],
+  "images_localised": 4,
+  "fixes": [
+   "2x placeholder links must not point at a registrable domain"
+  ]
+ },
+ "forbidden-city": {
+  "frames": [
+   "frame_1_imperial_meridian_gate_unrolling_silk_scroll_forbidden_city",
+   "frame_2_handscroll_ink_landscape_painted_terminal_screen_forbidden_city",
+   "frame_3_brushed_ink_stat_square_imperial_seal_forbidden_city",
+   "frame_4_jade_roller_knobs_silk_tag_gateway_url_forbidden_city"
+  ],
+  "extras": [
+   "imperial_cinnabar_seal_chop_nx"
+  ],
+  "images_localised": 3,
+  "fixes": [
+   "1x no unverified Chinese characters",
+   "2x no unverified Chinese characters"
+  ]
+ },
+ "sultans-firman": {
+  "frames": [
+   "frame_1_the_imperial_firman_gilded_monogram_ottoman_firman",
+   "frame_2_iznik_tile_panel_feature_terminal_ottoman_firman",
+   "frame_3_eight_pointed_star_medallion_99.999_invariance_ottoman_firman",
+   "frame_4_sealed_envelope_sovereign_gateway_url_ottoman_firman"
+  ],
+  "extras": [
+   "nexus_ottoman_imperial_latin_monogram"
+  ],
+  "images_localised": 2,
+  "fixes": [
+   "1x no Arabic script as ornament"
+  ]
+ },
+ "byzantine-gold": {
+  "frames": [
+   "frame_1_gold_ground_mosaic_title_imperial_monogram_byzantine_gold",
+   "frame_2_mosaic_terminal_panel_inside_basilica_arch_byzantine_gold",
+   "frame_3_porphyry_roundel_99.999_white_marble_stat_byzantine_gold",
+   "frame_4_mosaic_cartouche_loose_tesserae_url_byzantine_gold"
+  ],
+  "extras": [],
+  "images_localised": 1,
+  "fixes": []
+ },
+ "maharaja-deco": {
+  "frames": [
+   "frame_01_marine_drive_facade_etched_glass_marquee_maharaja_deco",
+   "frame_02_brass_lift_doors_reveal_floor_indicator_maharaja_deco",
+   "frame_03_sunburst_medallion_99.999_stat_on_emerald_maharaja_deco",
+   "frame_04_stepped_invitation_card_monogram_crest_maharaja_deco"
+  ],
+  "extras": [
+   "maharaja_deco_monogram_crest"
+  ],
+  "images_localised": 2,
+  "fixes": [
+   "1x placeholder links must not point at a registrable domain"
+  ]
+ }
+}

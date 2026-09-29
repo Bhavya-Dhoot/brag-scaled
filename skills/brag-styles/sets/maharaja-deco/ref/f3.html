@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&amp;family=Poiret+One&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "surface-dim": "#131313",
+          "on-primary": "#402d00",
+          "on-error-container": "#ffdad6",
+          "background": "#131313",
+          "outline": "#9a8f7e",
+          "tertiary-container": "#f89087",
+          "secondary-container": "#025647",
+          "tertiary": "#ffb6af",
+          "surface-container-lowest": "#0e0e0e",
+          "surface-tint": "#edc061",
+          "on-tertiary-fixed-variant": "#7a2e29",
+          "on-secondary-fixed-variant": "#005143",
+          "surface-container": "#201f1f",
+          "on-tertiary": "#5d1815",
+          "surface-container-high": "#2a2a2a",
+          "inverse-primary": "#795900",
+          "primary-fixed": "#ffdf9f",
+          "error-container": "#93000a",
+          "tertiary-fixed-dim": "#ffb4ac",
+          "on-primary-fixed": "#261a00",
+          "on-secondary-fixed": "#002019",
+          "outline-variant": "#4e4637",
+          "secondary-fixed-dim": "#8fd4c1",
+          "inverse-on-surface": "#313030",
+          "on-error": "#690005",
+          "surface-bright": "#3a3939",
+          "on-background": "#e5e2e1",
+          "error": "#ffb4ab",
+          "on-surface-variant": "#d1c5b1",
+          "on-primary-container": "#543d00",
+          "primary-container": "#d1a74a",
+          "surface-variant": "#353534",
+          "surface-container-highest": "#353534",
+          "on-primary-fixed-variant": "#5c4300",
+          "primary-fixed-dim": "#edc061",
+          "primary": "#efc262",
+          "inverse-surface": "#e5e2e1",
+          "surface-container-low": "#1c1b1b",
+          "on-tertiary-container": "#722823",
+          "tertiary-fixed": "#ffdad6",
+          "secondary-fixed": "#abf0dc",
+          "surface": "#131313",
+          "secondary": "#8fd4c1",
+          "on-tertiary-fixed": "#3f0304",
+          "on-secondary-container": "#85c9b6",
+          "on-secondary": "#00382d",
+          "on-surface": "#e5e2e1"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "space-md": "1.5rem",
+          "margin": "4rem",
+          "gutter": "2rem",
+          "space-sm": "1rem",
+          "space-lg": "2.5rem",
+          "space-xl": "4rem",
+          "space-xs": "0.5rem"
+        },
+        "fontFamily": {
+          "headline-md": [
+            "Poiret One"
+          ],
+          "headline-sm": [
+            "Poiret One"
+          ],
+          "display-hero": [
+            "Poiret One"
+          ],
+          "label-sm": [
+            "Space Grotesk"
+          ],
+          "title-lg": [
+            "Space Grotesk"
+          ],
+          "label-caps": [
+            "Space Grotesk"
+          ],
+          "body-lg": [
+            "Outfit"
+          ],
+          "body-md": [
+            "Outfit"
+          ],
+          "headline-lg": [
+            "Poiret One"
+          ]
+        },
+        "fontSize": {
+          "headline-md": [
+            "36px",
+            {
+              "lineHeight": "44px",
+              "letterSpacing": "0.1em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-sm": [
+            "24px",
+            {
+              "lineHeight": "32px",
+              "letterSpacing": "0.08em",
+              "fontWeight": "400"
+            }
+          ],
+          "display-hero": [
+            "72px",
+            {
+              "lineHeight": "80px",
+              "letterSpacing": "0.15em",
+              "fontWeight": "400"
+            }
+          ],
+          "label-sm": [
+            "10px",
+            {
+              "lineHeight": "14px",
+              "letterSpacing": "0.18em",
+              "fontWeight": "500"
+            }
+          ],
+          "title-lg": [
+            "20px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "0.06em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-caps": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.22em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-lg": [
+            "18px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "0.02em",
+              "fontWeight": "300"
+            }
+          ],
+          "body-md": [
+            "15px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-lg": [
+            "48px",
+            {
+              "lineHeight": "56px",
+              "letterSpacing": "0.12em",
+              "fontWeight": "400"
+            }
+          ]
+        }
+      },
+    },
+  }</script></head><body class="bg-surface-container-lowest text-on-surface antialiased selection:bg-primary selection:text-on-primary min-h-screen flex flex-col justify-between"><header class="fixed top-0 left-0 right-0 w-full z-50 bg-surface-container-lowest/95 backdrop-blur-md"><div class="h-20 w-full px-margin flex items-center justify-between"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs"><div class="w-7 h-7 bg-surface-container flex items-center justify-center"><span class="font-label-caps text-label-caps text-primary">NX</span></div><div class="flex flex-col"><span class="font-label-caps text-label-caps text-primary tracking-widest">NEXUS // TERMINAL</span><span class="font-label-sm text-label-sm text-outline tracking-widest">1935 BOMBAY CINEMA SUITE</span></div></div><div class="h-6 w-px bg-outline-variant"></div><div class="flex items-center gap-space-xs"><span class="font-label-caps text-label-caps text-tertiary bg-surface-container px-2 py-0.5">ACTE ROYALE</span><span class="font-label-sm text-label-sm text-on-surface-variant">SCENE 1935 BOMBAY</span></div></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm bg-surface-container-low px-space-sm py-1.5"><span class="font-label-sm text-label-sm text-outline">TC</span><span class="font-title-lg text-title-lg text-primary tracking-widest font-mono">01:19:35:12</span></div><div class="flex items-center gap-space-xs bg-surface-container-low px-space-sm py-1.5"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span><span class="font-label-caps text-label-caps text-secondary">16:9 DCI 4K MASTER</span></div><div class="flex items-center gap-space-sm pl-space-md"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-20 flex-1 relative bg-surface-container-lowest overflow-hidden"><div class="flex flex-col w-full">
+<div class="w-full relative px-margin py-space-md flex flex-col items-center justify-between min-h-[calc(100vh-10rem)] overflow-hidden">
+<!-- Deep Princely Emerald Texture & Guilloché Backdrop -->
+<div class="absolute inset-0 bg-secondary-container pointer-events-none">
+<div class="absolute inset-0 bg-gradient-to-b from-surface-container-lowest/80 via-transparent to-surface-container-lowest/90 mix-blend-multiply"></div>
+<div class="absolute inset-0 opacity-15" style="background-image: radial-gradient(circle at 50% 50%, #edc061 1px, transparent 1px); background-size: 24px 24px;"></div>
+<!-- Subtle Radial Glow behind central medallion -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[780px] h-[780px] rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+</div>
+<!-- Monumental Outer Ziggurat Stepped Corner Plinths -->
+<div class="absolute top-4 left-4 w-28 h-28 pointer-events-none">
+<div class="w-full h-4 bg-primary/20 flex gap-1 p-0.5">
+<div class="h-full flex-1 bg-primary"></div>
+<div class="h-full w-2 bg-primary/40"></div>
+</div>
+<div class="w-20 h-4 bg-primary/30 mt-1"></div>
+<div class="w-12 h-4 bg-primary/40 mt-1"></div>
+<div class="w-6 h-4 bg-primary/60 mt-1"></div>
+<div class="w-2 h-4 bg-primary mt-1"></div>
+</div>
+<div class="absolute top-4 right-4 w-28 h-28 pointer-events-none flex flex-col items-end">
+<div class="w-full h-4 bg-primary/20 flex gap-1 p-0.5 justify-end">
+<div class="h-full w-2 bg-primary/40"></div>
+<div class="h-full flex-1 bg-primary"></div>
+</div>
+<div class="w-20 h-4 bg-primary/30 mt-1"></div>
+<div class="w-12 h-4 bg-primary/40 mt-1"></div>
+<div class="w-6 h-4 bg-primary/60 mt-1"></div>
+<div class="w-2 h-4 bg-primary mt-1"></div>
+</div>
+<!-- Floor Register & Act Header -->
+<div class="relative z-10 w-full flex items-center justify-between">
+<div class="flex items-center gap-space-sm bg-surface-container-lowest/90 px-space-md py-space-xs shadow-md">
+<span class="w-2 h-2 rounded-full bg-tertiary-container"></span>
+<span class="font-label-caps text-label-caps text-primary tracking-widest">ACTE ROYALE // SEQUENCE 03</span>
+<div class="h-3 w-px bg-outline-variant"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">THE SUNBURST PROCLAMATION</span>
+</div>
+<!-- Semicircular Elevator Dial Scrim Indicator -->
+<div class="flex flex-col items-center bg-surface-container-lowest/95 px-space-lg py-1 shadow-lg">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-outline">DIAL REGISTER:</span>
+<span class="font-title-lg text-title-lg text-primary tracking-widest font-mono">03 / 04</span>
+<span class="material-symbols-outlined text-tertiary-container text-[16px]">change_history</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant tracking-widest">SOVEREIGN FIDELITY VERIFIED</span>
+</div>
+<div class="flex items-center gap-space-sm bg-surface-container-lowest/90 px-space-md py-space-xs shadow-md">
+<span class="font-label-caps text-label-caps text-secondary font-mono tracking-widest">TELEX: 1935-BMB-ROYAL</span>
+<span class="font-label-sm text-label-sm text-outline">NITROUS DCI</span>
+</div>
+</div>
+<!-- MAIN 16:9 MEDALLION CINEMATIC CORE -->
+<div class="relative z-10 w-full max-w-7xl my-auto flex items-center justify-between gap-space-md">
+<!-- Flanking Left: Porthole Chronometer Gauge -->
+<div class="w-72 bg-surface-container-lowest/95 p-space-md flex flex-col items-center shadow-xl relative group">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 px-space-sm py-0.5 bg-primary text-on-primary font-label-caps text-label-caps tracking-widest whitespace-nowrap shadow-sm">
+          CHRONOMETER I
+        </div>
+<!-- Nautical Porthole Outer Bezel -->
+<div class="w-44 h-44 rounded-full bg-surface-container p-2 relative flex items-center justify-center shadow-md">
+<div class="absolute inset-1 rounded-full bg-surface-container-low flex items-center justify-center">
+<!-- Brass Radial Ticks SVG -->
+<svg class="w-full h-full p-2 text-primary" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" opacity="0.4" r="46" stroke="currentColor" stroke-dasharray="2,3" stroke-width="0.5"></circle>
+<circle cx="50" cy="50" fill="none" opacity="0.6" r="38" stroke="currentColor" stroke-width="1"></circle>
+<!-- Needle -->
+<line stroke="currentColor" stroke-linecap="round" stroke-width="2" x1="50" x2="50" y1="50" y2="18"></line>
+<circle cx="50" cy="50" fill="currentColor" r="4"></circle>
+<circle class="fill-tertiary-container" cx="50" cy="18" r="2.5"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-title-lg text-title-lg text-primary font-mono tracking-tighter">840</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">NANOSECONDS</span>
+</div>
+</div>
+</div>
+<div class="mt-space-sm text-center">
+<span class="font-label-caps text-label-caps text-on-surface tracking-widest block">WIRE-TO-DECISION</span>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 text-xs">
+            Silicon pipeline latency under dual-engine marine arbitrage conditions.
+          </p>
+</div>
+<!-- Stepped Foot Bracket -->
+<div class="w-full flex justify-between items-center mt-space-sm pt-2 bg-surface-container-low px-space-xs">
+<span class="font-label-sm text-label-sm text-outline">REGISTER</span>
+<span class="font-label-caps text-label-caps text-secondary">PASS / 001</span>
+</div>
+</div>
+<!-- CENTER: Monumental Radiating Art Deco Sunburst Medallion & 99.999% Stat -->
+<div class="flex-1 flex flex-col items-center justify-center relative min-h-[460px]">
+<!-- Radiating Art Deco Sunburst Fan Vector Background -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<svg class="w-[620px] h-[620px] text-primary transition-transform duration-1000 group-hover:scale-105" fill="none" viewbox="0 0 400 400">
+<!-- 36 Alternating Deco Sunburst Rays -->
+<g class="origin-center" opacity="0.75">
+<!-- Polished Brass Primary Blades -->
+<polygon fill="currentColor" opacity="0.15" points="200,200 188,20 212,20"></polygon>
+<polygon fill="currentColor" opacity="0.15" points="200,200 327,73 344,89"></polygon>
+<polygon fill="currentColor" opacity="0.15" points="200,200 380,188 380,212"></polygon>
+<polygon fill="currentColor" opacity="0.15" points="200,200 327,327 310,344"></polygon>
+<polygon fill="currentColor" opacity="0.15" points="200,200 188,380 212,380"></polygon>
+<polygon fill="currentColor" opacity="0.15" points="200,200 73,327 56,310"></polygon>
+<polygon fill="currentColor" opacity="0.15" points="200,200 20,188 20,212"></polygon>
+<polygon fill="currentColor" opacity="0.15" points="200,200 73,73 89,56"></polygon>
+<!-- Frosted Secondary Narrow Blades -->
+<polygon fill="currentColor" opacity="0.08" points="200,200 240,25 255,30"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 290,50 302,60"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 350,110 360,122"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 375,150 380,165"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 375,235 380,250"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 350,278 360,290"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 302,340 290,350"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 255,370 240,375"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 160,375 145,370"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 110,350 98,340"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 50,290 40,278"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 25,250 20,235"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 25,165 20,150"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 40,122 50,110"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 98,60 110,50"></polygon>
+<polygon fill="currentColor" opacity="0.08" points="200,200 145,30 160,25"></polygon>
+</g>
+<!-- Inner Stepped Brass Teeth Wheel & Cabochon Track -->
+<circle cx="200" cy="200" opacity="0.3" r="162" stroke="currentColor" stroke-dasharray="4,4" stroke-width="1"></circle>
+<circle cx="200" cy="200" opacity="0.7" r="148" stroke="currentColor" stroke-width="2"></circle>
+<circle cx="200" cy="200" opacity="0.4" r="138" stroke="currentColor" stroke-width="1"></circle>
+<!-- 8 Emerald Cabochon Jewel Inlays -->
+<circle class="fill-secondary-container stroke-primary" cx="200" cy="52" r="5" stroke-width="1.5"></circle>
+<circle class="fill-secondary-container stroke-primary" cx="348" cy="200" r="5" stroke-width="1.5"></circle>
+<circle class="fill-secondary-container stroke-primary" cx="200" cy="348" r="5" stroke-width="1.5"></circle>
+<circle class="fill-secondary-container stroke-primary" cx="52" cy="200" r="5" stroke-width="1.5"></circle>
+<circle class="fill-secondary-container stroke-primary" cx="304" cy="96" r="4" stroke-width="1.5"></circle>
+<circle class="fill-secondary-container stroke-primary" cx="304" cy="304" r="4" stroke-width="1.5"></circle>
+<circle class="fill-secondary-container stroke-primary" cx="96" cy="304" r="4" stroke-width="1.5"></circle>
+<circle class="fill-secondary-container stroke-primary" cx="96" cy="96" r="4" stroke-width="1.5"></circle>
+</svg>
+</div>
+<!-- Synthetic "NX" Chevron Monogram Capstone -->
+<div class="relative z-20 mb-2 flex flex-col items-center">
+<div class="px-space-md py-1 bg-surface-container-lowest shadow-md flex items-center gap-space-xs">
+<span class="w-1.5 h-1.5 bg-primary rotate-45"></span>
+<span class="font-label-caps text-label-caps text-primary tracking-widest font-mono">ATELIER ARCHIVAL GRADE // N° 1935</span>
+<span class="w-1.5 h-1.5 bg-primary rotate-45"></span>
+</div>
+</div>
+<!-- The Monumental Golden Stat Punchline -->
+<div class="relative z-20 flex flex-col items-center">
+<div class="bg-surface-container-lowest/90 px-space-xl py-space-sm shadow-2xl relative flex flex-col items-center">
+<!-- Deco corner accents -->
+<div class="absolute top-1 left-1 w-3 h-3 bg-primary"></div>
+<div class="absolute top-1 right-1 w-3 h-3 bg-primary"></div>
+<div class="absolute bottom-1 left-1 w-3 h-3 bg-primary"></div>
+<div class="absolute bottom-1 right-1 w-3 h-3 bg-primary"></div>
+<h1 class="font-display-hero text-[96px] leading-[96px] text-primary tracking-wider text-center select-none drop-shadow-md">
+              99.999%
+            </h1>
+<!-- Sub-label Banner in High Contrast Brass on Black Lacquer -->
+<div class="mt-space-xs bg-surface-dim px-space-lg py-1.5 flex items-center gap-space-sm shadow-inner">
+<span class="material-symbols-outlined text-primary text-[14px]">stars</span>
+<span class="font-label-caps text-label-caps text-primary tracking-widest">
+                DETERMINISTIC INVARIANCE GUARANTEED
+              </span>
+<span class="material-symbols-outlined text-primary text-[14px]">stars</span>
+</div>
+</div>
+</div>
+<!-- Proclamation Plinth Inscription below Medallion -->
+<div class="relative z-20 mt-space-md w-full max-w-xl">
+<div class="bg-on-surface text-surface-container-lowest p-space-md shadow-xl relative">
+<!-- Brass Corner Graphic Trim -->
+<div class="absolute -top-1.5 -left-1.5 w-3 h-3 bg-primary-container"></div>
+<div class="absolute -top-1.5 -right-1.5 w-3 h-3 bg-primary-container"></div>
+<div class="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-primary-container"></div>
+<div class="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-primary-container"></div>
+<div class="flex items-center justify-between pb-1 mb-2 bg-surface-container-lowest/10 px-1">
+<span class="font-label-caps text-[10px] tracking-widest text-surface-container-lowest font-bold">SOVEREIGN PROCLAMATION &amp; WARRANT</span>
+<span class="font-label-sm text-[10px] text-surface-container-lowest font-mono">SEAL // NX-35</span>
+</div>
+<p class="font-body-md text-body-md text-surface-container-lowest text-center leading-relaxed">
+              "Zero unmatched fills in 1,400,000,000 princely transactions under peak market tumult. Verified without drift, neither jitter nor loss shall shake the foundation of silicon."
+            </p>
+</div>
+</div>
+</div>
+<!-- Flanking Right: Atomic Jitter Porthole Chronometer Gauge -->
+<div class="w-72 bg-surface-container-lowest/95 p-space-md flex flex-col items-center shadow-xl relative group">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 px-space-sm py-0.5 bg-primary text-on-primary font-label-caps text-label-caps tracking-widest whitespace-nowrap shadow-sm">
+          CHRONOMETER II
+        </div>
+<!-- Nautical Porthole Outer Bezel -->
+<div class="w-44 h-44 rounded-full bg-surface-container p-2 relative flex items-center justify-center shadow-md">
+<div class="absolute inset-1 rounded-full bg-surface-container-low flex items-center justify-center">
+<!-- Jitter Sparkline / Atomic Clock SVG -->
+<svg class="w-full h-full p-3 text-secondary" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" opacity="0.3" r="44" stroke="currentColor" stroke-width="0.75"></circle>
+<!-- Oscillating Sine Ring -->
+<path d="M 15 50 Q 25 35, 35 50 T 55 50 T 75 50 T 85 50" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+<line opacity="0.5" stroke="currentColor" stroke-dasharray="2,2" stroke-width="0.5" x1="50" x2="50" y1="10" y2="90"></line>
+<line opacity="0.5" stroke="currentColor" stroke-dasharray="2,2" stroke-width="0.5" x1="10" x2="90" y1="50" y2="50"></line>
+<circle class="fill-primary" cx="50" cy="50" r="3"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-title-lg text-title-lg text-secondary font-mono tracking-tighter">±0.00</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">PICOS</span>
+</div>
+</div>
+</div>
+<div class="mt-space-sm text-center">
+<span class="font-label-caps text-label-caps text-on-surface tracking-widest block">ATOMIC JITTER</span>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 text-xs">
+            Rubidium quartz reference frequency stabilization across Bombay–London cables.
+          </p>
+</div>
+<!-- Stepped Foot Bracket -->
+<div class="w-full flex justify-between items-center mt-space-sm pt-2 bg-surface-container-low px-space-xs">
+<span class="font-label-sm text-label-sm text-outline">STABILITY</span>
+<span class="font-label-caps text-label-caps text-primary">RUBIDIUM LOCK</span>
+</div>
+</div>
+</div>
+<!-- Cinematic Storyboard Production Director Notes & Actions -->
+<div class="relative z-10 w-full flex items-end justify-between pt-space-xs">
+<!-- Director Audio/Visual Cue Card -->
+<div class="flex items-center gap-space-md bg-surface-container-lowest/90 px-space-md py-space-xs max-w-2xl shadow-md">
+<span class="material-symbols-outlined text-tertiary-container text-[20px]">movie_edit</span>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-primary">CINEMATOGRAPHY &amp; SCORE DIRECTIVE:</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-xs italic">
+            "Sunburst rays fan outward dynamically like an opening peacock fan. Muted trumpet hits peak high-C note as 99.999% locks into center frame."
+          </span>
+</div>
+</div>
+<!-- Storyboard Interactive Controls -->
+<div class="flex items-center gap-space-sm">
+<button class="px-space-md py-2 bg-surface-container text-primary hover:bg-secondary-container hover:text-secondary transition-all font-label-caps text-label-caps flex items-center gap-space-xs shadow-md" id="sunburstPulseTrigger">
+<span class="material-symbols-outlined text-[16px]">rotate_right</span>
+          CYCLE FAN ACCELERATION
+        </button>
+<button class="px-space-lg py-2 bg-tertiary-container text-surface-container-lowest font-label-caps text-label-caps hover:bg-tertiary transition-all shadow-lg flex items-center gap-space-xs font-bold">
+          CONFIRM FRAME 03
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Monumental Base Plinth Stepped Line -->
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-40"></div>
+</div>
+<script>
+    (function() {
+      const button = document.getElementById('sunburstPulseTrigger');
+      const rays = document.querySelector('svg g');
+      let angle = 0;
+      if (button && rays) {
+        button.addEventListener('click', () => {
+          angle += 45;
+          rays.style.transition = 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          rays.style.transform = `rotate(${angle}deg)`;
+        });
+      }
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest/95 backdrop-blur-md z-40"><div class="w-full px-margin py-space-sm flex flex-col gap-space-sm"><div class="flex items-center justify-between"><div class="flex items-center gap-space-md"><span class="font-label-caps text-label-caps text-primary">CINEMATOGRAPHY SPEC</span><span class="font-label-sm text-label-sm text-on-surface-variant">35MM TECHNICOLOR 3-STRIP NITROUS SPEC</span><div class="h-4 w-px bg-outline-variant"></div><span class="font-label-sm text-label-sm text-outline">ATELIER: EROS CINEMA ATELIER &amp; MARINE DRIVE PAVILION</span></div><div class="flex items-center gap-space-xs"><span class="font-label-sm text-label-sm text-outline">DIRECTOR LOG</span><span class="font-label-sm text-label-sm text-primary tracking-widest">REEL #04-OCT</span></div></div><nav class="flex items-center justify-between gap-space-sm pt-space-xs" data-active-classes="bg-primary text-on-primary font-bold"><a class="flex-1 text-center py-2 px-space-sm bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-caps text-label-caps" data-path="frame-01-marine-drive-facade" href="#">FRAME 01: MARINE DRIVE FACADE</a><a class="flex-1 text-center py-2 px-space-sm bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-caps text-label-caps" data-path="frame-02-brass-lift-reveal" href="#">FRAME 02: BRASS LIFT REVEAL</a><a class="flex-1 text-center py-2 px-space-sm bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-caps text-label-caps" data-path="frame-03-emerald-sunburst-stat" href="#">FRAME 03: EMERALD SUNBURST STAT</a><a class="flex-1 text-center py-2 px-space-sm bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-caps text-label-caps" data-path="frame-04-stepped-invitation-card" href="#">FRAME 04: STEPPED INVITATION CARD</a></nav></div></footer></body></html>

@@ -1,7 +1,7 @@
 {
   "name": "brag-scaled",
   "description": "/brag with a fast renderer: turn the current project into a short, polished launch video, with frames drawn on the GPU in parallel browsers and piped straight to a hardware encoder.",
-  "version": "0.4.0-scaled.1",
+  "version": "0.5.0-scaled",
   "author": {
     "name": "Bhavya Dhoot",
     "url": "https://github.com/Bhavya-Dhoot"
@@ -9,5 +9,5 @@
   "license": "MIT",
   "homepage": "https://github.com/Bhavya-Dhoot/brag-scaled",
   "repository": "https://github.com/Bhavya-Dhoot/brag-scaled",
-  "keywords": ["video", "launch", "hyperframes", "skill", "render", "gpu"]
+  "keywords": ["video", "launch", "hyperframes", "skill", "render", "gpu", "tts", "design-system", "stitch"]
 }

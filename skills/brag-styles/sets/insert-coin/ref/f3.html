@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_blank" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.crt-scanlines{background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.45) 50%);background-size:100% 4px;pointer-events:none;}.crt-vignette{box-shadow:inset 0 0 80px rgba(0,0,0,0.9),inset 0 0 20px rgba(0,0,0,0.95);pointer-events:none;}.crt-bloom{text-shadow:0 0 2px #34f5ff,0 0 8px rgba(52,245,255,0.65);}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"error-container":"#93000a","primary-container":"#34f5ff","on-primary":"#003739","on-secondary-container":"#ffe6ed","surface-bright":"#393841","outline-variant":"#3b494a","on-tertiary-fixed":"#211b00","on-error-container":"#ffdad6","surface-container":"#1f1f26","tertiary-fixed-dim":"#e2c633","tertiary":"#fffaf7","tertiary-fixed":"#ffe256","on-background":"#e4e1ec","on-surface-variant":"#bacaca","error":"#ffb4ab","on-error":"#690005","inverse-surface":"#e4e1ec","surface-container-high":"#2a2931","inverse-primary":"#00696e","on-secondary-fixed-variant":"#8c0054","on-primary-container":"#006d72","surface":"#13131a","on-surface":"#e4e1ec","surface-container-highest":"#34343c","inverse-on-surface":"#303038","on-primary-fixed-variant":"#004f53","surface-dim":"#13131a","surface-tint":"#00dce5","secondary":"#ffb0ce","secondary-container":"#cd017e","on-secondary-fixed":"#3e0022","secondary-fixed":"#ffd9e5","outline":"#849494","primary":"#edfeff","primary-fixed":"#67f6ff","on-tertiary-container":"#726100","on-secondary":"#63003a","on-tertiary-fixed-variant":"#534600","surface-variant":"#34343c","surface-container-low":"#1b1b22","on-tertiary":"#393000","secondary-fixed-dim":"#ffb0ce","primary-fixed-dim":"#00dce5","surface-container-lowest":"#0e0e15","on-primary-fixed":"#002021","tertiary-container":"#fcde4a","background":"#13131a"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"margin":"1.5rem","space-xs":"0.25rem","space-xl":"2rem","space-sm":"0.5rem","gutter":"1rem","space-lg":"1.5rem","space-md":"1rem"},"fontFamily":{"headline-sm":["Space Mono"],"display-lg":["Space Mono"],"label-lg":["JetBrains Mono"],"headline-lg":["Space Mono"],"label-md":["JetBrains Mono"],"body-md":["Space Mono"],"body-sm":["Space Mono"],"headline-md":["Space Mono"],"display-lg-mobile":["Space Mono"],"body-lg":["Space Mono"],"label-sm":["JetBrains Mono"]},"fontSize":{"headline-sm":["15px",{"lineHeight":"20px","letterSpacing":"0.02em","fontWeight":"700"}],"display-lg":["32px",{"lineHeight":"40px","letterSpacing":"0.1em","fontWeight":"700"}],"label-lg":["13px",{"lineHeight":"16px","letterSpacing":"0.06em","fontWeight":"700"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"0.05em","fontWeight":"700"}],"label-md":["11px",{"lineHeight":"14px","letterSpacing":"0.05em","fontWeight":"500"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0","fontWeight":"400"}],"headline-md":["18px",{"lineHeight":"24px","letterSpacing":"0.04em","fontWeight":"700"}],"display-lg-mobile":["20px",{"lineHeight":"28px","letterSpacing":"0.08em","fontWeight":"700"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"0.02em","fontWeight":"400"}],"label-sm":["10px",{"lineHeight":"12px","letterSpacing":"0.08em","fontWeight":"500"}]}}}};</script></head><body class="bg-surface-container-lowest text-on-surface font-body-md text-body-md select-none"><div class="min-h-screen bg-surface-container-lowest p-space-md lg:p-margin flex flex-col items-center justify-center"><div class="w-full max-w-[1920px] aspect-[16/9] bg-surface rounded-xl overflow-hidden relative shadow-[0_0_0_12px_#0e0e15,0_0_0_16px_#2a2931,0_24px_48px_rgba(0,0,0,0.9)] flex items-center justify-center"><main class="w-full h-full bg-surface relative z-10 flex items-center justify-center p-space-lg"><div class="flex flex-col w-full relative select-none">
+<!-- Top Arcade Telemetry HUD Bar -->
+<div class="w-full bg-surface-container-lowest px-space-md py-space-xs flex items-center justify-between shadow-[4px_4px_0px_#000000] mb-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="inline-block w-3 h-3 bg-secondary-container animate-ping"></span>
+<span class="font-headline-sm text-headline-sm text-secondary tracking-widest crt-bloom">STAGE 02 CLEAR!</span>
+</div>
+<div class="hidden md:flex items-center gap-space-md font-label-md text-label-md text-tertiary-fixed tracking-wider">
+<span class="px-space-xs py-0.5 bg-surface-container-high text-tertiary-fixed shadow-[2px_2px_0px_#000000]">BONUS MULTIPLIER x100</span>
+<span class="text-on-surface-variant">//</span>
+<span class="text-primary-fixed crt-bloom">PERFECT INVARIANCE</span>
+</div>
+<div class="flex items-center gap-space-xs font-label-md text-label-md text-primary-fixed">
+<span class="text-outline">HI-SCORE:</span>
+<span class="text-tertiary-fixed-dim" id="header-hiscore">99,999,990</span>
+</div>
+</div>
+<!-- Giant Flashing Arcade Level Up Banner -->
+<div class="relative w-full py-space-xs flex flex-col items-center justify-center my-space-xs overflow-hidden">
+<!-- Background dither bursts -->
+<div class="absolute inset-0 opacity-20 pointer-events-none flex items-center justify-center">
+<div class="w-[720px] h-20 bg-gradient-to-r from-secondary via-primary-container to-secondary-container opacity-40 blur-none"></div>
+</div>
+<div class="relative z-10 flex items-center justify-center gap-space-md">
+<span class="text-tertiary-fixed text-headline-lg font-headline-lg animate-bounce select-none">★</span>
+<div class="px-space-lg py-space-xs bg-surface-container-lowest shadow-[6px_6px_0px_#000000] text-center">
+<h1 class="font-display-lg text-display-lg uppercase tracking-widest text-primary-container drop-shadow-[4px_4px_0px_#ffe256] transition-colors duration-150" id="arcade-banner-text">
+          LEVEL UP!
+        </h1>
+</div>
+<span class="text-tertiary-fixed text-headline-lg font-headline-lg animate-bounce select-none" style="animation-delay: 0.15s;">★</span>
+</div>
+</div>
+<!-- Hero Massive Score Display & Visual Canvas -->
+<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-space-md my-space-xs items-stretch">
+<!-- Left: Colossal Metric + Animated Coin Sparks -->
+<div class="lg:col-span-7 bg-surface-container-low p-space-md flex flex-col justify-between shadow-[6px_6px_0px_#000000] relative overflow-hidden">
+<!-- Upper plate status -->
+<div class="flex items-center justify-between w-full mb-space-xs">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest bg-surface-container-high px-space-xs py-0.5">METRIC // ULTRA-PRECISION RATE</span>
+<span class="font-label-sm text-label-sm text-secondary-fixed uppercase animate-pulse">OVERCLOCK: LOCKED</span>
+</div>
+<!-- Center Colossal 99.999% Readout -->
+<div class="relative py-space-sm flex flex-col items-center justify-center">
+<!-- Pixel Coin Sprites left/right -->
+<div class="absolute left-2 top-1/2 -translate-y-1/2 hidden sm:flex flex-col gap-space-sm items-center opacity-80">
+<div class="w-6 h-6 bg-tertiary-container shadow-[2px_2px_0px_#726100] flex items-center justify-center font-label-sm text-label-sm text-on-tertiary-container animate-pulse">◆</div>
+<div class="w-4 h-4 bg-tertiary-fixed shadow-[2px_2px_0px_#726100] flex items-center justify-center font-label-sm text-label-sm text-on-tertiary-fixed animate-bounce">🪙</div>
+<div class="w-6 h-6 bg-tertiary-container shadow-[2px_2px_0px_#726100] flex items-center justify-center font-label-sm text-label-sm text-on-tertiary-container animate-pulse" style="animation-delay: 0.3s;">◆</div>
+</div>
+<div class="text-center relative">
+<div class="font-display-lg text-[64px] sm:text-[84px] lg:text-[96px] leading-none font-bold text-tertiary-container tracking-wider drop-shadow-[6px_6px_0px_#003739] crt-bloom select-none">
+            99.999%
+          </div>
+<div class="font-headline-sm text-headline-sm text-primary-fixed uppercase tracking-widest mt-space-xs">
+            ABSOLUTE INVARIANCE VERIFIED
+          </div>
+</div>
+<div class="absolute right-2 top-1/2 -translate-y-1/2 hidden sm:flex flex-col gap-space-sm items-center opacity-80">
+<div class="w-6 h-6 bg-tertiary-container shadow-[2px_2px_0px_#726100] flex items-center justify-center font-label-sm text-label-sm text-on-tertiary-container animate-pulse" style="animation-delay: 0.2s;">◆</div>
+<div class="w-4 h-4 bg-tertiary-fixed shadow-[2px_2px_0px_#726100] flex items-center justify-center font-label-sm text-label-sm text-on-tertiary-fixed animate-bounce" style="animation-delay: 0.1s;">🪙</div>
+<div class="w-6 h-6 bg-tertiary-container shadow-[2px_2px_0px_#726100] flex items-center justify-center font-label-sm text-label-sm text-on-tertiary-container animate-pulse" style="animation-delay: 0.4s;">◆</div>
+</div>
+</div>
+<!-- Subhead Hardware Guarantee readout banner -->
+<div class="w-full bg-surface-container-lowest p-space-xs shadow-[3px_3px_0px_#000000] mt-space-xs">
+<p class="font-label-md text-label-md text-tertiary text-center tracking-wider uppercase leading-tight">
+          DETERMINISTIC EXECUTION GUARANTEE: ZERO UNMATCHED FILLS OVER 1,400,000,000 LIVE TRANSACTIONS
+        </p>
+</div>
+</div>
+<!-- Right: Retro Score Roll-Up Audit Table -->
+<div class="lg:col-span-5 bg-surface-container-low p-space-md flex flex-col justify-between shadow-[6px_6px_0px_#000000]">
+<!-- Box Header -->
+<div class="w-full bg-surface-container px-space-xs py-space-xs flex items-center justify-between mb-space-sm shadow-[2px_2px_0px_#000000]">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">receipt_long</span>
+          AUDIT ROLL-UP // STAGE-02
+        </span>
+<span class="font-label-sm text-label-sm text-outline tracking-widest">[OK-200]</span>
+</div>
+<!-- Audit Line Items -->
+<div class="flex flex-col gap-space-xs font-label-md text-label-md leading-relaxed my-auto">
+<div class="flex items-center justify-between py-1 px-space-xs bg-surface-container-lowest/60">
+<span class="text-on-surface">L3 FEED INGESTION</span>
+<span class="text-outline-variant select-none">......</span>
+<span class="text-tertiary-fixed tabular-nums font-bold">100,000 PTS</span>
+</div>
+<div class="flex items-center justify-between py-1 px-space-xs bg-surface-container/40">
+<span class="text-on-surface">KERNEL BYPASS SPEED</span>
+<span class="text-outline-variant select-none">....</span>
+<span class="text-tertiary-fixed tabular-nums font-bold">420,000 PTS</span>
+</div>
+<div class="flex items-center justify-between py-1 px-space-xs bg-surface-container-lowest/60">
+<span class="text-on-surface">SUB-MICROSEC LATENCY</span>
+<span class="text-outline-variant select-none">.</span>
+<span class="text-tertiary-fixed tabular-nums font-bold">840,000 PTS</span>
+</div>
+<div class="flex items-center justify-between py-1 px-space-xs bg-surface-container/40">
+<span class="text-on-surface">BUFFER OVERFLOW BONUS</span>
+<span class="text-outline-variant select-none">.</span>
+<span class="text-primary-fixed-dim tabular-nums font-bold">0 DROPS [PERFECT]</span>
+</div>
+<!-- Horizontal separator block -->
+<div class="w-full h-1 bg-surface-container-highest my-0.5"></div>
+<div class="flex items-center justify-between py-space-xs px-space-xs bg-surface-container-high shadow-[2px_2px_0px_#000000]">
+<span class="text-primary font-bold">TOTAL CLEAR SCORE</span>
+<span class="text-outline-variant select-none">......</span>
+<span class="text-tertiary-container font-headline-sm text-headline-sm crt-bloom tabular-nums">99,999,990 PTS</span>
+</div>
+</div>
+<!-- Rank Certification Badge -->
+<div class="mt-space-sm pt-space-xs flex items-center justify-between bg-surface-container-lowest px-space-xs py-1">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">RANK CERTIFIED:</span>
+<span class="font-headline-sm text-headline-sm text-secondary crt-bloom uppercase">GRANDMASTER SSS</span>
+</div>
+</div>
+</div>
+<!-- Interactive Arcade Push Buttons & Call To Action Area -->
+<div class="w-full mt-space-sm flex flex-col sm:flex-row items-center justify-between gap-space-md bg-surface-container-lowest p-space-sm shadow-[6px_6px_0px_#000000]">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 bg-primary-container shadow-[0_0_8px_#34f5ff]"></span>
+<span class="font-label-sm text-label-sm text-on-surface uppercase tracking-widest">
+        COINS: 02 // FREE PLAY // CONTINUES: ∞
+      </span>
+</div>
+<!-- Flashing Prompt Button -->
+<button class="w-full sm:w-auto px-space-xl py-space-sm bg-primary-container text-on-primary font-headline-sm text-headline-sm uppercase tracking-widest shadow-[4px_4px_0px_#000000] hover:bg-secondary hover:text-on-secondary active:translate-x-1 active:translate-y-1 active:shadow-none transition-all cursor-pointer" id="push-start-btn">
+<span class="animate-pulse">PUSH START BUTTON TO CONTINUE TO WORLD 3</span>
+</button>
+</div>
+</div>
+<script>
+  (function() {
+    // Banner stripe color switcher for authentic 80s arcade flashing
+    const banner = document.getElementById('arcade-banner-text');
+    let toggle = false;
+    if (banner) {
+      setInterval(() => {
+        toggle = !toggle;
+        if (toggle) {
+          banner.classList.remove('text-primary-container', 'drop-shadow-[4px_4px_0px_#ffe256]');
+          banner.classList.add('text-secondary-container', 'drop-shadow-[4px_4px_0px_#34f5ff]');
+        } else {
+          banner.classList.remove('text-secondary-container', 'drop-shadow-[4px_4px_0px_#34f5ff]');
+          banner.classList.add('text-primary-container', 'drop-shadow-[4px_4px_0px_#ffe256]');
+        }
+      }, 350);
+    }
+
+    // Micro-interaction on Start Button
+    const btn = document.getElementById('push-start-btn');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const audioCtx = window.AudioContext || window.webkitAudioContext;
+        if (audioCtx) {
+          try {
+            const ctx = new audioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(440, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.2);
+          } catch(e) {}
+        }
+        btn.innerHTML = '<span>LOADING WORLD 3... READY PLAYER 1</span>';
+      });
+    }
+  })();
+</script></main><div class="absolute inset-0 crt-scanlines z-30 pointer-events-none"></div><div class="absolute inset-0 crt-vignette z-30 pointer-events-none rounded-xl"></div></div></div></body></html>

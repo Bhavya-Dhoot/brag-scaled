@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_blank" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400;0,700;1,400&amp;family=Yatra+One&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "surface-container-high": "#f7e6c6",
+        "secondary-fixed": "#dbe1ff",
+        "surface-tint": "#aa342f",
+        "on-tertiary": "#ffffff",
+        "on-secondary-container": "#445281",
+        "secondary-fixed-dim": "#b6c5fb",
+        "primary-fixed-dim": "#ffb4ac",
+        "on-tertiary-fixed": "#291800",
+        "surface-container": "#fdeccb",
+        "error": "#ba1a1a",
+        "surface-bright": "#fff8f1",
+        "on-tertiary-fixed-variant": "#624000",
+        "primary-container": "#a4302b",
+        "surface-variant": "#f1e1c0",
+        "on-primary": "#ffffff",
+        "on-primary-fixed-variant": "#891c1a",
+        "surface-dim": "#e8d8b8",
+        "tertiary-fixed-dim": "#ffb94d",
+        "secondary": "#4e5d8c",
+        "error-container": "#ffdad6",
+        "surface-container-lowest": "#ffffff",
+        "inverse-on-surface": "#ffefd0",
+        "inverse-surface": "#382f19",
+        "on-background": "#221b07",
+        "on-surface-variant": "#58413f",
+        "outline-variant": "#dfbfbc",
+        "inverse-primary": "#ffb4ac",
+        "background": "#fff8f1",
+        "on-tertiary-container": "#ffc778",
+        "on-error": "#ffffff",
+        "tertiary-fixed": "#ffddb2",
+        "on-primary-container": "#ffc3bd",
+        "tertiary": "#5c3c00",
+        "surface": "#fff8f1",
+        "on-surface": "#221b07",
+        "primary-fixed": "#ffdad6",
+        "surface-container-highest": "#f1e1c0",
+        "on-error-container": "#93000a",
+        "surface-container-low": "#fff2db",
+        "outline": "#8b716e",
+        "on-secondary-fixed": "#061845",
+        "on-secondary-fixed-variant": "#364572",
+        "primary": "#831717",
+        "secondary-container": "#b9c7fd",
+        "on-primary-fixed": "#410002",
+        "tertiary-container": "#7b5100",
+        "on-secondary": "#ffffff"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "full": "0.75rem"
+      },
+      "spacing": {
+        "margin": "2.5rem",
+        "gutter": "1.5rem",
+        "space-md": "1rem",
+        "space-xl": "2.5rem",
+        "space-sm": "0.5rem",
+        "space-lg": "1.75rem",
+        "space-xs": "0.25rem"
+      },
+      "fontFamily": {
+        "headline-lg-mobile": ["Yatra One"],
+        "body-md": ["Karla"],
+        "label-sm": ["Karla"],
+        "label-lg": ["Karla"],
+        "label-md": ["Karla"],
+        "body-sm": ["Karla"],
+        "headline-lg": ["Yatra One"],
+        "headline-sm": ["Yatra One"],
+        "headline-xl-mobile": ["Yatra One"],
+        "headline-md": ["Yatra One"],
+        "headline-xl": ["Yatra One"],
+        "body-lg": ["Karla"],
+        "title-lg": ["Karla"],
+        "title-md": ["Karla"]
+      },
+      "fontSize": {
+        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "400"}],
+        "body-md": ["15px", {"lineHeight": "22px", "fontWeight": "400"}],
+        "label-sm": ["10px", {"lineHeight": "14px", "letterSpacing": "0.15em", "fontWeight": "700"}],
+        "label-lg": ["13px", {"lineHeight": "18px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+        "label-md": ["11px", {"lineHeight": "16px", "letterSpacing": "0.12em", "fontWeight": "700"}],
+        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+        "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "400"}],
+        "headline-sm": ["22px", {"lineHeight": "30px", "fontWeight": "400"}],
+        "headline-xl-mobile": ["36px", {"lineHeight": "44px", "fontWeight": "400"}],
+        "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "400"}],
+        "headline-xl": ["56px", {"lineHeight": "64px", "fontWeight": "400"}],
+        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+        "title-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+        "title-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.04em", "fontWeight": "700"}]
+      }
+    }
+  }
+}</script></head><body class="bg-surface-dim font-body-md text-on-surface min-h-screen selection:bg-primary-container selection:text-on-primary"><div class="min-h-screen w-full p-margin flex items-center justify-center"><div class="w-full max-w-[1920px] bg-surface shadow-[0_12px_48px_rgba(56,47,25,0.12)] p-margin relative overflow-hidden"><div class="absolute top-0 left-0 right-0 h-space-xs bg-primary"></div><div class="absolute bottom-0 left-0 right-0 h-space-xs bg-primary"></div><div class="absolute top-0 bottom-0 left-0 w-space-xs bg-primary"></div><div class="absolute top-0 bottom-0 right-0 w-space-xs bg-primary"></div><div class="w-full relative"><main class="w-full bg-surface"><div class="flex flex-col w-full">
+<!-- Widescreen Animatic Stage 16:9 Canvas -->
+<div class="relative w-full aspect-video bg-surface-dim overflow-hidden shadow-2xl flex flex-col justify-between p-6 md:p-10 select-none">
+<!-- Textile Slub Weave & Faint Paisley (Buta) Jaal Repeat Pattern (Inline SVG Mesh) -->
+<svg class="absolute inset-0 w-full h-full opacity-15 pointer-events-none" height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="8" id="slub-mesh" patternunits="userSpaceOnUse" width="8">
+<path d="M 0 2 L 8 2 M 2 0 L 2 8 M 0 6 L 8 6 M 6 0 L 6 8" stroke="#58413f" stroke-dasharray="2,3" stroke-width="0.35"></path>
+</pattern>
+<pattern height="96" id="buta-jaal" patterntransform="rotate(8)" patternunits="userSpaceOnUse" width="96">
+<!-- Mini faint indigo buta stamp -->
+<path d="M 24,36 C 24,24 38,18 42,8 C 45,18 46,26 42,34 C 38,40 28,42 24,36 Z" fill="none" opacity="0.6" stroke="#4e5d8c" stroke-width="1.2"></path>
+<circle cx="34" cy="24" fill="#5c3c00" opacity="0.5" r="2.5"></circle>
+<path d="M 28,34 Q 34,30 38,20" fill="none" stroke="#4e5d8c" stroke-width="0.8"></path>
+<!-- Staggered faint marigold motif -->
+<path d="M 72,84 C 72,72 86,66 90,56 C 93,66 94,74 90,82 C 86,88 76,90 72,84 Z" fill="none" opacity="0.5" stroke="#5c3c00" stroke-width="1"></path>
+<circle cx="82" cy="72" fill="#831717" opacity="0.4" r="2"></circle>
+</pattern>
+</defs>
+<rect fill="url(#slub-mesh)" height="100%" width="100%"></rect>
+<rect fill="url(#buta-jaal)" height="100%" width="100%"></rect>
+</svg>
+<!-- Block Printer's Physical Edge Framing & Registration Marks -->
+<div class="absolute inset-3 pointer-events-none flex flex-col justify-between">
+<div class="flex justify-between items-center text-primary/40 font-label-sm text-label-sm">
+<div class="flex items-center space-x-2">
+<svg class="text-primary/70" height="24" viewbox="0 0 24 24" width="24">
+<circle cx="12" cy="12" fill="none" r="9" stroke="currentColor" stroke-dasharray="2,2" stroke-width="1"></circle>
+<line stroke="currentColor" stroke-width="1.2" x1="12" x2="12" y1="0" y2="24"></line>
+<line stroke="currentColor" stroke-width="1.2" x1="0" x2="24" y1="12" y2="12"></line>
+<circle cx="12" cy="12" fill="#831717" r="2"></circle>
+</svg>
+<span class="tracking-widest uppercase">STRIKE-REG • K-03-A</span>
+</div>
+<div class="flex items-center space-x-4">
+<span class="font-headline-sm text-headline-sm text-primary">NEXUS // TERMINAL</span>
+<span class="bg-surface-container-high px-2 py-0.5 text-on-surface-variant font-label-md text-label-md uppercase tracking-widest">SEQ: 016-WIDESCREEN</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="tracking-widest uppercase">REG-DYE: MADDER / INDIGO</span>
+<svg class="text-secondary/70" height="24" viewbox="0 0 24 24" width="24">
+<circle cx="12" cy="12" fill="none" r="9" stroke="currentColor" stroke-dasharray="3,1" stroke-width="1"></circle>
+<line stroke="currentColor" stroke-width="1.2" x1="12" x2="12" y1="0" y2="24"></line>
+<line stroke="currentColor" stroke-width="1.2" x1="0" x2="24" y1="12" y2="12"></line>
+</svg>
+</div>
+</div>
+<div class="flex justify-between items-end text-outline/50 font-label-sm text-label-sm">
+<div class="flex items-center space-x-2">
+<svg height="20" viewbox="0 0 20 20" width="20">
+<line stroke="#831717" stroke-width="1" x1="10" x2="10" y1="2" y2="18"></line>
+<line stroke="#831717" stroke-width="1" x1="2" x2="18" y1="10" y2="10"></line>
+</svg>
+<span>JAIPUR ATELIER PRESS // ANAMORPHIC UNIT 3</span>
+</div>
+<div class="text-right">
+<span>LAT/LONG: 26.9124° N, 75.7873° E // BASTING REEL IV</span>
+</div>
+</div>
+</div>
+<!-- Top Storyboard Scene / Metadata Banner -->
+<header class="relative z-10 w-full flex items-center justify-between pt-2">
+<!-- Jharokha Crest Frame Indicator -->
+<div class="flex items-center gap-3">
+<div class="bg-primary text-on-primary px-3 py-1 font-headline-sm text-headline-sm flex items-center gap-2 shadow-sm transform -rotate-1">
+<span class="material-symbols-outlined text-base">architecture</span>
+<span>FRAME 03</span>
+</div>
+<div class="bg-surface-container px-3 py-1 font-label-lg text-label-lg text-tertiary-container tracking-wider uppercase">
+          ACT I • THE CEREMONY OF EXECUTION
+        </div>
+</div>
+<!-- Anamorphic Camera Rig Shelf -->
+<div class="hidden md:flex items-center gap-4 bg-surface-container-high px-4 py-1.5 text-on-surface">
+<div class="flex items-center gap-1 font-label-sm text-label-sm uppercase tracking-wider text-outline">
+<span class="material-symbols-outlined text-sm text-primary">videocam</span>
+<span>LENS:</span>
+<span class="font-title-md text-title-md text-primary">35mm Kowa Anamorphic</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1 font-label-sm text-label-sm uppercase tracking-wider text-outline">
+<span class="material-symbols-outlined text-sm text-secondary">motion_sensor_active</span>
+<span>MOTION:</span>
+<span class="font-title-md text-title-md text-secondary">Slow Axial Dolly In</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1 font-label-sm text-label-sm uppercase tracking-wider text-outline">
+<span class="material-symbols-outlined text-sm text-tertiary">timer</span>
+<span>TIMECODE:</span>
+<span class="font-title-md text-title-md text-tertiary">00:01:24:18</span>
+</div>
+</div>
+</header>
+<!-- Master Stage: Colossal Hero Paisley Medallion with Hand-Block Misregistration -->
+<main class="relative z-10 flex-1 w-full flex items-center justify-center my-auto">
+<!-- Flanking Left Stamp: Serrated Marigold Sun Seal -->
+<aside class="hidden lg:flex flex-col items-center justify-center w-64 text-center transform -rotate-3 transition-transform hover:rotate-0 duration-300">
+<div class="relative p-6 bg-surface-container flex flex-col items-center justify-center">
+<!-- Marigold Sun-Burst Stamp Outer Edge -->
+<div class="w-44 h-44 relative flex items-center justify-center">
+<svg class="absolute inset-0 w-full h-full text-tertiary-container" viewbox="0 0 100 100">
+<polygon fill="#ffddb2" opacity="0.85" points="50,2 61,15 78,8 82,25 98,28 92,45 100,60 88,71 88,88 71,88 60,100 45,92 28,98 25,82 8,78 15,61 2,50 15,39 8,22 25,18 28,2 45,8"></polygon>
+<circle cx="50" cy="50" fill="none" r="38" stroke="#7b5100" stroke-dasharray="4,2" stroke-width="2.5"></circle>
+<circle cx="50" cy="50" fill="#fdeccb" r="32"></circle>
+</svg>
+<!-- Offset Second-Strike Stamp Ink Misalignment Layer -->
+<svg class="absolute inset-0 w-full h-full text-primary translate-x-0.5 -translate-y-0.5 opacity-60 pointer-events-none" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="38" stroke="#a4302b" stroke-dasharray="8,4" stroke-width="1"></circle>
+</svg>
+<div class="relative z-10 flex flex-col items-center px-2">
+<span class="material-symbols-outlined text-tertiary text-2xl">bolt</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-tertiary font-bold mt-1">LATENCY</span>
+<span class="font-headline-sm text-headline-sm text-primary leading-none my-1">840ns</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant tracking-wider uppercase">WIRE-TO-WIRE</span>
+</div>
+</div>
+<div class="mt-3 bg-surface-container-high px-2.5 py-1 text-tertiary font-label-sm text-label-sm tracking-widest uppercase">
+            ROYAL TELEGRAPH SEAL
+          </div>
+</div>
+<p class="mt-2 font-body-sm text-body-sm text-on-surface-variant text-center max-w-[180px] italic">
+          Sub-microsecond deterministic pipeline certified by the Royal Observatory.
+        </p>
+</aside>
+<!-- Centerpiece: Colossal Kalka / Paisley Block Medallion with Hero "[STAT]" -->
+<section class="relative flex flex-col items-center justify-center px-4 max-w-2xl mx-auto">
+<!-- The Monumental Medallion Container -->
+<div class="relative w-[340px] sm:w-[460px] md:w-[540px] aspect-[4/3] flex items-center justify-center">
+<!-- Layer 1: Hand-Carved Teak Block Print Impression Base (Dabu Indigo & Madder Bleed) -->
+<svg class="absolute inset-0 w-full h-full overflow-visible" viewbox="0 0 540 400" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<!-- Textile Floral Inner Filler Pattern -->
+<pattern height="24" id="kalka-inner-fill" patterntransform="rotate(25)" patternunits="userSpaceOnUse" width="24">
+<path d="M12,0 C18,6 18,18 12,24 C6,18 6,6 12,0 Z" fill="#fdeccb" opacity="0.4"></path>
+<circle cx="12" cy="12" fill="#a4302b" r="2.5"></circle>
+<circle cx="0" cy="12" fill="#4e5d8c" r="1.5"></circle>
+<circle cx="24" cy="12" fill="#4e5d8c" r="1.5"></circle>
+</pattern>
+</defs>
+<!-- Organic Block Offset Background Ghost (Deliberate Artisanal Misregistration: +2px X, +2px Y) -->
+<g opacity="0.5" transform="translate(3, 2.5)">
+<path d="M 270 30 C 370 30 460 100 460 210 C 460 305 380 370 270 370 C 160 370 80 305 80 210 C 80 140 135 75 205 45 C 240 30 255 10 280 15 C 265 28 250 45 270 30 Z" fill="#a4302b"></path>
+</g>
+<!-- Primary Hand-Carved Teak Silhouette in Deep Dabu Indigo -->
+<path d="M 270 30 C 370 30 460 100 460 210 C 460 305 380 370 270 370 C 160 370 80 305 80 210 C 80 140 135 75 205 45 C 240 30 255 10 280 15 C 265 28 250 45 270 30 Z" fill="#4e5d8c"></path>
+<!-- Secondary Inner Madder Inlay Shell -->
+<path d="M 270 48 C 355 48 435 110 435 210 C 435 292 365 348 270 348 C 175 348 105 292 105 210 C 105 150 150 95 210 68 C 240 55 252 38 270 48 Z" fill="#831717"></path>
+<!-- Inner Intricate Jaali Fill Surface -->
+<path d="M 270 65 C 340 65 410 120 410 210 C 410 280 350 328 270 328 C 190 328 130 280 130 210 C 130 160 170 110 220 85 C 245 74 255 58 270 65 Z" fill="url(#kalka-inner-fill)"></path>
+<!-- Scalloped Jharokha Arch Rim Dots (Chuna Plaster Lime Droplets) -->
+<g fill="#fff8f1" opacity="0.9">
+<circle cx="270" cy="18" r="4"></circle>
+<circle cx="310" cy="24" r="3.5"></circle>
+<circle cx="350" cy="40" r="3.5"></circle>
+<circle cx="390" cy="65" r="3.5"></circle>
+<circle cx="425" cy="100" r="3.5"></circle>
+<circle cx="450" cy="145" r="3.5"></circle>
+<circle cx="462" cy="195" r="3.5"></circle>
+<circle cx="455" cy="245" r="3.5"></circle>
+<circle cx="430" cy="290" r="3.5"></circle>
+<circle cx="390" cy="330" r="3.5"></circle>
+<circle cx="340" cy="358" r="3.5"></circle>
+<circle cx="270" cy="378" r="4.5"></circle>
+<circle cx="200" cy="358" r="3.5"></circle>
+<circle cx="150" cy="330" r="3.5"></circle>
+<circle cx="110" cy="290" r="3.5"></circle>
+<circle cx="85" cy="245" r="3.5"></circle>
+<circle cx="78" cy="195" r="3.5"></circle>
+<circle cx="90" cy="145" r="3.5"></circle>
+<circle cx="115" cy="100" r="3.5"></circle>
+<circle cx="150" cy="65" r="3.5"></circle>
+<circle cx="190" cy="40" r="3.5"></circle>
+<circle cx="230" cy="24" r="3.5"></circle>
+</g>
+<!-- Decorative Marigold Center Spine Flourish -->
+<path d="M 270 90 C 270 90 285 140 270 170 C 255 200 280 240 270 300" fill="none" stroke="#7b5100" stroke-dasharray="2,6" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<!-- Core Stat Inscription inside Medallion -->
+<div class="relative z-20 flex flex-col items-center justify-center text-center mt-3">
+<span class="font-label-md text-label-md uppercase tracking-[0.25em] text-secondary-fixed bg-secondary/80 px-3 py-0.5 rounded-sm">
+              EXECUTION CERTAINTY
+            </span>
+<!-- Hero Punchline: 99.999% in Monumental Yatra One -->
+<div class="relative my-1">
+<!-- Misregistered Madder Under-Strike Text Shadow -->
+<span class="font-headline-xl text-[68px] sm:text-[92px] md:text-[108px] leading-none text-primary absolute -left-1 -top-1 opacity-75 select-none pointer-events-none">
+                99.999%
+              </span>
+<!-- Crisp Indigo & Chuna Surface Strike -->
+<span class="relative font-headline-xl text-[68px] sm:text-[92px] md:text-[108px] leading-none text-surface-bright tracking-tight drop-shadow-[0_2px_0_#4e5d8c]">
+                99.999%
+              </span>
+</div>
+<!-- Stamped Sub-Metric Badge -->
+<div class="flex items-center gap-2 bg-surface-container-high px-3 py-1 text-primary-container font-label-lg text-label-lg uppercase tracking-widest mt-1">
+<span class="material-symbols-outlined text-sm text-primary">verified</span>
+<span>FIVE-NINE INVARIANCE</span>
+</div>
+</div>
+</div>
+<!-- Stamped Claims directly into the Cotton Cloth -->
+<div class="flex flex-col items-center text-center mt-4 space-y-1.5 max-w-xl">
+<!-- Basting stitch banner -->
+<div class="flex items-center gap-3">
+<div class="w-10 h-px bg-tertiary"></div>
+<span class="font-headline-sm text-headline-sm text-primary tracking-wider uppercase font-bold">
+              DETERMINISTIC INVARIANCE GUARANTEED
+            </span>
+<div class="w-10 h-px bg-tertiary"></div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant font-medium max-w-lg leading-relaxed">
+            Zero unmatched fills in <span class="text-primary font-bold">1,400,000,000</span> royal transactions across all trading seasons.
+          </p>
+<!-- Woodblock Registration Micro-Bar -->
+<div class="flex items-center gap-4 pt-1 font-label-sm text-label-sm text-outline uppercase tracking-widest">
+<span>AUDITED BY ARYA &amp; CO.</span>
+<span>•</span>
+<span>CHUNA-WHITE RELIEF</span>
+<span>•</span>
+<span>BAGRU VAT NO. 07</span>
+</div>
+</div>
+</section>
+<!-- Flanking Right Stamp: Indigo Diamond Seal -->
+<aside class="hidden lg:flex flex-col items-center justify-center w-64 text-center transform rotate-2 transition-transform hover:rotate-0 duration-300">
+<div class="relative p-6 bg-surface-container flex flex-col items-center justify-center">
+<!-- Diamond Seal Geometric Geometry -->
+<div class="w-44 h-44 relative flex items-center justify-center">
+<svg class="absolute inset-0 w-full h-full text-secondary" viewbox="0 0 100 100">
+<polygon fill="#dbe1ff" opacity="0.9" points="50,4 96,50 50,96 4,50"></polygon>
+<polygon fill="none" points="50,10 90,50 50,90 10,50" stroke="#4e5d8c" stroke-width="2"></polygon>
+<polygon fill="none" points="50,15 85,50 50,85 15,50" stroke="#831717" stroke-dasharray="3,2" stroke-width="1"></polygon>
+</svg>
+<!-- Ink Offset Ghost Layer -->
+<svg class="absolute inset-0 w-full h-full text-primary translate-x-1 translate-y-0.5 opacity-50 pointer-events-none" viewbox="0 0 100 100">
+<polygon fill="none" points="50,10 90,50 50,90 10,50" stroke="#831717" stroke-width="1.2"></polygon>
+</svg>
+<div class="relative z-10 flex flex-col items-center px-2">
+<span class="material-symbols-outlined text-secondary text-2xl">straighten</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-bold mt-1">JITTER</span>
+<span class="font-headline-sm text-headline-sm text-secondary leading-none my-1">±0.00ps</span>
+<span class="font-label-sm text-label-sm text-primary tracking-wider uppercase font-bold">VERIFIED</span>
+</div>
+</div>
+<div class="mt-3 bg-surface-container-high px-2.5 py-1 text-secondary font-label-sm text-label-sm tracking-widest uppercase">
+            QUARTZ ACCREDITED
+          </div>
+</div>
+<p class="mt-2 font-body-sm text-body-sm text-on-surface-variant text-center max-w-[180px] italic">
+          Zero variance across optical cross-connects under peak market tumult.
+        </p>
+</aside>
+</main>
+<!-- Bottom Director Cue Sheet & Timeline Controller Shelf -->
+<footer class="relative z-10 w-full flex flex-col sm:flex-row items-center justify-between pt-3 gap-3">
+<!-- Micro-Jaali Repeating Chevron Ribbon Print -->
+<div class="absolute -top-3 left-0 right-0 h-2 opacity-35 overflow-hidden flex items-center">
+<svg class="w-full h-2 text-primary" preserveaspectratio="repeat-x" viewbox="0 0 200 8">
+<pattern height="8" id="jaali-ribbon" patternunits="userSpaceOnUse" width="16">
+<path d="M 0 4 L 4 0 L 8 4 L 12 0 L 16 4 L 12 8 L 8 4 L 4 8 Z" fill="none" stroke="currentColor" stroke-width="1"></path>
+<circle cx="8" cy="4" fill="#7b5100" r="1"></circle>
+</pattern>
+<rect fill="url(#jaali-ribbon)" height="8" width="100%"></rect>
+</svg>
+</div>
+<!-- Left: Storyboard Sequence Actions -->
+<div class="flex items-center gap-2">
+<!-- Royal Seal Primary Trigger -->
+<button class="bg-primary text-on-primary font-headline-sm text-headline-sm px-4 py-1.5 flex items-center gap-2 hover:bg-primary-container transition-all active:translate-y-0.5" type="button">
+<span class="font-label-sm text-label-sm tracking-tighter">⟨NX⟩</span>
+<span>APPROVE FRAME</span>
+<span class="font-label-sm text-label-sm tracking-tighter">⟨/NX⟩</span>
+</button>
+<!-- Block Stamp Secondary Trigger -->
+<button class="bg-surface-container text-secondary font-title-md text-title-md px-3.5 py-1.5 flex items-center gap-1.5 hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-sm">edit_note</span>
+<span>REVISION NOTE</span>
+</button>
+<!-- Thread-Stitched Tertiary Trigger -->
+<button class="hidden md:flex bg-surface-dim text-tertiary font-title-md text-title-md px-3 py-1.5 items-center gap-1 hover:bg-surface-variant transition-colors" type="button">
+<span class="material-symbols-outlined text-sm">palette</span>
+<span>INK MIXING LOG</span>
+</button>
+</div>
+<!-- Center: Storyboard Contact Navigation Dots -->
+<div class="flex items-center gap-1.5 bg-surface-container px-3 py-1">
+<span class="font-label-sm text-label-sm text-outline uppercase mr-1">FRAMES:</span>
+<button class="w-5 h-5 flex items-center justify-center font-label-sm text-label-sm bg-surface-dim text-outline hover:text-on-surface" type="button">1</button>
+<button class="w-5 h-5 flex items-center justify-center font-label-sm text-label-sm bg-surface-dim text-outline hover:text-on-surface" type="button">2</button>
+<button class="w-5 h-5 flex items-center justify-center font-label-sm text-label-sm bg-primary text-on-primary font-bold" type="button">3</button>
+<button class="w-5 h-5 flex items-center justify-center font-label-sm text-label-sm bg-surface-dim text-outline hover:text-on-surface" type="button">4</button>
+<button class="w-5 h-5 flex items-center justify-center font-label-sm text-label-sm bg-surface-dim text-outline hover:text-on-surface" type="button">5</button>
+<button class="w-5 h-5 flex items-center justify-center font-label-sm text-label-sm bg-surface-dim text-outline hover:text-on-surface" type="button">6</button>
+</div>
+<!-- Right: Director / Client Stamped Inventory Swatch -->
+<div class="flex items-center gap-3">
+<!-- Fabric Inventory Swatch Tag -->
+<div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm text-on-surface uppercase tracking-wider">STATE: APPROVED BY CURATOR</span>
+</div>
+<div class="bg-primary text-on-primary px-2.5 py-1 font-headline-sm text-headline-sm tracking-widest">
+          16:9 MASTER
+        </div>
+</div>
+</footer>
+</div>
+</div></main></div></div></div></body></html>

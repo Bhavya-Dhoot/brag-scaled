@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; } .hud-grid { background-size: 120px 120px; background-image: linear-gradient(to right, #1c1b1b 1px, transparent 1px), linear-gradient(to bottom, #1c1b1b 1px, transparent 1px); }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-highest": "#353534", "surface-bright": "#3a3939", "surface-dim": "#131313", "primary-fixed": "#c0f500", "error-container": "#93000a", "outline-variant": "#434933", "primary": "#ffffff", "outline": "#8e9479", "on-primary-fixed": "#161f00", "on-tertiary": "#1f333f", "on-secondary-container": "#b5b5b5", "primary-fixed-dim": "#a8d700", "tertiary-fixed": "#d0e5f5", "secondary-fixed-dim": "#c7c6c6", "surface-variant": "#353534", "inverse-primary": "#4f6600", "surface-container": "#201f1f", "secondary": "#c7c6c6", "on-secondary-fixed": "#1b1c1c", "on-surface-variant": "#c4caac", "surface-container-low": "#1c1b1b", "inverse-on-surface": "#313030", "surface-container-lowest": "#0e0e0e", "background": "#131313", "primary-container": "#c0f500", "on-primary-fixed-variant": "#3b4d00", "tertiary-container": "#d0e5f5", "on-secondary-fixed-variant": "#464747", "on-tertiary-fixed-variant": "#364956", "on-tertiary-fixed": "#081e29", "tertiary": "#ffffff", "tertiary-fixed-dim": "#b5c9d9", "on-error-container": "#ffdad6", "on-surface": "#e5e2e1", "on-tertiary-container": "#536774", "on-error": "#690005", "on-primary": "#273500", "on-primary-container": "#546d00", "error": "#ffb4ab", "on-background": "#e5e2e1", "on-secondary": "#303031", "secondary-fixed": "#e3e2e2", "surface": "#131313", "surface-container-high": "#2a2a2a", "inverse-surface": "#e5e2e1", "secondary-container": "#464747", "surface-tint": "#a8d700" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-lg": "24px", "gutter": "0px", "margin": "16px", "margin-desktop": "32px", "space-md": "16px", "gutter-desktop": "16px", "space-sm": "8px", "space-xs": "4px", "space-xl": "32px" }, "fontFamily": { "headline-lg-mobile": [ "Space Grotesk" ], "metric-huge-mobile": [ "JetBrains Mono" ], "body-lg": [ "JetBrains Mono" ], "headline-lg": [ "Space Grotesk" ], "headline-md": [ "Space Grotesk" ], "metric-huge": [ "JetBrains Mono" ], "display-xl": [ "Space Grotesk" ], "label-mono-sm": [ "JetBrains Mono" ], "display-xl-mobile": [ "Space Grotesk" ], "label-mono-lg": [ "JetBrains Mono" ], "body-md": [ "JetBrains Mono" ] }, "fontSize": { "headline-lg-mobile": [ "28px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "metric-huge-mobile": [ "38px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-lg": [ "16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "400" } ], "headline-lg": [ "40px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "headline-md": [ "24px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "metric-huge": [ "64px", { "lineHeight": "64px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "display-xl": [ "56px", { "lineHeight": "60px", "letterSpacing": "-0.04em", "fontWeight": "700" } ], "label-mono-sm": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.12em", "fontWeight": "500" } ], "display-xl-mobile": [ "36px", { "lineHeight": "40px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "label-mono-lg": [ "14px", { "lineHeight": "18px", "letterSpacing": "0.08em", "fontWeight": "700" } ], "body-md": [ "13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" } ] } } } };</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+</head><body class="bg-surface-container-lowest text-on-surface font-body-md text-body-md min-h-screen selection:bg-primary-container selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest border-r-2 border-surface-container-high z-50 flex flex-col justify-between p-space-md"><div class="flex flex-col gap-space-lg"><div class="flex flex-col gap-space-xs border-b-2 border-surface-container-high pb-space-md"><div class="flex items-center justify-between"><span class="font-label-mono-lg text-label-mono-lg text-primary-fixed uppercase tracking-wider">[NEXUS] // TRM</span><span class="font-label-mono-sm text-label-mono-sm text-primary-fixed bg-surface-container-high px-1.5 py-0.5 border border-primary-fixed-dim">L3</span></div><span class="font-label-mono-sm text-label-mono-sm text-secondary uppercase">SYS.VER 4.8.2 // RECV: OK</span></div><nav class="flex flex-col gap-space-xs" data-active-classes="bg-primary-container text-on-primary-container font-bold border-l-2 border-primary-fixed"><a class="flex items-center justify-between px-space-sm py-space-sm border border-surface-container-high text-secondary hover:border-primary-fixed hover:text-primary-fixed transition-none" data-path="overview-telemetry" href="#"><span class="font-label-mono-sm text-label-mono-sm uppercase">// TELEMETRY_FLOW</span><span class="font-label-mono-sm text-label-mono-sm">01</span></a><a class="flex items-center justify-between px-space-sm py-space-sm border border-surface-container-high text-secondary hover:border-primary-fixed hover:text-primary-fixed transition-none" data-path="order-book-matrix" href="#"><span class="font-label-mono-sm text-label-mono-sm uppercase">// ORDER_BOOK_DMA</span><span class="font-label-mono-sm text-label-mono-sm">02</span></a><a class="flex items-center justify-between px-space-sm py-space-sm border border-surface-container-high text-secondary hover:border-primary-fixed hover:text-primary-fixed transition-none" data-path="algo-execution" href="#"><span class="font-label-mono-sm text-label-mono-sm uppercase">// ALGO_ROUTER</span><span class="font-label-mono-sm text-label-mono-sm">03</span></a><a aria-current="page" class="flex items-center justify-between px-space-sm py-space-sm transition-none bg-primary-container text-on-primary-container font-bold border-l-2 border-primary-fixed" data-path="risk-exposure" href="#"><span class="font-label-mono-sm text-label-mono-sm uppercase">// VOL_RISK_L2</span><span class="font-label-mono-sm text-label-mono-sm">04</span></a></nav></div><div class="border-t-2 border-surface-container-high pt-space-md flex flex-col gap-space-xs"><span class="font-label-mono-sm text-label-mono-sm text-secondary uppercase">CORE_KERNEL // ACTIVE</span><div class="h-1.5 w-full bg-surface-container-high"><div class="h-full bg-primary-fixed w-3/4"></div></div><div class="flex justify-between font-label-mono-sm text-label-mono-sm text-secondary"><span>LOAD: 74.2%</span><span>TPS: 184K</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest border-b-2 border-surface-container-high z-40 px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-md font-label-mono-sm text-label-mono-sm text-secondary uppercase"><span>FRAME_INDEX: [16:9_WIDE]</span><span class="text-primary-fixed">COORD: [X:1920 // Y:1080]</span></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><span class="w-2 h-2 rounded-full bg-primary-fixed inline-block animate-ping"></span><span class="font-label-mono-sm text-label-mono-sm text-primary-fixed uppercase">NYC 09:29:58.42 UTC-4 // LSE 14:29:58 // HKG 21:29:58</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 bg-surface-container-lowest hud-grid min-h-[calc(100vh-48px)] p-space-lg"><div class="flex flex-col w-full">
+<div class="relative w-full aspect-[16/9] bg-surface-container-lowest border-2 border-surface-container-high overflow-hidden select-none flex flex-col justify-between p-space-lg">
+<div class="absolute inset-0 pointer-events-none hud-grid opacity-80 z-0"></div>
+<div class="absolute top-2 left-2 text-primary-fixed-dim font-label-mono-sm text-label-mono-sm z-10 leading-none">+</div>
+<div class="absolute top-2 right-2 text-primary-fixed-dim font-label-mono-sm text-label-mono-sm z-10 leading-none">+</div>
+<div class="absolute bottom-2 left-2 text-primary-fixed-dim font-label-mono-sm text-label-mono-sm z-10 leading-none">+</div>
+<div class="absolute bottom-2 right-2 text-primary-fixed-dim font-label-mono-sm text-label-mono-sm z-10 leading-none">+</div>
+<div class="relative z-10 flex items-center justify-between border-b-2 border-surface-container-high pb-space-sm bg-surface-container-lowest/90">
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="inline-block w-2.5 h-2.5 bg-primary-fixed"></span>
+<span class="font-label-mono-lg text-label-mono-lg text-primary font-bold tracking-widest uppercase">NEXUS / TERMINAL</span>
+</div>
+<span class="font-label-mono-sm text-label-mono-sm text-secondary bg-surface-container-high px-space-xs py-0.5 border border-surface-container-highest">BUILD_4.8.2 // PROD_NY4</span>
+</div>
+<div class="flex items-center gap-space-lg">
+<div class="flex items-center gap-space-xs font-label-mono-sm text-label-mono-sm text-secondary">
+<span class="text-secondary-fixed">COORD:</span>
+<span class="text-primary font-bold">[X:1920 // Y:1080]</span>
+</div>
+<div class="flex items-center gap-space-xs font-label-mono-sm text-label-mono-sm">
+<span class="text-primary-fixed font-bold tracking-wider">16:00:00.000 EST</span>
+<span class="text-secondary">// MARKET CLOSED</span>
+</div>
+</div>
+</div>
+<div class="relative z-10 my-auto flex flex-col justify-center px-space-xl">
+<div class="flex items-center gap-space-sm mb-space-sm font-label-mono-sm text-label-mono-sm text-primary-fixed uppercase tracking-widest">
+<span>[SEQUENCE // 04_END_TRANSIT]</span>
+<span class="text-secondary">SYS_HASH: 0x8F94C2B149E0</span>
+<span class="text-primary-fixed ml-auto flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-primary-fixed animate-ping"></span>
+          LOCK: DETERMINISTIC
+        </span>
+</div>
+<div class="flex flex-col tracking-tighter leading-none mb-space-lg">
+<h1 class="font-display-xl text-display-xl text-primary font-bold uppercase tracking-tight m-0">
+          THE MARKET DOES NOT WAIT.
+        </h1>
+<h2 class="font-display-xl text-display-xl text-primary-fixed font-bold uppercase tracking-tight m-0 mt-1">
+          TRADE WITH DETERMINISTIC ADVANTAGE.
+        </h2>
+</div>
+<div class="w-full flex items-center mb-space-xl">
+<div class="h-[2px] bg-primary-fixed w-1/3"></div>
+<div class="h-[2px] bg-surface-container-high w-2/3"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 border-2 border-surface-container-high bg-surface-container-lowest">
+<div class="p-space-md border-b md:border-b-0 md:border-r-2 border-surface-container-high flex flex-col justify-between gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary uppercase tracking-wider">URL // ENTRY</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed">[PORT: 443]</span>
+</div>
+<div class="flex items-center gap-space-xs pt-space-xs">
+<span class="font-label-mono-lg text-label-mono-lg text-primary-fixed font-bold">&gt;</span>
+<a class="font-label-mono-lg text-label-mono-lg text-primary hover:text-primary-fixed transition-none font-bold tracking-wide" href="https://nexus.example/terminal">
+              NEXUS.MARKETS/TERMINAL
+            </a>
+</div>
+<span class="font-label-mono-sm text-label-mono-sm text-secondary pt-space-xs border-t border-surface-container-high">PROTO: TLS 1.3 // ZERO PROXY</span>
+</div>
+<div class="p-space-md border-b md:border-b-0 md:border-r-2 border-surface-container-high flex flex-col justify-between gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary uppercase tracking-wider">DIRECT DMA DESK</span>
+<span class="font-label-mono-sm text-label-mono-sm text-secondary">FIX 4.4 / 5.0</span>
+</div>
+<div class="pt-space-xs">
+<a class="font-label-mono-lg text-label-mono-lg text-primary hover:text-primary-fixed transition-none font-bold tracking-wide break-all" href="mailto:institutional@nexus.example">
+              INSTITUTIONAL@NEXUS.MARKETS
+            </a>
+</div>
+<span class="font-label-mono-sm text-label-mono-sm text-secondary pt-space-xs border-t border-surface-container-high">SLA: &lt; 850ns TICK-TO-TRADE</span>
+</div>
+<div class="p-space-md flex flex-col justify-between gap-space-xs bg-surface-container-lowest">
+<div class="flex items-center justify-between">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary uppercase tracking-wider">ACCESS STATUS</span>
+<span class="font-label-mono-sm text-label-mono-sm text-primary-fixed uppercase tracking-wider">● [ACTIVE]</span>
+</div>
+<div class="pt-space-xs">
+<span class="font-label-mono-lg text-label-mono-lg text-primary-fixed font-bold tracking-wide uppercase">
+              OPEN TO QUANTITATIVE FUNDS &amp; MARKET MAKERS
+            </span>
+</div>
+<span class="font-label-mono-sm text-label-mono-sm text-secondary pt-space-xs border-t border-surface-container-high">KYB / LEI CLEARANCE REQUIRED</span>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-space-xs mt-space-md">
+<p class="font-label-mono-sm text-label-mono-sm text-secondary uppercase tracking-widest">
+          HOSTED IN EQUINIX NY4 / LD4 // DIRECT FIBER CONNECTIONS AVAILABLE // API KEYS VIA PGP
+        </p>
+<div class="flex items-center gap-space-sm font-label-mono-sm text-label-mono-sm text-secondary">
+<span class="border border-surface-container-high px-space-xs py-0.5 text-primary">CROSS-CONNECT: READY</span>
+<span class="border border-surface-container-high px-space-xs py-0.5 text-primary">AURORA FPGA v3</span>
+</div>
+</div>
+</div>
+<div class="relative z-10 flex items-center justify-between border-t-2 border-surface-container-high pt-space-sm bg-surface-container-lowest/90 font-label-mono-sm text-label-mono-sm">
+<div class="flex items-center gap-space-md text-secondary uppercase">
+<span class="text-primary font-bold">SESSION ARCHIVE: STORED &amp; IMMUTABLE</span>
+<span>MERKLE_ROOT: 4b29c9fa1807d</span>
+<span class="hidden sm:inline">LATENCY: 1.18µs PEAK</span>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="text-secondary uppercase">STORYBOARD INDEX</span>
+<div class="border-2 border-primary-fixed bg-surface-container-lowest px-space-sm py-0.5 text-primary-fixed font-bold tracking-wider">
+          SCENE 04 / 04
+        </div>
+</div>
+</div>
+</div>
+</div></main><footer class="fixed bottom-0 left-64 right-0 h-12 bg-surface-container-lowest border-t-2 border-surface-container-high z-40 px-space-lg flex items-center justify-between font-label-mono-sm text-label-mono-sm"><div class="text-secondary uppercase">[FEED: NASDAQ L3 ULTRA-LOW LATENCY // ORDER ROUTER: DIRECT DMA]</div><div class="border-2 border-primary-fixed px-space-sm py-0.5 text-primary-fixed font-bold uppercase tracking-wider bg-surface-container-lowest">SCENE // 04.9A</div></footer></div></body></html>

@@ -15,3 +15,12 @@ The music terms were checked against ende.app's FAQ on 2026-09-29.
 | Files | Source | Licence |
 |---|---|---|
 | `kokoro-v1.0.onnx`, `kokoro-v1.0.int8.onnx`, `voices-v1.0.bin` (release `tts-v1`) | [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) weights, ONNX export from [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx) `model-files-v1.0` | Weights: Apache-2.0. Export and runtime library: MIT |
+
+## Style references (`skills/brag-styles/sets/`)
+
+| Files | Source | Terms |
+|---|---|---|
+| `DESIGN.md`, `ref/*.html`, `frames/*.webp`, `assets/*` | Generated with Google Stitch for this repo, then sanitised on import (`scripts/import_stitch.py`) | Distributed under this repo's MIT licence. The images are AI-generated mood references: they are not photographs of real products, and all copy in them is placeholder. |
+| Material Symbols (loaded by `ref/*.html`) | Google | Apache-2.0 |
+| Fonts named in each `set.md` | Google Fonts | SIL Open Font License 1.1 (loaded at render time, not bundled) |
+

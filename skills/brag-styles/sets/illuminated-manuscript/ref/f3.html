@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "on-surface": "#241911",
+          "outline": "#8d706c",
+          "error-container": "#ffdad6",
+          "on-error-container": "#93000a",
+          "secondary-fixed": "#d8e2ff",
+          "on-background": "#241911",
+          "secondary-container": "#95b5ff",
+          "background": "#fff8f5",
+          "on-secondary-fixed": "#001a43",
+          "on-tertiary-container": "#f9c755",
+          "surface-tint": "#b22a23",
+          "primary-fixed-dim": "#ffb4aa",
+          "tertiary-fixed": "#ffdf9e",
+          "tertiary": "#533d00",
+          "inverse-surface": "#3a2e24",
+          "on-tertiary-fixed-variant": "#5b4300",
+          "on-tertiary": "#ffffff",
+          "secondary": "#3b5da0",
+          "on-secondary-fixed-variant": "#1f4586",
+          "surface-bright": "#fff8f5",
+          "on-secondary": "#ffffff",
+          "surface-container-highest": "#f4dfd0",
+          "surface-variant": "#f4dfd0",
+          "primary-container": "#a8231d",
+          "on-tertiary-fixed": "#261a00",
+          "inverse-primary": "#ffb4aa",
+          "on-primary-container": "#ffbeb6",
+          "on-surface-variant": "#5a413d",
+          "error": "#ba1a1a",
+          "on-primary-fixed": "#410001",
+          "surface-container-low": "#fff1e8",
+          "on-primary": "#ffffff",
+          "tertiary-fixed-dim": "#f1c04e",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-high": "#f9e4d6",
+          "primary": "#860408",
+          "tertiary-container": "#705300",
+          "surface-container": "#ffeadc",
+          "surface": "#fff8f5",
+          "secondary-fixed-dim": "#afc6ff",
+          "surface-dim": "#ebd6c8",
+          "primary-fixed": "#ffdad5",
+          "inverse-on-surface": "#ffeee2",
+          "on-error": "#ffffff",
+          "outline-variant": "#e2beba",
+          "on-secondary-container": "#204587",
+          "on-primary-fixed-variant": "#8f0e0e"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "margin-mobile": "1rem",
+          "space-xl": "2.5rem",
+          "gutter-sm": "1rem",
+          "space-lg": "1.5rem",
+          "space-sm": "0.5rem",
+          "gutter": "1.5rem",
+          "margin": "2rem",
+          "gutter-lg": "2.5rem",
+          "space-xs": "0.25rem",
+          "margin-desktop": "4rem",
+          "space-md": "1rem"
+        },
+        "fontFamily": {
+          "body-md": [
+            "EB Garamond"
+          ],
+          "body-italic": [
+            "EB Garamond"
+          ],
+          "display-hero-mobile": [
+            "EB Garamond"
+          ],
+          "body-sm": [
+            "EB Garamond"
+          ],
+          "body-lg": [
+            "EB Garamond"
+          ],
+          "label-gloss": [
+            "EB Garamond"
+          ],
+          "headline-lg-mobile": [
+            "EB Garamond"
+          ],
+          "title-rubric": [
+            "EB Garamond"
+          ],
+          "headline-sm": [
+            "EB Garamond"
+          ],
+          "headline-md": [
+            "EB Garamond"
+          ],
+          "label-scholastic": [
+            "JetBrains Mono"
+          ],
+          "headline-lg": [
+            "EB Garamond"
+          ],
+          "display-hero": [
+            "EB Garamond"
+          ]
+        },
+        "fontSize": {
+          "body-md": [
+            "17px",
+            {
+              "lineHeight": "26px",
+              "letterSpacing": "0.005em",
+              "fontWeight": "400"
+            }
+          ],
+          "body-italic": [
+            "17px",
+            {
+              "lineHeight": "26px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "400"
+            }
+          ],
+          "display-hero-mobile": [
+            "36px",
+            {
+              "lineHeight": "44px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-sm": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "body-lg": [
+            "19px",
+            {
+              "lineHeight": "30px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "400"
+            }
+          ],
+          "label-gloss": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.03em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-lg-mobile": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "title-rubric": [
+            "16px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0.08em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-sm": [
+            "20px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "0em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-md": [
+            "26px",
+            {
+              "lineHeight": "34px",
+              "letterSpacing": "0.005em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-scholastic": [
+            "11px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.12em",
+              "fontWeight": "500"
+            }
+          ],
+          "headline-lg": [
+            "38px",
+            {
+              "lineHeight": "46px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "display-hero": [
+            "56px",
+            {
+              "lineHeight": "64px",
+              "letterSpacing": "0.02em",
+              "fontWeight": "700"
+            }
+          ]
+        }
+      },
+    },
+  }</script></head><body class="bg-[#efe2c3] text-on-surface font-body-md text-body-md select-none min-h-screen relative overflow-x-hidden"><div class="fixed inset-y-0 left-3 w-1.5 flex flex-col justify-between py-12 pointer-events-none z-50 opacity-40"><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div></div><div class="fixed inset-y-0 right-3 w-1.5 flex flex-col justify-between py-12 pointer-events-none z-50 opacity-40"><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div></div><header class="fixed top-0 left-0 right-0 z-40 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between"><div class="flex items-center gap-space-md"><span class="font-label-scholastic text-label-scholastic text-primary tracking-widest uppercase">SCRIPT. REG. TUDOR // MMXXIV</span><span class="font-label-scholastic text-label-scholastic text-on-surface-variant opacity-60">|</span><span class="font-label-scholastic text-label-scholastic text-on-surface-variant tracking-wider uppercase">ASPECT RATIO 16:9 • ANAMORPHIC</span></div><nav class="flex items-center gap-space-md" data-active-classes="bg-primary-container text-on-primary-container"><a aria-current="page" class="font-title-rubric px-3 py-1 rounded transition-colors bg-primary-container text-on-primary-container" data-path="storyboard-presentation" href="#">Folio Projection</a><a class="font-title-rubric text-title-rubric text-on-surface-variant hover:text-on-surface px-3 py-1 rounded transition-colors" data-path="scene-catalogue" href="#">Canons of Sequence</a><a class="font-title-rubric text-title-rubric text-on-surface-variant hover:text-on-surface px-3 py-1 rounded transition-colors" data-path="scholastic-annotations" href="#">Marginalia Glossa</a></nav><div class="flex items-center gap-space-md"><div class="text-right hidden sm:block"><div class="font-label-scholastic text-label-scholastic text-tertiary-container tracking-wider">FOLIO REF: CIX-r</div><div class="font-label-scholastic text-label-scholastic text-on-surface-variant opacity-75">CIPHER NX-SECULARIS</div></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-[#efe2c3]"><div class="flex flex-col w-full">
+<!-- Widescreen 16:9 Presentation Frame Container -->
+<div class="w-full max-w-[1920px] mx-auto p-4 sm:p-6 lg:p-10 flex flex-col items-center">
+<!-- Outer Manuscript Board with Van de Graaf Grid Alignment -->
+<div class="relative w-full aspect-[16/9] bg-surface shadow-2xl rounded-lg overflow-hidden flex flex-col justify-between p-6 lg:p-10 select-none">
+<!-- Faint Leadpoint Ruled Rulings Background Layer -->
+<div class="absolute inset-0 pointer-events-none opacity-20">
+<svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="24" id="leadpoint" patternunits="userSpaceOnUse" width="100%">
+<line stroke="#8d706c" stroke-dasharray="3 3" stroke-width="0.75" x1="0" x2="100%" y1="24" y2="24"></line>
+</pattern>
+</defs>
+<rect fill="url(#leadpoint)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<!-- Simulated Parchment Folio Pricking Marks on Left & Right Boundaries -->
+<div class="absolute top-0 bottom-0 left-2 w-1 flex flex-col justify-between py-6 pointer-events-none opacity-40">
+<div class="w-1.5 h-1.5 bg-outline rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-outline rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-outline rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-outline rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-outline rounded-full"></div>
+</div>
+<div class="absolute top-0 bottom-0 right-2 w-1 flex flex-col justify-between py-6 pointer-events-none opacity-40">
+<div class="w-1.5 h-1.5 bg-outline rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-outline rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-outline rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-outline rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-outline rounded-full"></div>
+</div>
+<!-- 1. Top Folio Running Header -->
+<header class="relative z-10 w-full flex items-center justify-between pb-3 bg-surface-container/60 backdrop-blur-sm px-6 py-2 rounded-t">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-primary inline-block"></span>
+<span class="font-label-scholastic text-label-scholastic text-primary tracking-widest uppercase">FOLIO TERTIO // CANON INVARIANTIAE</span>
+<span class="font-label-scholastic text-label-scholastic text-outline">•</span>
+<span class="font-body-italic text-body-sm text-on-surface-variant">Tomus Primus Secularis</span>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-scholastic text-label-scholastic text-tertiary-container tracking-wider uppercase">SCENA III • PROBATIO DETERMINISTICA • FIDES ABSOLUTA</span>
+<span class="bg-primary text-on-primary font-label-scholastic text-[10px] px-2 py-0.5 rounded tracking-widest font-semibold uppercase">NX-VERIF</span>
+</div>
+</header>
+<!-- Centerpiece Section: Tracery Margins + Monumental Roundel + Flanking Medallions -->
+<div class="relative z-10 my-auto grid grid-cols-12 gap-4 lg:gap-6 items-center w-full px-2 lg:px-6">
+<!-- Left Flank: Acanthus Tracery, Whimsical Dragon Marginalia & Latency Medallion -->
+<div class="col-span-3 flex flex-col items-center justify-between h-full gap-4">
+<!-- Whimsical Tudor Drollery Marginalia -->
+<div class="w-full bg-surface-container-low/90 p-3 rounded-lg shadow-sm relative group overflow-hidden">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-scholastic text-[10px] text-primary tracking-widest uppercase">MARGINALIA NX.309</span>
+<span class="material-symbols-outlined text-tertiary text-sm">auto_stories</span>
+</div>
+<!-- Inline SVG: Two-headed Heraldic Dragon Drollery with Psaltery & Silicon Wafer -->
+<div class="w-full h-32 flex items-center justify-center relative">
+<svg class="w-full h-full text-on-surface" viewbox="0 0 240 140" xmlns="http://www.w3.org/2000/svg">
+<!-- Golden acanthus vine loop -->
+<path d="M 20,110 C 60,130 90,80 140,115 C 190,140 220,100 230,60" fill="none" stroke="#705300" stroke-linecap="round" stroke-width="2"></path>
+<!-- Strawberry blossom & gilded bezants -->
+<circle cx="35" cy="115" fill="#860408" r="4"></circle>
+<circle cx="95" cy="85" fill="#f1c04e" r="3.5"></circle>
+<circle cx="150" cy="120" fill="#f1c04e" r="3"></circle>
+<circle cx="210" cy="95" fill="#a8231d" r="4.5"></circle>
+<!-- Dragon Body in Tudor heraldic lapis and cinnabar -->
+<path d="M 60,95 Q 85,45 125,75 Q 160,105 180,65 Q 195,40 165,30 Q 130,20 110,45 Z" fill="#3b5da0" fill-opacity="0.25" stroke="#3b5da0" stroke-width="1.75"></path>
+<!-- Head 1: Gazing at Psaltery -->
+<path d="M 70,55 C 50,45 40,65 55,75 Z" fill="#860408" stroke="#860408" stroke-width="1.5"></path>
+<circle cx="58" cy="58" fill="#ffffff" r="1.5"></circle>
+<!-- Head 2: Gazing intently at Silicon Wafer -->
+<path d="M 175,40 C 195,30 205,50 185,60 Z" fill="#705300" stroke="#705300" stroke-width="1.5"></path>
+<circle cx="186" cy="44" fill="#ffffff" r="1.5"></circle>
+<!-- Medieval Psaltery (Zither instrument) -->
+<polygon fill="#ffeadc" points="75,85 105,75 100,105 70,100" stroke="#241911" stroke-width="1.5"></polygon>
+<line stroke="#860408" stroke-width="0.75" x1="77" x2="72" y1="87" y2="99"></line>
+<line stroke="#860408" stroke-width="0.75" x1="85" x2="80" y1="83" y2="101"></line>
+<line stroke="#860408" stroke-width="0.75" x1="93" x2="88" y1="79" y2="103"></line>
+<!-- Levitating Hexagonal Monocrystalline Silicon Chip Wafer -->
+<polygon fill="#d8e2ff" points="210,40 222,46 222,60 210,66 198,60 198,46" stroke="#3b5da0" stroke-width="1.2"></polygon>
+<line stroke="#3b5da0" stroke-width="0.75" x1="205" x2="215" y1="48" y2="58"></line>
+<line stroke="#3b5da0" stroke-width="0.75" x1="215" x2="205" y1="48" y2="58"></line>
+<!-- Mystic spark rays from silicon wafer -->
+<line stroke="#f1c04e" stroke-width="1.5" x1="210" x2="210" y1="34" y2="30"></line>
+<line stroke="#f1c04e" stroke-width="1.5" x1="228" x2="233" y1="53" y2="53"></line>
+<line stroke="#f1c04e" stroke-width="1.5" x1="192" x2="187" y1="53" y2="53"></line>
+</svg>
+</div>
+<p class="font-body-italic text-xs text-on-surface-variant leading-tight mt-1 text-center">
+              "Draco Biceps psalterium tangit ac crystallum siliconis contemplatur."
+            </p>
+</div>
+<!-- Left Metric Medallion: Latentia -->
+<div class="w-full bg-surface-container p-4 rounded-xl shadow-md text-center relative overflow-hidden group hover:scale-[1.02] transition-transform">
+<div class="absolute -right-6 -bottom-6 w-20 h-20 bg-primary/10 rounded-full pointer-events-none"></div>
+<div class="font-label-scholastic text-label-scholastic text-primary tracking-widest uppercase mb-1">
+              LATENTIA WIRE-TO-WIRE
+            </div>
+<div class="font-display-hero-mobile text-3xl font-bold text-on-surface tracking-tight">
+              840 <span class="font-title-rubric text-lg text-primary">ns</span>
+</div>
+<div class="mt-2 text-xs font-label-scholastic text-on-surface-variant flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary">speed</span>
+<span>Sub-microsecond determinism</span>
+</div>
+</div>
+</div>
+<!-- Center Monumental Roundel (Col-Span 6) -->
+<div class="col-span-6 flex flex-col items-center justify-center">
+<!-- Outer Burnished Gold & Acanthus Circular Shrine -->
+<div class="relative w-80 h-80 sm:w-96 sm:h-96 rounded-full p-2 bg-gradient-to-br from-tertiary-fixed via-tertiary to-primary-container shadow-2xl flex items-center justify-center">
+<!-- Concentric Bezel Ring -->
+<div class="w-full h-full rounded-full p-2 bg-surface-container-high flex items-center justify-center relative">
+<!-- Deep Lapis Blue Field spangled with golden fleurons -->
+<div class="w-full h-full rounded-full bg-secondary flex flex-col items-center justify-center relative overflow-hidden shadow-inner px-4 text-center">
+<!-- Spangled Gold Star Fleurons Pattern -->
+<div class="absolute inset-0 pointer-events-none opacity-25">
+<svg class="w-full h-full" viewbox="0 0 100 100">
+<circle cx="20" cy="25" fill="#ffdf9e" r="1.5"></circle>
+<circle cx="80" cy="25" fill="#ffdf9e" r="1.5"></circle>
+<circle cx="15" cy="70" fill="#ffdf9e" r="1.5"></circle>
+<circle cx="85" cy="70" fill="#ffdf9e" r="1.5"></circle>
+<circle cx="50" cy="15" fill="#ffdf9e" r="2"></circle>
+<circle cx="50" cy="85" fill="#ffdf9e" r="2"></circle>
+</svg>
+</div>
+<!-- Top Illuminated Scroll Banner: Invariantia -->
+<div class="relative z-10 -mt-2 mb-2 bg-tertiary-fixed text-on-tertiary-fixed px-5 py-1 rounded shadow-md">
+<span class="font-headline-sm text-sm sm:text-base font-bold uppercase tracking-widest">
+                    Invariantia
+                  </span>
+</div>
+<!-- Colossal Dual Numerals 1: Arabic Gilded Invariance -->
+<div class="relative z-10 flex items-baseline justify-center gap-0.5">
+<span class="font-display-hero text-5xl sm:text-7xl font-bold tracking-tight text-tertiary-fixed drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
+                    99.999
+                  </span>
+<span class="font-headline-lg text-3xl sm:text-4xl font-bold text-tertiary-fixed-dim">
+                    %
+                  </span>
+</div>
+<!-- Colossal Dual Numerals 2: Tudor Roman Gilded Numeral Flanking -->
+<div class="relative z-10 mt-1 px-4 py-1 rounded-full bg-surface-container-lowest/20 backdrop-blur-sm">
+<span class="font-title-rubric text-xs sm:text-sm text-tertiary-fixed tracking-widest font-semibold uppercase">
+                    XCIX · CMXCIX ‰
+                  </span>
+</div>
+<span class="relative z-10 font-label-scholastic text-[10px] text-secondary-fixed mt-1 tracking-wider uppercase opacity-90">
+                  Secularis Determinata
+                </span>
+</div>
+</div>
+</div>
+<!-- Solemn Invariance Proclamation Plate -->
+<div class="mt-4 text-center max-w-xl bg-surface-container-lowest/80 p-4 rounded-lg shadow-sm">
+<div class="font-title-rubric text-primary tracking-widest text-base sm:text-lg uppercase flex items-center justify-center gap-2">
+<span>¶</span>
+<span>DETERMINISTIC INVARIANCE GUARANTEED</span>
+<span>¶</span>
+</div>
+<p class="font-body-md text-on-surface mt-1 text-sm sm:text-base leading-snug">
+              Zero unmatched fills in 1,400,000,000 royal transactions under peak market tumult. Verified without drift, neither jitter nor loss shall shake the foundation of silicon.
+            </p>
+</div>
+</div>
+<!-- Right Flank: Strawberry Vine Tracery, Jitter Medallion & Royal Verification Seal -->
+<div class="col-span-3 flex flex-col items-center justify-between h-full gap-4">
+<!-- Right Metric Medallion: Jitter -->
+<div class="w-full bg-surface-container p-4 rounded-xl shadow-md text-center relative overflow-hidden group hover:scale-[1.02] transition-transform">
+<div class="absolute -left-6 -bottom-6 w-20 h-20 bg-secondary/10 rounded-full pointer-events-none"></div>
+<div class="font-label-scholastic text-label-scholastic text-secondary tracking-widest uppercase mb-1">
+              JITTER DEVIATIO RMS
+            </div>
+<div class="font-display-hero-mobile text-3xl font-bold text-on-surface tracking-tight">
+              ±0.00 <span class="font-title-rubric text-lg text-secondary">ps</span>
+</div>
+<div class="mt-2 text-xs font-label-scholastic text-on-surface-variant flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">grain</span>
+<span>Zero drift quartz synch</span>
+</div>
+</div>
+<!-- Micro Sparkline / Proof of Execution Cadence -->
+<div class="w-full bg-surface-container-low p-4 rounded-lg shadow-sm flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-scholastic text-[11px] text-on-surface-variant uppercase tracking-wider">Flumen Ordinum</span>
+<span class="font-label-scholastic text-[11px] text-primary">1.4B / FLUX</span>
+</div>
+<!-- Hand-drawn style Sparkline Cadence SVG -->
+<div class="w-full h-12">
+<svg class="w-full h-full text-primary" fill="none" stroke="currentColor" viewbox="0 0 200 40">
+<path d="M 0,20 L 25,20 L 30,12 L 35,28 L 40,20 L 75,20 L 80,10 L 85,30 L 90,20 L 130,20 L 135,15 L 140,25 L 145,20 L 175,20 L 180,8 L 185,32 L 190,20 L 200,20" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="flex justify-between font-label-scholastic text-[10px] text-outline">
+<span>T₀ + 0.000ms</span>
+<span>T_FINIS</span>
+</div>
+</div>
+<!-- Wax Seal Signature of Pure Arithmetic -->
+<div class="w-full bg-surface-container-high/70 p-3 rounded-lg flex items-center gap-3 shadow-inner">
+<div class="w-12 h-12 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-on-primary shadow-md">
+<span class="font-headline-md font-bold text-sm tracking-wider">NX</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-rubric text-xs text-on-surface truncate font-semibold">SIGILLUM REGALE</span>
+<span class="font-label-scholastic text-[10px] text-on-surface-variant truncate">Arithmetica Inviolabilis</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 6. Bottom Foliation Bar & Storyboard Controls -->
+<footer class="relative z-10 w-full pt-3 px-6 py-2 bg-surface-container/60 backdrop-blur-sm rounded-b flex flex-col sm:flex-row items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<span class="font-label-scholastic text-label-scholastic text-primary tracking-widest font-semibold uppercase">
+            CERTIFICATUM PER ARITHMETICAM PURAM
+          </span>
+<span class="text-outline font-label-scholastic">•</span>
+<span class="font-label-scholastic text-label-scholastic text-on-surface-variant tracking-wider uppercase">
+            REGALIS COMPROBATIO CIX-r
+          </span>
+</div>
+<!-- Storyboard Step Indicator (Frame 3 of 4 highlighted) -->
+<div class="flex items-center gap-2">
+<span class="font-label-scholastic text-[10px] text-on-surface-variant uppercase mr-1">SCENARIUM:</span>
+<div class="w-2.5 h-2.5 rounded-full bg-outline-variant"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-outline-variant"></div>
+<div class="w-7 h-2.5 rounded-full bg-primary flex items-center justify-center">
+<span class="text-[8px] font-bold text-on-primary">III</span>
+</div>
+<div class="w-2.5 h-2.5 rounded-full bg-outline-variant"></div>
+</div>
+<div class="flex items-center gap-2">
+<button class="font-title-rubric text-xs px-3 py-1 bg-primary text-on-primary rounded shadow hover:bg-primary-container transition-colors flex items-center gap-1" id="toggle-rubric-sound">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span>Comprobatum</span>
+</button>
+</div>
+</footer>
+</div>
+<!-- Marginalia Notes Gutter directly below the 16:9 Cinema Canvas -->
+<div class="w-full mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center px-4 font-label-scholastic text-[11px] text-on-surface-variant gap-2">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-primary">NX-SCRIBAL NOTE:</span>
+<span>Leadpoint baseline 8px verified. Anamorphic 16:9 projection rendered at 100% vector accuracy.</span>
+</div>
+<div>
+<span>CIPHER: 0x99_999_DETERMINISTIC_INVARIANCE</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple micro-interaction for the verification button
+  document.getElementById('toggle-rubric-sound')?.addEventListener('click', function() {
+    this.classList.toggle('bg-tertiary');
+    const label = this.querySelector('span:last-child');
+    if (label.innerText === 'Comprobatum') {
+      label.innerText = 'Sigillatum Est';
+    } else {
+      label.innerText = 'Comprobatum';
+    }
+  });
+</script></main><footer class="w-full bg-surface-container-low/75 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="max-w-7xl mx-auto px-6 lg:px-12 py-space-md flex flex-col md:flex-row items-center justify-between gap-space-sm"><div class="flex items-center gap-space-md"><span class="font-label-scholastic text-label-scholastic text-primary tracking-widest">NX OFFICINA SCRIBÆ</span><span class="font-label-scholastic text-label-scholastic text-outline">•</span><span class="font-body-italic text-body-italic text-on-surface-variant text-sm">Hand-ground mineral pigments, cinnabar rubrications &amp; speculative silicon illuminations.</span></div><div class="flex items-center gap-space-md font-label-scholastic text-label-scholastic text-on-surface-variant"><span class="uppercase tracking-wider">CALCULATED LEADPOINT GRID: 8PX</span><span class="text-outline">•</span><span class="uppercase tracking-wider">SIGILLUM AUTHENTICUM</span></div></div></footer></body></html>

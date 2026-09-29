@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "on-surface": "#241911",
+          "outline": "#8d706c",
+          "error-container": "#ffdad6",
+          "on-error-container": "#93000a",
+          "secondary-fixed": "#d8e2ff",
+          "on-background": "#241911",
+          "secondary-container": "#95b5ff",
+          "background": "#fff8f5",
+          "on-secondary-fixed": "#001a43",
+          "on-tertiary-container": "#f9c755",
+          "surface-tint": "#b22a23",
+          "primary-fixed-dim": "#ffb4aa",
+          "tertiary-fixed": "#ffdf9e",
+          "tertiary": "#533d00",
+          "inverse-surface": "#3a2e24",
+          "on-tertiary-fixed-variant": "#5b4300",
+          "on-tertiary": "#ffffff",
+          "secondary": "#3b5da0",
+          "on-secondary-fixed-variant": "#1f4586",
+          "surface-bright": "#fff8f5",
+          "on-secondary": "#ffffff",
+          "surface-container-highest": "#f4dfd0",
+          "surface-variant": "#f4dfd0",
+          "primary-container": "#a8231d",
+          "on-tertiary-fixed": "#261a00",
+          "inverse-primary": "#ffb4aa",
+          "on-primary-container": "#ffbeb6",
+          "on-surface-variant": "#5a413d",
+          "error": "#ba1a1a",
+          "on-primary-fixed": "#410001",
+          "surface-container-low": "#fff1e8",
+          "on-primary": "#ffffff",
+          "tertiary-fixed-dim": "#f1c04e",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-high": "#f9e4d6",
+          "primary": "#860408",
+          "tertiary-container": "#705300",
+          "surface-container": "#ffeadc",
+          "surface": "#fff8f5",
+          "secondary-fixed-dim": "#afc6ff",
+          "surface-dim": "#ebd6c8",
+          "primary-fixed": "#ffdad5",
+          "inverse-on-surface": "#ffeee2",
+          "on-error": "#ffffff",
+          "outline-variant": "#e2beba",
+          "on-secondary-container": "#204587",
+          "on-primary-fixed-variant": "#8f0e0e"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "margin-mobile": "1rem",
+          "space-xl": "2.5rem",
+          "gutter-sm": "1rem",
+          "space-lg": "1.5rem",
+          "space-sm": "0.5rem",
+          "gutter": "1.5rem",
+          "margin": "2rem",
+          "gutter-lg": "2.5rem",
+          "space-xs": "0.25rem",
+          "margin-desktop": "4rem",
+          "space-md": "1rem"
+        },
+        "fontFamily": {
+          "body-md": [
+            "EB Garamond"
+          ],
+          "body-italic": [
+            "EB Garamond"
+          ],
+          "display-hero-mobile": [
+            "EB Garamond"
+          ],
+          "body-sm": [
+            "EB Garamond"
+          ],
+          "body-lg": [
+            "EB Garamond"
+          ],
+          "label-gloss": [
+            "EB Garamond"
+          ],
+          "headline-lg-mobile": [
+            "EB Garamond"
+          ],
+          "title-rubric": [
+            "EB Garamond"
+          ],
+          "headline-sm": [
+            "EB Garamond"
+          ],
+          "headline-md": [
+            "EB Garamond"
+          ],
+          "label-scholastic": [
+            "JetBrains Mono"
+          ],
+          "headline-lg": [
+            "EB Garamond"
+          ],
+          "display-hero": [
+            "EB Garamond"
+          ]
+        },
+        "fontSize": {
+          "body-md": [
+            "17px",
+            {
+              "lineHeight": "26px",
+              "letterSpacing": "0.005em",
+              "fontWeight": "400"
+            }
+          ],
+          "body-italic": [
+            "17px",
+            {
+              "lineHeight": "26px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "400"
+            }
+          ],
+          "display-hero-mobile": [
+            "36px",
+            {
+              "lineHeight": "44px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-sm": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "body-lg": [
+            "19px",
+            {
+              "lineHeight": "30px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "400"
+            }
+          ],
+          "label-gloss": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.03em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-lg-mobile": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "title-rubric": [
+            "16px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0.08em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-sm": [
+            "20px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "0em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-md": [
+            "26px",
+            {
+              "lineHeight": "34px",
+              "letterSpacing": "0.005em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-scholastic": [
+            "11px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.12em",
+              "fontWeight": "500"
+            }
+          ],
+          "headline-lg": [
+            "38px",
+            {
+              "lineHeight": "46px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "display-hero": [
+            "56px",
+            {
+              "lineHeight": "64px",
+              "letterSpacing": "0.02em",
+              "fontWeight": "700"
+            }
+          ]
+        }
+      },
+    },
+  }</script></head><body class="bg-[#efe2c3] text-on-surface font-body-md text-body-md select-none min-h-screen relative overflow-x-hidden"><div class="fixed inset-y-0 left-3 w-1.5 flex flex-col justify-between py-12 pointer-events-none z-50 opacity-40"><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div></div><div class="fixed inset-y-0 right-3 w-1.5 flex flex-col justify-between py-12 pointer-events-none z-50 opacity-40"><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div><div class="w-1.5 h-1.5 rounded-full bg-outline"></div></div><header class="fixed top-0 left-0 right-0 z-40 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between"><div class="flex items-center gap-space-md"><span class="font-label-scholastic text-label-scholastic text-primary tracking-widest uppercase">SCRIPT. REG. TUDOR // MMXXIV</span><span class="font-label-scholastic text-label-scholastic text-on-surface-variant opacity-60">|</span><span class="font-label-scholastic text-label-scholastic text-on-surface-variant tracking-wider uppercase">ASPECT RATIO 16:9 • ANAMORPHIC</span></div><nav class="flex items-center gap-space-md" data-active-classes="bg-primary-container text-on-primary-container"><a aria-current="page" class="font-title-rubric px-3 py-1 rounded transition-colors bg-primary-container text-on-primary-container" data-path="storyboard-presentation" href="#">Folio Projection</a><a class="font-title-rubric text-title-rubric text-on-surface-variant hover:text-on-surface px-3 py-1 rounded transition-colors" data-path="scene-catalogue" href="#">Canons of Sequence</a><a class="font-title-rubric text-title-rubric text-on-surface-variant hover:text-on-surface px-3 py-1 rounded transition-colors" data-path="scholastic-annotations" href="#">Marginalia Glossa</a></nav><div class="flex items-center gap-space-md"><div class="text-right hidden sm:block"><div class="font-label-scholastic text-label-scholastic text-tertiary-container tracking-wider">FOLIO REF: CIX-r</div><div class="font-label-scholastic text-label-scholastic text-on-surface-variant opacity-75">CIPHER NX-SECULARIS</div></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-[#efe2c3]"><div class="flex flex-col w-full">
+<!-- Widescreen 16:9 Canvas Enclosure with Leadpoint Ruling and Pricking Guides -->
+<div class="relative w-full max-w-[1920px] mx-auto px-6 py-6 md:px-12 md:py-10 flex flex-col gap-space-lg">
+<!-- Top Folio Headpiece: Pricked Guideline Header -->
+<div class="w-full bg-surface-container-low shadow-sm rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
+<!-- Simulated leadpoint ruled background lines -->
+<div class="absolute inset-0 pointer-events-none opacity-20 flex flex-col justify-between py-2">
+<div class="w-full h-px bg-outline"></div>
+<div class="w-full h-px bg-outline"></div>
+<div class="w-full h-px bg-outline"></div>
+</div>
+<div class="flex items-center gap-space-md z-10">
+<span class="inline-flex items-center justify-center px-2.5 py-1 rounded bg-primary text-on-primary font-label-scholastic text-label-scholastic tracking-wider shadow-sm">
+          FOLIO SECUNDO
+        </span>
+<span class="font-title-rubric text-title-rubric text-primary tracking-widest uppercase">
+          ANATOMIA SYSTEMATIS
+        </span>
+<span class="hidden lg:inline text-outline opacity-50 font-label-scholastic text-label-scholastic">/ /</span>
+<span class="hidden lg:inline font-label-scholastic text-label-scholastic text-on-surface-variant">
+          SCENA II • TRACTATUS DE VELOCITATE
+        </span>
+</div>
+<div class="flex items-center gap-4 z-10">
+<div class="flex items-center gap-2 bg-surface px-3 py-1.5 rounded shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-scholastic text-label-scholastic text-tertiary-container font-semibold uppercase">
+            TEMPORE CLOCK: 840ns DIRECT-TO-GATE
+          </span>
+</div>
+<div class="font-label-scholastic text-label-scholastic text-on-surface-variant bg-surface-container px-3 py-1.5 rounded">
+          PARCHMENT REF. NX-16:9-II
+        </div>
+</div>
+</div>
+<!-- Main Manuscript Folio Spread: 16:9 Architectural Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- Central Miniated Tabula (8 Columns): The Sub-Microsecond Silicon Terminal -->
+<div class="xl:col-span-8 flex flex-col gap-space-md">
+<!-- Illuminated Gothic Architectural Border Frame -->
+<div class="relative bg-surface-container-high rounded-xl p-3 md:p-5 shadow-xl overflow-hidden">
+<!-- Ornate Trefoil & Cusped Arch Surrounds (Gilded and Lapis Illusion) -->
+<div class="flex items-center justify-between px-3 py-2 mb-3 bg-secondary rounded-t-lg text-on-secondary shadow-sm">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed text-[20px]">architecture</span>
+<span class="font-title-rubric text-title-rubric text-tertiary-fixed tracking-wider">
+                TABULA SUB-MICROSECUNDA // TSMC 3NM REGISTRA
+              </span>
+</div>
+<div class="flex items-center gap-2 font-label-scholastic text-label-scholastic text-secondary-fixed">
+<span>MMIO HARDWARE CHANNEL</span>
+<span class="text-tertiary-fixed">•</span>
+<span class="text-tertiary-fixed font-bold">FPGA BARE-METAL</span>
+</div>
+</div>
+<!-- Inside the Painting: Dark Brutalist Terminal Rendered as an Authentic Manuscript Miniature -->
+<div class="relative w-full bg-inverse-surface rounded-lg p-5 text-inverse-on-surface shadow-inner overflow-hidden">
+<!-- Gilded Micro-Architecture Corner Fillets -->
+<div class="absolute top-2 left-2 text-tertiary-fixed-dim opacity-70 pointer-events-none">
+<svg class="stroke-current" fill="none" height="24" viewbox="0 0 24 24" width="24">
+<path d="M2 14V4C2 2.89543 2.89543 2 4 2H14" stroke-width="2"></path>
+<circle cx="6" cy="6" fill="currentColor" r="2"></circle>
+</svg>
+</div>
+<div class="absolute top-2 right-2 text-tertiary-fixed-dim opacity-70 pointer-events-none">
+<svg class="stroke-current" fill="none" height="24" viewbox="0 0 24 24" width="24">
+<path d="M22 14V4C22 2.89543 21.1046 2 20 2H10" stroke-width="2"></path>
+<circle cx="18" cy="6" fill="currentColor" r="2"></circle>
+</svg>
+</div>
+<!-- Terminal Visual: Order Book Depth & Packet Waterfall -->
+<div class="flex flex-col gap-4">
+<!-- Telemetry Header Banner -->
+<div class="flex flex-wrap items-center justify-between gap-3 bg-inverse-surface/80 p-3 rounded">
+<div class="flex items-center gap-3">
+<span class="px-2 py-0.5 rounded bg-primary text-on-primary font-label-scholastic text-label-scholastic">
+                    LATENCY CRITICAL
+                  </span>
+<p class="font-headline-sm text-headline-sm text-tertiary-fixed">
+                    840 NANOSECONDS DIRECT TO SILICON
+                  </p>
+</div>
+<div class="font-label-scholastic text-label-scholastic text-outline-variant uppercase tracking-widest">
+                  ZERO OS INTERRUPTUS • NO SYSCALL PENALTY
+                </div>
+</div>
+<!-- Main Terminal Dual Visual: Order Book Matrix + Silicon Conduit Canvas -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Left: Order Depth & Hardware MMIO Registers -->
+<div class="bg-surface-variant/10 rounded p-4 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-label-scholastic text-label-scholastic text-tertiary-fixed-dim">
+                      REG_0x00FF89 // ORDER_STREAM
+                    </span>
+<span class="font-label-scholastic text-label-scholastic text-outline-variant">
+                      DEPTH L2: ACTIVE
+                    </span>
+</div>
+<!-- Book Rows with Gilded Ink Lines -->
+<div class="space-y-1.5 font-label-scholastic text-label-scholastic">
+<div class="flex items-center justify-between p-1.5 rounded bg-primary/20 text-on-primary-container">
+<span class="text-tertiary-fixed">ASK 184.220</span>
+<span>85,400 QTY</span>
+<span class="text-tertiary-fixed-dim">12ns MMIO</span>
+</div>
+<div class="flex items-center justify-between p-1.5 rounded bg-primary/10 text-on-primary-container opacity-90">
+<span class="text-tertiary-fixed">ASK 184.215</span>
+<span>142,000 QTY</span>
+<span class="text-tertiary-fixed-dim">19ns MMIO</span>
+</div>
+<div class="flex items-center justify-between p-1.5 rounded bg-secondary/15 text-secondary-fixed">
+<span class="text-secondary-fixed">BID 184.210</span>
+<span>210,500 QTY</span>
+<span class="text-tertiary-fixed-dim">24ns MMIO</span>
+</div>
+<div class="flex items-center justify-between p-1.5 rounded bg-secondary/25 text-secondary-fixed font-bold">
+<span class="text-secondary-fixed">BID 184.205</span>
+<span>450,000 QTY</span>
+<span class="text-tertiary-fixed-dim">31ns MMIO</span>
+</div>
+</div>
+<!-- Inline Telemetry Spark Bar -->
+<div class="pt-2 flex flex-col gap-1">
+<div class="flex justify-between font-label-scholastic text-label-scholastic text-outline-variant">
+<span>PACKET PIPELINE SATURATION</span>
+<span class="text-tertiary-fixed">99.984%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-inverse-surface overflow-hidden p-0.5">
+<div class="h-full rounded-full bg-gradient-to-r from-secondary-fixed via-tertiary-fixed to-primary" style="width: 88%;"></div>
+</div>
+</div>
+</div>
+<!-- Right: High-Res Silicon Miniature Graphic / Circuit Micro-Art -->
+<div class="bg-surface-variant/10 rounded p-4 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between mb-2 z-10">
+<span class="font-label-scholastic text-label-scholastic text-tertiary-fixed">
+                      NIC DECODER // PACKET WATERFALL
+                    </span>
+<span class="font-label-scholastic text-label-scholastic text-secondary-fixed">
+                      AURORA 64B/66B
+                    </span>
+</div>
+<!-- Miniated Circuitry SVG Trace -->
+<div class="py-2 z-10">
+<svg class="w-full h-auto text-tertiary-fixed-dim" fill="none" viewbox="0 0 320 120">
+<!-- Bus Lines -->
+<path d="M10 20 H70 L90 40 H160 L180 20 H310" stroke="currentColor" stroke-dasharray="3 3" stroke-width="1.5"></path>
+<path d="M10 60 H110 L130 80 H210 L230 60 H310" stroke="currentColor" stroke-width="1.5"></path>
+<path d="M10 100 H50 L70 80 H140 L160 100 H310" stroke="currentColor" stroke-dasharray="4 2" stroke-width="1.5"></path>
+<!-- Silicon Nodes (Burnished Gold Bezants) -->
+<circle cx="70" cy="20" fill="#f1c04e" r="3.5"></circle>
+<circle cx="90" cy="40" fill="#f1c04e" r="3.5"></circle>
+<circle cx="160" cy="40" fill="#f1c04e" r="3.5"></circle>
+<circle cx="130" cy="80" fill="#f1c04e" r="3.5"></circle>
+<circle cx="210" cy="80" fill="#f1c04e" r="3.5"></circle>
+<circle cx="230" cy="60" fill="#a8231d" r="3.5"></circle>
+<!-- Dynamic Flow Indicator -->
+<rect fill="#3b5da0" height="8" opacity="0.8" rx="2" width="30" x="175" y="56"></rect>
+<text fill="#ffffff" font-family="'JetBrains Mono'" font-size="6" x="180" y="63">840ns</text>
+</svg>
+</div>
+<!-- Terminal Micro-Footer -->
+<div class="z-10 bg-inverse-surface/90 p-2 rounded flex items-center justify-between font-label-scholastic text-label-scholastic">
+<span class="text-tertiary-fixed">HARDWARE MMIO PIN: 0x4A</span>
+<span class="text-on-primary-container bg-primary-container px-2 py-0.5 rounded">DIRECT INGEST</span>
+</div>
+</div>
+</div>
+<!-- Silicon Scriptorium Narrative Strip -->
+<div class="p-3 rounded bg-surface-variant/15 flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed text-[20px]">memory</span>
+<p class="font-body-sm text-body-sm text-inverse-on-surface">
+<strong class="text-tertiary-fixed">Speculatio Scriptoris:</strong> 
+                  The registers of the physical transceiver be mapped directly unto the memory expanse of the machine, 
+                  suffering neither the arbitration of the supervisor nor the delay of peripheral bus interruption.
+                </p>
+</div>
+</div>
+</div>
+<!-- Bottom Architectural Plinth with Inscribed Legend -->
+<div class="mt-3 px-4 py-2 bg-surface-container rounded flex items-center justify-between">
+<span class="font-label-scholastic text-label-scholastic text-primary font-bold">
+              FIG. II: TABULA VELOCITATIS IN ANAMORPHIC ILLUMINATION
+            </span>
+<span class="font-label-scholastic text-label-scholastic text-on-surface-variant">
+              TUDOR-ERA BRUTALISM • SCRIBE'S SEAL NX
+            </span>
+</div>
+</div>
+<!-- Text Column with Historic Drop-Cap Below Miniature -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col md:flex-row gap-6 items-start">
+<div class="flex-shrink-0 w-16 h-16 rounded bg-primary flex items-center justify-center text-tertiary-fixed shadow-md">
+<span class="font-display-hero text-headline-lg leading-none select-none">P</span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-headline-sm text-headline-sm text-primary">
+              Præceptum Sub-Microsecundae Executionis
+            </h3>
+<p class="font-body-md text-body-md text-on-surface">
+              Peradventure it was held impossible by the ancients that an order should travel through the ether and strike the 
+              ledger without the intermediacy of operating kernels. Herein lies the triumph of our modern scriptorium: by binding the 
+              optical strand directly unto gate arrays of three-nanometer geometry, we dispense entirely with the mortal friction of interrupts.
+            </p>
+</div>
+</div>
+</div>
+<!-- Outer Scholastic Marginalia Column (4 Columns): Glosses, Manicula & Snail Drollery -->
+<div class="xl:col-span-4 flex flex-col gap-space-lg">
+<!-- Scholastic Marginal Gloss (Glosse) with Ruled Margin Note Look -->
+<div class="relative bg-surface-container rounded-xl p-6 shadow-md flex flex-col gap-space-md">
+<!-- Gloss Header with Gothic Fraktur Typography Styling -->
+<div class="flex items-center justify-between pb-2 bg-surface-container-high px-3 py-1.5 rounded">
+<span class="font-title-rubric text-title-rubric text-primary uppercase tracking-widest font-bold">
+              De Sub-Microsecunda
+            </span>
+<span class="font-label-scholastic text-label-scholastic text-tertiary-container bg-surface px-2 py-0.5 rounded">
+              GLOSSA SECUNDA
+            </span>
+</div>
+<!-- Manicula: The Pointing Tudor Hand Indicator -->
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-lg shadow-sm">
+<div class="flex-shrink-0 text-primary">
+<!-- Manicula SVG Drawing with Ruffled Cuff -->
+<svg fill="currentColor" height="28" viewbox="0 0 54 36" width="42">
+<!-- Ruffled Tudor Cuff -->
+<path d="M4 10 Q7 7 10 10 Q13 7 16 10 Q19 7 22 10 L22 26 Q19 29 16 26 Q13 29 10 26 Q7 29 4 26 Z" fill="#8d706c"></path>
+<path d="M22 13 C26 11 30 11 33 13 L33 18 L50 18 C52 18 53 19 53 20 C53 21 52 22 50 22 L36 22 L37 25 L34 26 C30 27 26 26 22 23 Z" fill="#860408"></path>
+<circle cx="28" cy="18" fill="#f9c755" r="1.5"></circle>
+</svg>
+</div>
+<p class="font-label-scholastic text-label-scholastic text-primary font-bold tracking-wider uppercase">
+              Ad Tabulam Directio: The Hand of the Scribe Pointeth Within
+            </p>
+</div>
+<!-- Handwritten Style Scholastic Rubric Body -->
+<div class="p-4 bg-surface rounded-lg shadow-sm flex flex-col gap-3 relative">
+<div class="font-headline-sm text-headline-sm text-primary italic font-serif">
+              ¶ Nota bene:
+            </div>
+<p class="font-body-lg text-body-lg text-on-surface italic leading-relaxed">
+              "The scribe testifieth that orders bypasseth the realm of the kernel, writing directly upon bare silicon registers 
+              in eight hundred and forty nanoseconds. No queue shall abide in this court; delay is sinne."
+            </p>
+<div class="pt-2 flex items-center justify-between font-label-scholastic text-label-scholastic text-outline">
+<span>LEX SILICIS § 14</span>
+<span>IN CURIA MMIO</span>
+</div>
+</div>
+<!-- Hardware Telemetry Metric Badge -->
+<div class="grid grid-cols-2 gap-3">
+<div class="p-3 bg-surface-container-low rounded text-center">
+<span class="block font-label-scholastic text-label-scholastic text-on-surface-variant">JITTER BUDGET</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">± 1.4 ns</span>
+</div>
+<div class="p-3 bg-surface-container-low rounded text-center">
+<span class="block font-label-scholastic text-label-scholastic text-on-surface-variant">BYPASS STATUS</span>
+<span class="font-headline-sm text-headline-sm text-secondary font-bold">RING-0 ABSENT</span>
+</div>
+</div>
+</div>
+<!-- Whimsical Tudor Marginal Drollery Enclosure -->
+<div class="bg-surface-container-low rounded-xl p-5 shadow-md flex flex-col gap-3 relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-scholastic text-label-scholastic text-tertiary-container font-semibold tracking-wider">
+              DROLLERIA MARGINALIS // FOLIO SECUNDO
+            </span>
+<span class="font-label-scholastic text-label-scholastic text-outline">
+              [AUTHENTIC CYPHRE NX]
+            </span>
+</div>
+<!-- Snail Drollery Graphic & Scene Description -->
+<div class="flex flex-col sm:flex-row items-center gap-4 p-3 bg-surface rounded-lg">
+<!-- Snail Knight SVG Illustration carrying Microscopic Transceiver -->
+<div class="flex-shrink-0 w-24 h-24 flex items-center justify-center bg-surface-container-high rounded-full shadow-inner p-2">
+<svg class="w-full h-full" viewbox="0 0 100 100">
+<!-- Snail Shell (Golden Spiral) -->
+<path d="M50 75 C30 75 20 60 20 45 C20 28 35 18 52 18 C68 18 80 30 80 46 C80 58 72 68 62 70 C54 72 46 68 45 60 C44 52 50 48 55 50" fill="none" stroke="#705300" stroke-width="4"></path>
+<circle cx="50" cy="46" fill="#a8231d" r="4"></circle>
+<!-- Snail Soft Body -->
+<path d="M20 75 C35 75 70 75 88 75 C92 75 95 70 93 66 C88 58 82 60 78 65" fill="#f1c04e" stroke="#241911" stroke-width="2"></path>
+<!-- Knight's Tudor Sallet Visor Helmet on Snail Head -->
+<path d="M85 64 L96 64 L93 54 L84 54 Z" fill="#3b5da0" stroke="#241911" stroke-width="1.5"></path>
+<line stroke="#ffdf9e" stroke-width="1.5" x1="86" x2="94" y1="59" y2="59"></line>
+<!-- Microscopic Transceiver & Optical Spool Mounted upon Shell -->
+<rect fill="#860408" height="12" rx="2" stroke="#ffdf9e" stroke-width="1.5" width="16" x="42" y="24"></rect>
+<!-- Fiber Optic Coil -->
+<ellipse cx="50" cy="30" fill="none" rx="12" ry="5" stroke="#264a8c" stroke-dasharray="2 1" stroke-width="2"></ellipse>
+<line stroke="#264a8c" stroke-width="1.5" x1="58" x2="75" y1="30" y2="22"></line>
+<circle cx="75" cy="22" fill="#f9c755" r="2"></circle>
+</svg>
+</div>
+<!-- Drollery Text Gloss -->
+<div class="flex flex-col gap-1">
+<span class="font-title-rubric text-title-rubric text-primary">
+                Cochlea Bellicosa in Fibra Optica
+              </span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Lo! The armored snail bearing the optical transceiver marvels that while his shell remaineth slow by earthly measure, 
+                his payload flieth through pure quartz fiber at nine-tenths the speed of heavenly light.
+              </p>
+</div>
+</div>
+<!-- Bottom Margin Verification Mark -->
+<div class="flex items-center justify-between font-label-scholastic text-label-scholastic text-outline-variant pt-1">
+<span>SIGILLUM SCRIPTORIS // NX-SECULARIS</span>
+<span class="text-primary font-bold">840ns VALIDATUM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Colophon Navigation Strip -->
+<div class="w-full bg-surface-container rounded-lg p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+<!-- Prev Frame Folio -->
+<a class="flex items-center gap-2 px-3 py-1.5 rounded bg-surface hover:bg-surface-container-high transition-colors text-on-surface shadow-sm font-label-scholastic text-label-scholastic uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined text-[16px] text-primary">arrow_back</span>
+<span>FOLIO I • GENESIS ARCHITECTURA</span>
+</a>
+<!-- Center Colophon Bezant with Pen Flourish Decor -->
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+<span class="font-title-rubric text-title-rubric text-primary uppercase tracking-widest font-semibold">
+          DE FACTO VELOCITATIS ET DISPOSITIONE HARDWARE
+        </span>
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+</div>
+<!-- Next Frame Folio -->
+<a class="flex items-center gap-2 px-3 py-1.5 rounded bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-sm font-label-scholastic text-label-scholastic uppercase tracking-wider" href="#">
+<span>FOLIO III • LITURGIA LIQUIDITATIS</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary-fixed">arrow_forward</span>
+</a>
+</div>
+</div>
+</div></main><footer class="w-full bg-surface-container-low/75 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="max-w-7xl mx-auto px-6 lg:px-12 py-space-md flex flex-col md:flex-row items-center justify-between gap-space-sm"><div class="flex items-center gap-space-md"><span class="font-label-scholastic text-label-scholastic text-primary tracking-widest">NX OFFICINA SCRIBÆ</span><span class="font-label-scholastic text-label-scholastic text-outline">•</span><span class="font-body-italic text-body-italic text-on-surface-variant text-sm">Hand-ground mineral pigments, cinnabar rubrications &amp; speculative silicon illuminations.</span></div><div class="flex items-center gap-space-md font-label-scholastic text-label-scholastic text-on-surface-variant"><span class="uppercase tracking-wider">CALCULATED LEADPOINT GRID: 8PX</span><span class="text-outline">•</span><span class="uppercase tracking-wider">SIGILLUM AUTHENTICUM</span></div></div></footer></body></html>
