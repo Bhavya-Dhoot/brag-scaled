@@ -100,6 +100,16 @@ def grab(cdp, t, fmt):
         opts["quality"] = 100
     return base64.b64decode(cdp.send("Page.captureScreenshot", opts)["data"])
 
+def warm(cdp, fmt, dur=None):
+    """Paint sample frames across the whole timeline before capturing anything.
+    Chromium paints a font face lazily: the first frame that uses a new face comes out
+    without its text (measured: 0 text pixels, then 2,211 on the next capture of the same
+    frame). Visiting frames from every part of the video first puts every face in use."""
+    if not dur:
+        dur = cdp.send("Runtime.evaluate", {"expression": "window.DURATION || 0", "returnByValue": True})["result"].get("value") or 0
+    for k in range(25):
+        grab(cdp, (dur * k / 24) if dur else 0.0, fmt)
+
 
 def capture(job):
     url, w, h, fps, fmt, lo, hi, seg, poster_t, ff, gpu = job
@@ -111,7 +121,7 @@ def capture(job):
                            stdin=subprocess.PIPE)
     with sync_playwright() as p:
         b, pg, cdp = open_page(p, url, w, h, gpu)
-        grab(cdp, 0.0, fmt)  # warm-up: the first capture compiles shaders
+        warm(cdp, fmt)  # warm-up: shaders and every font face
         for i in range(lo, hi):
             enc.stdin.write(grab(cdp, poster_t if (i == 0 and poster_t is not None) else i / fps, fmt))
         b.close()
@@ -160,6 +170,8 @@ def main():
             b, pg, cdp = open_page(p, url, a.width, a.height, gpu)
         rend = renderer_name(pg)
         dur = a.duration or pg.evaluate("window.DURATION || 0")
+        if a.stills or a.poster_jpg:
+            warm(cdp, "jpeg", dur)
         if a.poster_jpg and a.poster is not None:
             pathlib.Path(a.poster_jpg).write_bytes(grab(cdp, a.poster, "jpeg"))
         if a.stills:
