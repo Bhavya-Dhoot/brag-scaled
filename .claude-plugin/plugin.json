@@ -1,13 +1,13 @@
 {
-  "name": "brag",
-  "description": "Turn the current project into a short, polished, shareable launch video using HyperFrames.",
-  "version": "0.4.0",
+  "name": "brag-scaled",
+  "description": "/brag with a fast renderer: turn the current project into a short, polished launch video, with frames drawn on the GPU in parallel browsers and piped straight to a hardware encoder.",
+  "version": "0.4.0-scaled.1",
   "author": {
-    "name": "Shunit Haviv Hakimi",
-    "email": "shunithaviv@gmail.com"
+    "name": "Bhavya Dhoot",
+    "url": "https://github.com/Bhavya-Dhoot"
   },
   "license": "MIT",
-  "homepage": "https://github.com/latent-spaces/brag",
-  "repository": "https://github.com/latent-spaces/brag",
-  "keywords": ["video", "launch", "hyperframes", "skill"]
+  "homepage": "https://github.com/Bhavya-Dhoot/brag-scaled",
+  "repository": "https://github.com/Bhavya-Dhoot/brag-scaled",
+  "keywords": ["video", "launch", "hyperframes", "skill", "render", "gpu"]
 }

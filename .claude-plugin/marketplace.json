@@ -1,16 +1,15 @@
 {
-  "name": "brag",
-  "description": "You built it. Now brag. Turn the project you just shipped into a short, shareable launch video with one command.",
+  "name": "brag-scaled",
+  "description": "/brag with a fast renderer. Fork of latent-spaces/brag by Shunit Haviv Hakimi.",
   "owner": {
-    "name": "Shunit Haviv Hakimi",
-    "email": "shunithaviv@gmail.com",
-    "url": "https://github.com/shunithaviv"
+    "name": "Bhavya Dhoot",
+    "url": "https://github.com/Bhavya-Dhoot"
   },
   "plugins": [
     {
-      "name": "brag",
+      "name": "brag-scaled",
       "source": "./",
-      "description": "Turn the current project website into a short, polished, shareable launch video using HyperFrames."
+      "description": "Turn the current project into a short, shareable launch video; renders on the GPU in parallel."
     }
   ]
 }

@@ -1,3 +1,48 @@
+# brag-scaled
+
+**/brag, with a renderer that uses your GPU.**
+
+This is a fork of [latent-spaces/brag](https://github.com/latent-spaces/brag) by Shunit Haviv Hakimi. It has everything upstream has, plus one addition: a `fast-render` skill that `/brag-slim` uses for stills and the final render.
+
+### What changed
+
+| | upstream | brag-scaled |
+|---|---|---|
+| Frame drawing | Headless Chromium, often on the CPU (SwiftShader) | Pushed onto the GPU; the renderer in use is printed and checked |
+| Capture | Screenshots, typically written to disk | Captured over CDP and piped straight into video segments by parallel browsers |
+| Encode | One serial pass | Segments encoded in parallel on the best working H.264 encoder (NVENC, Quick Sync, AMF, VideoToolbox, then libx264), after capture finishes |
+
+### Measured
+
+Windows 11, i9-11950H (16 threads), RTX A2000 Laptop GPU, NVMe. The test was a 130-second, 60 fps /brag-slim video (7,800 frames at 1080p).
+
+| | time |
+|---|---|
+| Playwright PNG screenshots to disk, then x264 | ~45 min |
+| `fast-render`, default settings | 4 min 46 s |
+| `fast-render --encode-jobs 12` (workstation GPU) | 3 min 46 s |
+
+Single frames went from 1.7 s to 75 ms once Chromium was on the GPU. The output decodes within 43.6 dB PSNR of a lossless capture of the same frame, which is visually identical.
+
+Only the Windows + NVIDIA path is measured so far. Quick Sync, libx264 and the CPU fallback are tested on the same machine. The macOS and Linux GPU flags are the documented ANGLE backends, but they are unmeasured.
+
+### Install
+
+```bash
+claude plugin marketplace add Bhavya-Dhoot/brag-scaled
+claude plugin install brag-scaled@brag-scaled
+```
+
+`fast-render` needs Python 3.9+, `pip install playwright imageio-ffmpeg`, and `playwright install chromium`.
+
+The speed-up is also proposed upstream as guidance only, in [latent-spaces/brag#39](https://github.com/latent-spaces/brag/pull/39).
+
+Licences: code is MIT (see `LICENSE`); bundled music is CC BY 4.0 and the sound effects are CC0 (see [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)).
+
+---
+
+*Upstream README follows.*
+
 # /brag
 
 **You built it. Now brag.**
