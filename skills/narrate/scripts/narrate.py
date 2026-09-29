@@ -138,7 +138,8 @@ def main():
 
     if a.music:
         ff = ffmpeg_exe()
-        graph = ("[1:a]aresample=48000,aformat=channel_layouts=stereo,volume=1.4,asplit=2[v][sc];"
+        graph = ("[1:a]aresample=48000,aformat=channel_layouts=stereo,volume=1.4,asplit=2[v][sc0];"
+                 "[sc0]apad[sc];"  # pad the key so the music keeps its full length after the last line
                  "[0:a]aresample=48000,aformat=channel_layouts=stereo[m];"
                  f"[m][sc]sidechaincompress=threshold={a.duck}:ratio=10:attack=15:release=400[duck];"
                  "[duck][v]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95")

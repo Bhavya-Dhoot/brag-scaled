@@ -17,7 +17,7 @@ Usage: `/brag-slim [input] [options]`. Options (flags or plain language):
 | `--format landscape\|vertical\|square` | landscape (1920×1080; vertical 1080×1920, square 1080×1080), 30fps |
 | `--duration <s>` | about 20s |
 | `--voice [voice]` | off; narration with the `narrate` skill (default voice `af_heart`) |
-| `--style <set>` | none; one of 18 art-directed looks from the `brag-styles` skill (quant terminal, riso, arcade, Mughal court, Versailles, …) |
+| `--style <set \| options \| auto>` | recommend, then wait for a pick. A set name builds with it; `options` only recommends; `auto` picks the best set and builds. There are 19 sets in `brag-styles`, including doodle, quant terminal, riso, arcade, Mughal court and Versailles |
 
 Write the deliverables to `brag-output/` in the current directory (timestamped `brag-output-YYYY-MM-DD-HHmmss/` if it already exists). Keep every intermediate file (frames, downloads, scripts, stems) in a `work/` subfolder inside it.
 
@@ -60,7 +60,7 @@ If the user points at one part — a new version, a new feature, one angle — m
 
 **Shape:** Hook (2–3s) → Reveal (2–4s) → 2–3 sharp highlights → Punchline/outro (2–4s). A starting shape, not a template.
 
-**Style.** When `--style` is given or the user names a look, use the `brag-styles` skill beside this one (`../brag-styles/`). Read only that set's `set.md`, and let it set palette, type, texture, signature move and sound, while the project supplies every word and number. If `brag-styles` isn't installed, say so and design from the project itself.
+**Style.** After inspecting and before writing `brag-plan.md`, follow the Choosing protocol in the `brag-styles` skill beside this one (`../brag-styles/SKILL.md`). If the user named a set or a vibe, or said to go straight ahead ("just make it", `--style auto`), pick, say which in one line, and continue. If they asked for options, or said nothing about style, recommend one set, a safer and a bolder alternative, and "keep the project's own look", each with a reason drawn from the project, then stop and wait for their pick. The one exception is a project whose own UI can clearly carry the video: then build in its look. Once a set is chosen, read only that set's `set.md`; it sets palette, type, texture, signature move and sound, while the project supplies every word and number. If `brag-styles` isn't installed, say so and design from the project itself.
 
 ## Creative laws
 

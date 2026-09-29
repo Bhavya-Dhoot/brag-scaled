@@ -2,7 +2,11 @@
 
 **You built it. Now brag — and render it in minutes.**
 
-[![you built it, now brag](docs/assets/hero.png)](https://github.com/Bhavya-Dhoot/brag-scaled)
+[![The brag-scaled launch video: 25 seconds, made with brag-scaled. Click to play.](docs/assets/brag-scaled.jpg)](docs/assets/brag-scaled.mp4)
+
+*This launch video was made with brag-scaled itself: the `patent-office` style, offline
+narration from `narrate`, and 1,500 frames at 60 fps rendered by `fast-render` in 38 s.
+Click the image to play it.*
 
 `brag-scaled` is a set of agent skills that turn the project you built into a short, shareable launch video, with music, motion, optional narration and share copy.
 
@@ -12,25 +16,48 @@
 | `/brag` | The classic workflow, which builds and renders through [Hyperframes](https://hyperframes.heygen.com/). |
 | `fast-render` | Renders any `window.render(t)` page to MP4 on the GPU with parallel browsers. `/brag-slim` uses it for stills and the final render. |
 | `narrate` | Offline voiceover with a bundled 82M-parameter TTS model (Kokoro). It gives exact line timings and ducks the music under the voice. |
-| `brag-styles` | 18 art-directed looks, each with a signature motion trick and a matching sound palette (quant terminal, riso zine, blueprint, newsprint, arcade, receipt, transit map, and royal sets from Mughal court to Maharaja Deco). |
+| `brag-styles` | 19 art-directed looks, each with a signature motion trick and a matching sound palette. Ask for options and it recommends one before building anything. |
 
 ## Why it's fast
 
-| Step | Typical approach | brag-scaled |
-|---|---|---|
-| Drawing frames | Headless Chromium, often on the CPU (SwiftShader) | Pushed onto the GPU; the renderer in use is printed and checked |
-| Capture | Screenshots, typically written to disk | Captured over CDP and piped straight into video segments by parallel browsers |
-| Encode | One serial pass | Segments encoded in parallel on the best working H.264 encoder (NVENC, Quick Sync, AMF, VideoToolbox, then libx264), after capture finishes |
+![Frame cost and whole-film render time](docs/assets/scaled/render-speed.svg)
 
-Measured on Windows 11 with an i9-11950H (16 threads), an RTX A2000 Laptop GPU and an NVMe drive. The test was a 130-second, 60 fps video (7,800 frames at 1080p).
+![Render pipeline, before and after](docs/assets/scaled/pipeline.svg)
+
+The whole-film test was a 130-second, 60 fps video (7,800 frames at 1080p) on Windows 11,
+with an i9-11950H, an RTX A2000 Laptop GPU and an NVMe drive:
 
 | | time |
 |---|---|
-| Playwright PNG screenshots to disk, then x264 | ~45 min |
-| `fast-render`, default settings | 4 min 46 s |
-| `fast-render --encode-jobs 12` (workstation GPU) | 3 min 46 s |
+| Playwright PNG screenshots to disk, then x264 | ~45 min (estimated from the observed ~3 fps) |
+| `fast-render`, default settings (4 encoder sessions) | 4 min 46 s |
+| 12 parallel encoder sessions (same as `--encode-jobs 12`) | 3 min 46 s |
 
-Single frames went from 1.7 s to 75 ms once Chromium was on the GPU. The output decodes within 43.6 dB PSNR of a lossless capture of the same frame. Only the Windows + NVIDIA path is measured so far. The macOS and Linux GPU flags are the documented ANGLE backends, and the renderer line shows what actually ran.
+Short clips get their own browser count (60+ frames per browser), so a 6-second clip went
+from 34 s to 22 s. The output decodes within 43.6 dB PSNR of a lossless capture of the same
+frame. Only the Windows + NVIDIA path is measured so far. The macOS and Linux GPU flags are
+the documented ANGLE backends, and the renderer line shows what actually ran.
+
+## 19 looks, recommended before anything is built
+
+![The 19 brag-styles looks](docs/assets/scaled/styles.jpg)
+
+| You say | brag-scaled does |
+|---|---|
+| `/brag-slim --style options`, "give me some style options" | Recommends one look for your project, with a safer and a bolder alternative plus your own look, then **waits for your pick** |
+| `/brag-slim` (no style mentioned) | Same: it recommends, then waits, unless your project's own UI can carry the video |
+| `/brag-slim --style auto`, "just make it", "your call" | Picks the best look, says why in one line, then builds |
+| `/brag-slim --style shahi-darbar`, "make it royal" | Uses that look (or the closest one) straight away |
+
+![What a styled run has to read](docs/assets/scaled/style-context.svg)
+
+## Offline narration
+
+![How far the music drops under the voice](docs/assets/scaled/narration-ducking.svg)
+
+`/brag-slim --voice` writes a short voiceover and synthesizes it locally with Kokoro-82M
+(54 voices, no API key). It times each scene to the real length of its line and ducks the
+music under the voice.
 
 ## Install
 
@@ -86,6 +113,7 @@ Steer the tone, or add narration:
 /brag --tone "fake Series A launch from 2016"
 /brag-slim --voice
 /brag-slim --voice bf_emma
+/brag-slim --style options
 /brag-slim --style shahi-darbar
 /brag-slim --style the-receipt --tone deadpan
 ```
@@ -105,7 +133,7 @@ You get a `brag-output/` folder with the plan, share copy, and the rendered `bra
 - `skills/brag-slim/`: the single-file skill
 - `skills/fast-render/`: the GPU renderer (`scripts/fastrender.py`)
 - `skills/narrate/`: offline narration (`scripts/narrate.py`)
-- `skills/brag-styles/`: the 18 visual systems. Each has a `set.md`, which is all a run reads, plus reference frames, `DESIGN.md` tokens and reference markup.
+- `skills/brag-styles/`: the 19 visual systems. Each has a `set.md`, which is all a run reads, plus reference frames, `DESIGN.md` tokens and reference markup.
 - `scripts/import_stitch.py`: turns a Google Stitch export into sanitised sets
 - `skills/brag/`: the classic workflow, with its references and bundled music and SFX
 - `examples/`: fake product sites used as a benchmark suite

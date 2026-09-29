@@ -1,6 +1,6 @@
 ---
 name: brag-styles
-description: Eighteen art-directed visual systems for launch videos, each with a signature motion trick and a matching sound palette. The general sets are quant terminal, riso zine, blueprint, stop-motion collage, newsprint, arcade, receipt, transit map, title sequence and museum placard. The royal sets are Mughal court, Jaipur block print, Versailles, illuminated manuscript, Forbidden City, Ottoman firman, Byzantine mosaic and Maharaja Deco. Use when /brag-slim gets --style, when the user names a look ("make it royal", "like a newspaper", "arcade style"), or when a video needs a stronger identity than the project's own UI.
+description: Nineteen art-directed visual systems for launch videos, each with a signature motion trick and a matching sound palette. The general sets are doodle, quant terminal, riso zine, blueprint, stop-motion collage, newsprint, arcade, receipt, transit map, title sequence and museum placard. The royal sets are Mughal court, Jaipur block print, Versailles, illuminated manuscript, Forbidden City, Ottoman firman, Byzantine mosaic and Maharaja Deco. It recommends a set and waits for a pick when asked for options; it builds straight away when told to. Use when /brag-slim gets --style, when the user asks for style options or a recommendation, when they name a look ("make it royal", "like a newspaper", "arcade style"), or when a video needs a stronger identity than the project's own UI.
 ---
 
 # brag-styles
@@ -11,6 +11,7 @@ sets the pacing.
 
 | slug | set | best for |
 |---|---|---|
+| `doodle` | Doodle | pitches, services and consulting, how-it-works explainers, friendly B2B, education |
 | `exchange-floor` | Exchange Floor | fintech, data tools, dev infrastructure, anything with real metrics |
 | `riso-zine` | Riso Zine | indie apps, creative tools, community products, anything with personality |
 | `patent-office` | Patent Office | hardware, APIs, developer tools, anything architectural |
@@ -30,13 +31,45 @@ sets the pacing.
 | `byzantine-gold` | Byzantine Gold | community and social products, "built piece by piece" stories, data made of many parts |
 | `maharaja-deco` | Maharaja Deco | premium launches, hospitality and finance, anything glamorous with rigour |
 
-## Choosing
-1. `--style <slug>` wins. Next, a look the user names (match it to the closest slug).
-   Otherwise, only if the project's own UI is too plain to carry the video, pick from the
-   "best for" column. Say which set you chose in one line.
-2. Read **only** `sets/<slug>/set.md`, which is about 25 lines. Open the rest only when you
-   need it: the webp frames for composition, `DESIGN.md` for an exact token, and
-   `ref/*.html` to lift an ornament. Never load another set.
+## Choosing: recommend first, build second
+
+Work out which mode the request is in before doing anything else.
+
+| The user… | Do this |
+|---|---|
+| names a set (`--style <slug>`, "the receipt one") | Use it. Say which in one line, then build. |
+| names a vibe ("royal", "retro", "like a newspaper") | Map it to the closest set, say which in one line, then build. |
+| asks for options in any wording: options, choices, suggestions, "which style/look?", "what would work?", "show me looks", `--style options` | **Recommend, then stop.** Present the options below and wait for their pick. Build nothing. |
+| says to go straight ahead ("just make it", "create it directly", "your call", `--style auto`) | Pick the recommended set, say which and why in one line, then build. |
+| asks for a video and says nothing about style | **Recommend, then stop**, unless the project's own UI is strong enough to carry the video. In that case, build in the project's look and mention in one line that styles are available. |
+
+**How to present options.** Read the project first, so the recommendation is about this
+project and not generic. Then give:
+
+1. **Recommended:** the set that best fits the project's audience and material, with one
+   sentence of reasoning that cites something real from the project.
+2. **Safer alternative:** the set closest to the project's own brand.
+3. **Bolder alternative:** a set that makes the video memorable at some risk to fit.
+4. **Or keep the project's own look.** This is always an option.
+
+Give each option one line: its name, its signature move, and why it fits. End with
+"Which one? (or say 'go' for the recommendation)". When the user picks, build with that set.
+Don't ask again.
+
+**Reading the fit.** Numbers-heavy fintech, data or infrastructure → `exchange-floor`,
+`the-receipt`, `patent-office`. A workflow or pipeline → `transit-map`, `patent-office`.
+A pitch, service or explainer → `doodle`. Consumer, with personality → `riso-zine`,
+`stop-motion-collage`, `insert-coin`. A big announcement → `extra-extra`, `sultans-firman`,
+`title-sequence`. Premium or luxury → `court-of-versailles`, `maharaja-deco`,
+`museum-placard`. An Indian audience → `shahi-darbar`, `jaipur-block-print`,
+`maharaja-deco`. An Asian audience → `forbidden-city`. Writing or knowledge tools →
+`illuminated-manuscript`. Community, or "built piece by piece" → `byzantine-gold`.
+A royal set only fits when the project can carry grandeur, or plays it as knowing humour.
+On a tie, prefer the set whose signature move acts out the project's core action (a matcher → lines converging, a ledger → a receipt printing). Put the runner-up in as the safer or bolder alternative.
+
+**Once a set is chosen,** read **only** `sets/<slug>/set.md`, which is about 25 lines. Open
+the rest only when you need it: the webp frames for composition, `DESIGN.md` for an exact
+token, and `ref/*.html` to lift an ornament. Never load another set.
 
 ## Rules
 - **It's a video, not a website.** The Stitch frames are dressed as web pages. Drop their

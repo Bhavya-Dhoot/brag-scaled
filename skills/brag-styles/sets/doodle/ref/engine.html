@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;700&family=Patrick+Hand&display=block" rel="stylesheet">
+<style>
+  
+  :root { --ink:#0a0a0a; --paper:#f0ede8; --muted:#6f6c66; --accent:#c8ff00; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:var(--paper); color:var(--ink); }
+  #stage { position:absolute; inset:0; overflow:hidden; background:var(--paper); }
+  #grid { position:absolute; inset:0;
+    background-image: linear-gradient(rgba(10,10,10,.07) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(10,10,10,.07) 1.5px, transparent 1.5px);
+    background-size: 60px 60px; }
+  #grain { position:absolute; inset:0; opacity:.35; mix-blend-mode:multiply; }
+  .scene { position:absolute; inset:0; display:none; }
+  .scene svg.ink { position:absolute; inset:0; overflow:visible; }
+  .scene svg.ink path { fill:none; stroke:var(--ink); stroke-linecap:round; stroke-linejoin:round; }
+  .t { position:absolute; will-change:clip-path, transform, opacity; }
+  .hand { font-family:'Patrick Hand', cursive; }
+  .disp { font-family:'Archivo', sans-serif; font-weight:800; letter-spacing:-.04em; line-height:.95; }
+  .body { font-family:'Archivo', sans-serif; font-weight:500; letter-spacing:-.01em; line-height:1.2; }
+  .mono { font-family:'JetBrains Mono', monospace; }
+  .mk { position:relative; display:inline-block; z-index:0; }
+  .mk > i { position:absolute; left:-.08em; right:-.08em; top:.52em; bottom:-.02em; background:var(--accent); z-index:-1; transform-origin:left center; transform:scaleX(0) skewX(-6deg); }
+  .chip { background:var(--ink); color:var(--paper); padding:14px 20px; font-size:24px; letter-spacing:.06em; line-height:1.45; border-radius:4px; }
+  u { text-decoration:none; background:#c8ff00; }
+  .chip b { color:var(--accent); font-weight:700; }
+  .hud { position:absolute; font-family:'JetBrains Mono', monospace; font-size:20px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); z-index:40; }
+  #wipe { position:absolute; inset:0; z-index:60; pointer-events:none; overflow:visible; }
+  #wipe path { fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .dark #hud-a, .dark #hud-b, .dark #hud-c, .dark #hud-d { color:#8a8a8a; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="grid"></div>
+  <svg id="grain" width="1920" height="1080"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .18 0"/></filter><rect width="1920" height="1080" filter="url(#n)"/></svg>
+  <svg width="0" height="0" style="position:absolute">
+    <filter id="boil" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence id="turb" type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="1"/>
+      <feDisplacementMap in="SourceGraphic" scale="4.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
+  <div id="scenes"></div>
+  <div class="hud" id="hud-a" style="left:140px;top:64px">BD / Automation</div>
+  <div class="hud" id="hud-b" style="right:140px;top:64px"></div>
+  <div class="hud" id="hud-c" style="left:140px;bottom:52px">bhavya-dhoot.vercel.app</div>
+  <div class="hud" id="hud-d" style="right:140px;bottom:52px"></div>
+  <svg id="wipe" width="1920" height="1080"><path id="wipe-p" pathLength="1"/></svg>
+</div>
+<script>
+// ------------------------------------------------------------------ utils
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);                       // ease-out cubic
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20); // overshoots then settles
+let _s = 20260929; const rnd = () => (_s = (_s * 16807) % 2147483647) / 2147483647;
+const J = a => (rnd() - .5) * 2 * a;
+const f1 = v => v.toFixed(1);
+const P = (x, y) => `${f1(x)} ${f1(y)}`;
+const SFX = [];
+
+// ------------------------------------------------------------------ doodle path generators
+function line(x1, y1, x2, y2, b = 5) {
+  const mx = (x1 + x2) / 2 + J(b), my = (y1 + y2) / 2 + J(b);
+  return `M${P(x1 + J(2), y1 + J(2))} Q${P(mx, my)} ${P(x2 + J(2), y2 + J(2))}`;
+}
+function rectP(x, y, w, h, o = 9) {
+  return [line(x - o*rnd(), y, x + w + o*rnd(), y), line(x + w, y - o*rnd(), x + w, y + h + o*rnd()),
+          line(x + w + o*rnd(), y + h, x - o*rnd(), y + h), line(x, y + h + o*rnd(), x, y - o*rnd())].join(' ');
+}
+function circleP(cx, cy, r, turn = 1.1, a0 = -2.2) {
+  const n = 56; let d = '';
+  for (let i = 0; i <= n; i++) {
+    const a = a0 + (i / n) * Math.PI * 2 * turn, rr = r * (1 + J(.025) + (i / n) * .05);
+    d += (i ? ' L' : 'M') + P(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr);
+  }
+  return d;
+}
+function ellipseP(cx, cy, rx, ry) { return circleP(0, 0, 1000, 1.1).replace(/(-?\d+\.\d) (-?\d+\.\d)/g, (m, x, y) => `${f1(cx + x / 1000 * rx)} ${f1(cy + y / 1000 * ry)}`); }
+function arcP(cx, cy, r, a1, a2) { // simple arc as polyline
+  let d = ''; const n = 24;
+  for (let i = 0; i <= n; i++) { const a = a1 + (a2 - a1) * i / n; d += (i ? ' L' : 'M') + P(cx + Math.cos(a) * r, cy + Math.sin(a) * r); }
+  return d;
+}
+function arrowP(x1, y1, x2, y2, bend = 40, head = 24) {
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
+  const cx = mx - dy / L * bend, cy = my + dx / L * bend;
+  const a = Math.atan2(y2 - cy, x2 - cx);
+  return `M${P(x1, y1)} Q${P(cx, cy)} ${P(x2, y2)} M${P(x2 - Math.cos(a - .5) * head, y2 - Math.sin(a - .5) * head)} L${P(x2, y2)} L${P(x2 - Math.cos(a + .5) * head, y2 - Math.sin(a + .5) * head)}`;
+}
+const checkP = (x, y, s) => `M${P(x, y + s*.5)} L${P(x + s*.35, y + s*.88)} L${P(x + s, y)}`;
+const crossP = (x, y, s) => `${line(x, y, x + s, y + s, 3)} ${line(x + s, y, x, y + s, 3)}`;
+function scribLines(x, y, w, n, gap = 26) {
+  let d = '';
+  for (let i = 0; i < n; i++) {
+    const ww = i === n - 1 ? w * (.4 + rnd() * .3) : w * (.85 + rnd() * .15), yy = y + i * gap;
+    d += ` M${P(x, yy)}`; let cx = x;
+    while (cx < x + ww) { const st = 18 + rnd() * 14; d += ` Q${P(cx + st / 2, yy + J(6))} ${P(Math.min(cx + st, x + ww), yy + J(1.5))}`; cx += st; }
+  }
+  return d;
+}
+function sparkP(x, y, s) {
+  return [0, 1, 2, 3].map(k => { const a = k * Math.PI / 2 + .3; return line(x + Math.cos(a) * s * .35, y + Math.sin(a) * s * .35, x + Math.cos(a) * s, y + Math.sin(a) * s, 1); }).join(' ');
+}
+function gearP(cx, cy, r) {
+  let d = circleP(cx, cy, r, 1.02) + ' ' + circleP(cx, cy, r * .38, 1.02);
+  for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; d += ' ' + line(cx + Math.cos(a) * r, cy + Math.sin(a) * r, cx + Math.cos(a) * (r + 22), cy + Math.sin(a) * (r + 22), 1); }
+  return d;
+}
+const personP = (x, y, s = 1) => `${circleP(x, y, 26 * s, 1.03)} ${line(x, y + 28*s, x, y + 110*s, 3)} ${line(x - 40*s, y + 60*s, x + 40*s, y + 60*s, 3)} ${line(x, y + 110*s, x - 30*s, y + 170*s, 3)} ${line(x, y + 110*s, x + 30*s, y + 170*s, 3)}`;
+function cloudP(cx, cy, w) {
+  const h = w * .45, x0 = cx - w / 2, y0 = cy + h / 2;
+  return `M${P(x0 + 30, y0)} L${P(x0 + w - 30, y0)} ` +
+    arcP(x0 + w - 40, y0 - 40, 45, Math.PI / 2, -Math.PI / 2).replace('M', 'L') + ' ' +
+    arcP(cx + w * .12, cy - h * .25, w * .2, 0, -Math.PI).replace('M', 'L') + ' ' +
+    arcP(cx - w * .22, cy - h * .05, w * .17, -Math.PI * .2, -Math.PI).replace('M', 'L') + ' ' +
+    arcP(x0 + 40, y0 - 40, 42, -Math.PI / 2, -Math.PI * 1.5).replace('M', 'L');
+}
+function zigFill(x, y, w, h, rows) { // wipe scribble
+  let d = `M${P(x, y)}`;
+  for (let i = 1; i <= rows; i++) d += ` L${P(i % 2 ? x + w : x, y + (h * i) / rows + J(20))}`;
+  return d;
+}
+
+// ------------------------------------------------------------------ scene engine
+const scenes = [];
+class Scene {
+  constructor(t0, t1, chapter, opts = {}) {
+    Object.assign(this, { t0, t1, chapter, tracks: [], hooks: [], dark: !!opts.dark, idx: opts.idx || '' });
+    this.el = document.createElement('div'); this.el.className = 'scene';
+    if (this.dark) this.el.style.background = '#0a0a0a';
+    this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    this.svg.setAttribute('class', 'ink'); this.svg.setAttribute('width', 1920); this.svg.setAttribute('height', 1080);
+    this.fills = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    this.g = document.createElementNS('http://www.w3.org/2000/svg', 'g'); this.g.setAttribute('filter', 'url(#boil)');
+    this.svg.append(this.fills, this.g); this.el.append(this.svg);
+    document.getElementById('scenes').append(this.el); scenes.push(this);
+  }
+  // draw-on stroke. at/dur are scene-local seconds
+  path(d, at, dur = .5, o = {}) {
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', d); p.setAttribute('pathLength', 1);
+    p.style.strokeWidth = o.w || 5; if (o.color) p.style.stroke = o.color;
+    p.style.strokeDasharray = '1 1';
+    (o.parent || this.g).append(p);
+    this.tracks.push({ kind: 'draw', el: p, at, dur });
+    if (dur >= .3 && !o.quiet) SFX.push({ t: this.t0 + at, type: 'pencil', d: dur });
+    return p;
+  }
+  // filled lime/ink rect that pops (not boiled — highlighter blocks stay crisp)
+  block(x, y, w, h, at, o = {}) {
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    Object.entries({ x, y, width: w, height: h, rx: o.rx ?? 4 }).forEach(([k, v]) => r.setAttribute(k, v));
+    r.style.fill = o.color || '#c8ff00'; r.style.transformBox = 'fill-box'; r.style.transformOrigin = o.origin || 'left center';
+    if (o.rot) r.dataset.rot = o.rot;
+    this.fills.append(r);
+    this.tracks.push({ kind: o.kind || 'grow', el: r, at, dur: o.dur || .35 });
+    return r;
+  }
+  // HTML text. anim: write | pop | fade | stamp | none
+  text(x, y, html, cls, at, o = {}) {
+    const d = document.createElement('div'); d.className = 't ' + cls; d.innerHTML = html;
+    Object.assign(d.style, { left: x + 'px', top: y + 'px' }, o.style || {});
+    if (o.w) d.style.width = o.w + 'px';
+    if (o.rot) d.dataset.rot = o.rot;
+    this.el.append(d);
+    const anim = o.anim || 'write';
+    const dur = o.dur || (anim === 'write' ? Math.max(.5, d.textContent.length * .03) : .45);
+    this.tracks.push({ kind: anim, el: d, at, dur });
+    d.querySelectorAll('.mk > i').forEach((m, k) => this.tracks.push({ kind: 'marker', el: m, at: at + dur + .1 + k * .2, dur: .35 }));
+    if (anim === 'write') SFX.push({ t: this.t0 + at, type: 'write', d: dur });
+    if (anim === 'pop') SFX.push({ t: this.t0 + at, type: 'pop' });
+    if (anim === 'stamp') SFX.push({ t: this.t0 + at + .12, type: 'stamp' });
+    return d;
+  }
+  on(fn) { this.hooks.push(fn); }
+  update(u) {
+    for (const k of this.tracks) {
+      const p = seg(u, k.at, k.at + k.dur), s = k.el.style, rot = +(k.el.dataset.rot || 0);
+      switch (k.kind) {
+        case 'draw': s.strokeDashoffset = 1 - eo(p); s.opacity = p > 0 ? 1 : 0; break;
+        case 'grow': s.transform = `scaleX(${eo(p)})`; break;
+        case 'growY': s.transform = `scaleY(${eo(p)})`; break;
+        case 'write': s.clipPath = `inset(-30% ${f1((1 - p) * 100)}% -30% -2%)`; s.opacity = p > 0 ? 1 : 0; s.transform = rot ? `rotate(${rot}deg)` : ''; break;
+        case 'fade': s.opacity = p; s.transform = `translateY(${f1((1 - eo(p)) * 30)}px) rotate(${rot}deg)`; break;
+        case 'pop': { const x = u - k.at; const sc = x <= 0 ? 0 : spring(x * 1.1); s.opacity = x > 0 ? 1 : 0; s.transform = `scale(${sc.toFixed(3)}) rotate(${rot}deg)`; break; }
+        case 'popb': { const x = u - k.at; const sc = x <= 0 ? 0 : spring(x * 1.1); s.transform = `scale(${sc.toFixed(3)}) rotate(${rot}deg)`; s.transformOrigin = 'center'; break; }
+        case 'stamp': { const x = u - k.at; const q = clamp(x / .16); s.opacity = x > 0 ? 1 : 0; s.transform = `scale(${(2.4 - 1.4 * eo(q) + (q >= 1 ? spring((x - .16) * 1.5) * 0 : 0)).toFixed(3)}) rotate(${rot}deg)`; break; }
+        case 'marker': s.transform = `scaleX(${eo(p)}) skewX(-6deg)`; break;
+      }
+    }
+    for (const fn of this.hooks) fn(u);
+  }
+}
+
+// helpers for common pieces
+function badge(S, x, y, n, at) { S.path(circleP(x, y, 34), at, .4, { w: 4 }); S.text(x - 40, y - 25, String(n), 'mono', at + .25, { anim: 'pop', w: 80, style: { textAlign: 'center', fontSize: '34px', fontWeight: 700 } }); }
+
+// ================================================================== SCENE 0 — the gap (0–8)
+{
+  const S = new Scene(0, 8, 'The gap');
+  S.path(rectP(170, 250, 560, 360), .15, .7, { w: 6 });
+  S.text(215, 285, 'AI DEMO', 'mono', .7, { anim: 'pop', style: { fontSize: '30px', fontWeight: 700, letterSpacing: '.2em' } });
+  S.block(212, 380, 470, 150, .9, { color: '#c8ff00', dur: .4 });
+  S.path(checkP(365, 395, 150), 1.05, .45, { w: 12 });
+  S.path(sparkP(760, 250, 44), 1.3, .3, { w: 4 }); S.path(sparkP(150, 640, 34), 1.4, .3, { w: 4, quiet: 1 }); S.path(sparkP(700, 650, 28), 1.5, .3, { w: 4, quiet: 1 });
+  S.text(172, 660, 'Works on stage.', 'hand', 1.6, { style: { fontSize: '64px' } });
+
+  S.path(arrowP(790, 430, 1060, 430, -50), 2.6, .5, { w: 6 });
+
+  // the mess
+  const g1 = document.createElementNS('http://www.w3.org/2000/svg', 'g'); g1.setAttribute('transform', 'rotate(-7 1250 420)'); S.g.append(g1);
+  S.path(rectP(1110, 220, 290, 380), 3.0, .45, { parent: g1 });
+  S.path(rectP(1140, 250, 110, 50, 4), 3.3, .25, { parent: g1, w: 4, quiet: 1 });
+  S.path(scribLines(1140, 340, 230, 7, 30), 3.35, .6, { parent: g1, w: 3 });
+  S.path(circleP(1330, 540, 38, 1.2), 3.6, .3, { parent: g1, w: 3, quiet: 1 });
+  const g2 = document.createElementNS('http://www.w3.org/2000/svg', 'g'); g2.setAttribute('transform', 'rotate(5 1580 420)'); S.g.append(g2);
+  S.path(rectP(1420, 300, 340, 250), 3.4, .45, { parent: g2 });
+  for (let r = 1; r < 4; r++) S.path(line(1420, 300 + r * 62, 1760, 300 + r * 62, 2), 3.6 + r * .05, .2, { parent: g2, w: 3, quiet: 1 });
+  for (let c = 1; c < 3; c++) S.path(line(1420 + c * 113, 300, 1420 + c * 113, 550, 2), 3.7 + c * .05, .2, { parent: g2, w: 3, quiet: 1 });
+  S.text(1560, 395, '#N/A', 'mono', 3.9, { anim: 'pop', rot: 5, style: { fontSize: '30px', fontWeight: 700 } });
+  S.text(1450, 455, '??', 'hand', 4.0, { anim: 'pop', rot: 5, style: { fontSize: '46px' } });
+  S.text(1660, 330, '#REF!', 'mono', 4.1, { anim: 'pop', rot: 5, style: { fontSize: '24px', fontWeight: 700 } });
+  S.text(1180, 640, '3 reports. 3 different totals.', 'hand', 4.3, { rot: -3, style: { fontSize: '44px' } });
+  S.text(1110, 745, 'Then it meets real customer data.', 'hand', 4.9, { style: { fontSize: '52px' } });
+  S.text(170, 850, 'That gap is <span class="mk"><i></i>the job.</span>', 'disp', 6.0, { anim: 'fade', style: { fontSize: '104px' } });
+}
+
+// ================================================================== SCENE 1 — who (8–16)
+{
+  const S = new Scene(8, 16, 'Who');
+  S.text(160, 175, 'FORWARD DEPLOYED ENGINEER — DUBAI, UAE', 'mono', .25, { anim: 'fade', style: { fontSize: '24px', letterSpacing: '.22em', color: '#6f6c66' } });
+  S.text(150, 225, 'Bhavya', 'disp', .35, { anim: 'pop', style: { fontSize: '250px', transformOrigin: 'left bottom' } });
+  S.text(150, 460, '<span class="mk"><i></i>Dhoot</span>', 'disp', .5, { anim: 'pop', style: { fontSize: '250px', transformOrigin: 'left bottom' } });
+  // laptop + wrench doodle
+  S.path(rectP(1260, 280, 420, 270), .8, .5, { w: 6 });
+  S.path(`M${P(1200, 600)} L${P(1740, 600)} L${P(1690, 555)} L${P(1245, 555)} Z`, 1.2, .4, { w: 6 });
+  S.text(1395, 340, '&lt;/&gt;', 'mono', 1.5, { anim: 'pop', style: { fontSize: '96px', fontWeight: 700 } });
+  S.path(scribLines(1310, 490, 320, 1), 1.7, .3, { w: 4, quiet: 1 });
+  S.path(gearP(1660, 250, 44), 1.8, .5, { w: 5 });
+  S.path(sparkP(1210, 250, 36), 2.1, .25, { w: 4, quiet: 1 });
+  S.text(160, 760, 'I sit with your operators, find where time or money leaks, and ship the system that closes it.', 'body', 2.0, { anim: 'fade', w: 1560, style: { fontSize: '54px' } });
+}
+
+// ================================================================== SCENE 2 — how (16–29)
+{
+  const S = new Scene(16, 29, 'How I work');
+  S.text(160, 130, 'How I work', 'hand', .2, { style: { fontSize: '84px' } });
+  S.path(line(160, 240, 520, 236, 8), .75, .35, { w: 6 });
+  const cols = [
+    { x: 160, n: 1, at: .9, label: 'Sit with the operators', sub: 'learn the process as it really runs', icon: (S, x, at) => { S.path(personP(x + 110, 330, .8), at, .6, { w: 5 }); S.path(personP(x + 270, 330, .8), at + .2, .6, { w: 5, quiet: 1 }); S.path(line(x + 40, 440, x + 360, 440, 3), at + .5, .3, { w: 5, quiet: 1 }); S.path(rectP(x + 150, 400, 80, 40, 3), at + .6, .25, { w: 4, quiet: 1 }); } },
+    { x: 740, n: 2, at: 2.4, label: 'Find the leak', sub: 'where time or money goes missing', icon: (S, x, at) => { S.path(`${line(x + 20, 360, x + 250, 360, 2)} ${line(x + 20, 410, x + 250, 410, 2)} ${line(x + 250, 360, x + 250, 410, 1)}`, at, .5, { w: 5 }); S.path(`M${P(x + 240, 420)} Q${P(x + 232, 445)} ${P(x + 242, 452)} Q${P(x + 252, 445)} ${P(x + 240, 420)}`, at + .4, .25, { w: 4, quiet: 1 }); S.path(`M${P(x + 240, 470)} Q${P(x + 232, 495)} ${P(x + 242, 502)} Q${P(x + 252, 495)} ${P(x + 240, 470)}`, at + .55, .25, { w: 4, quiet: 1 }); S.path(circleP(x + 300, 360, 60), at + .6, .45, { w: 6 }); S.path(line(x + 342, 402, x + 400, 460, 2), at + .95, .2, { w: 9, quiet: 1 }); } },
+    { x: 1320, n: 3, at: 3.9, label: 'Ship the system', sub: 'and leave it running', icon: (S, x, at) => { S.path(gearP(x + 150, 380, 62), at, .7, { w: 5 }); S.path(arcP(x + 150, 380, 125, -2.6, 1.9), at + .5, .5, { w: 5, quiet: 1 }); S.path(arrowP(x + 150 + Math.cos(1.6) * 125, 380 + Math.sin(1.6) * 125, x + 150 + Math.cos(2.0) * 125, 380 + Math.sin(2.0) * 125, 0, 20), at + .95, .2, { w: 5, quiet: 1 }); S.path(checkP(x + 300, 300, 70), at + 1.0, .3, { w: 9 }); } },
+  ];
+  for (const c of cols) {
+    badge(S, c.x + 34, 330, c.n, c.at);
+    c.icon(S, c.x + 60, c.at + .2);
+    S.text(c.x, 530, c.label, 'disp', c.at + .9, { anim: 'fade', style: { fontSize: '46px', whiteSpace: 'nowrap' }, w: 540 });
+    S.text(c.x, 592, c.sub, 'hand', c.at + 1.2, { style: { fontSize: '38px', color: '#3a3833', whiteSpace: 'nowrap' }, w: 560 });
+  }
+  // the rule
+  const y = 790, at = 6.3;
+  S.path(rectP(160, y - 20, 470, 120), at, .45, { w: 5 });
+  S.text(190, y + 12, 'The model proposes', 'body', at + .3, { anim: 'fade', style: { fontSize: '42px' } });
+  S.path(arrowP(650, y + 40, 760, y + 40, -20), at + .7, .3, { w: 5, quiet: 1 });
+  S.path(rectP(780, y - 20, 430, 120), at + .9, .45, { w: 5 });
+  S.text(810, y + 12, '<span class="mk"><i></i>Checks decide</span>', 'body', at + 1.2, { anim: 'fade', style: { fontSize: '42px', fontWeight: 700 } });
+  S.path(arrowP(1230, y + 40, 1340, y + 40, -20), at + 1.8, .3, { w: 5, quiet: 1 });
+  S.path(rectP(1360, y - 20, 420, 120), at + 2.0, .45, { w: 5 });
+  S.text(1390, y + 12, 'A human approves', 'body', at + 2.3, { anim: 'fade', style: { fontSize: '42px' } });
+  S.text(1400, y + 118, 'anything touching money', 'hand', at + 2.7, { style: { fontSize: '36px', color: '#3a3833' } });
+}
+
+// ================================================================== SCENE 3 — chapter (29–32)
+{
+  const S = new Scene(29, 33, 'Case files');
+  S.text(160, 330, 'Seven problems', 'disp', .1, { anim: 'pop', style: { fontSize: '170px', transformOrigin: 'left center' } });
+  S.text(160, 510, 'I\'ve <span class="mk"><i></i>already solved.</span>', 'disp', .3, { anim: 'pop', style: { fontSize: '170px', transformOrigin: 'left center' } });
+  S.text(170, 730, 'real builds · real numbers · names kept under NDA', 'hand', 1.1, { style: { fontSize: '46px', color: '#3a3833' } });
+}
+
+// ================================================================== CASES (32–102)
+const CASES = [
+  { problem: 'Supplier paperwork arrives as scans nobody types in.',
+    fix: 'LLM extraction into a same-day reconciled ledger, gated by deterministic checks.',
+    proof: '<b>GOODS-RECEIPT EXTRACTION</b> · ONE OF TEN TOOLS SHIPPED INSIDE AN FMCG BUSINESS',
+    draw(S) {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g'); g.setAttribute('transform', 'rotate(-6 1200 380)'); S.g.append(g);
+      S.path(rectP(1090, 200, 260, 350), .5, .5, { parent: g });
+      S.path(rectP(1115, 225, 100, 44, 3), .9, .2, { parent: g, w: 4, quiet: 1 });
+      S.path(scribLines(1115, 310, 200, 6, 30), .95, .6, { parent: g, w: 3 });
+      S.path(circleP(1290, 500, 30, 1.2), 1.4, .25, { parent: g, w: 3, quiet: 1 });
+      S.path(arrowP(1380, 330, 1500, 330, -30), 1.7, .35, { w: 5 });
+      S.path(cloudP(1640, 330, 250), 2.0, .6, { w: 5 });
+      S.text(1590, 305, 'LLM', 'mono', 2.4, { anim: 'pop', style: { fontSize: '40px', fontWeight: 700 } });
+      S.path(arrowP(1640, 440, 1500, 640, -40), 2.8, .4, { w: 5 });
+      // ledger table
+      S.path(rectP(1100, 660, 680, 250), 3.1, .5, { w: 5 });
+      S.path(line(1100, 720, 1780, 720, 2), 3.4, .25, { w: 4, quiet: 1 });
+      S.path(line(1400, 660, 1400, 910, 2), 3.45, .2, { w: 4, quiet: 1 }); S.path(line(1650, 660, 1650, 910, 2), 3.5, .2, { w: 4, quiet: 1 });
+      S.text(1125, 672, 'FIELD', 'mono', 3.5, { anim: 'fade', style: { fontSize: '22px', letterSpacing: '.14em', color: '#6f6c66' } });
+      S.text(1425, 672, 'VALUE', 'mono', 3.55, { anim: 'fade', style: { fontSize: '22px', letterSpacing: '.14em', color: '#6f6c66' } });
+      S.text(1672, 672, 'CHECK', 'mono', 3.6, { anim: 'fade', style: { fontSize: '22px', letterSpacing: '.14em', color: '#6f6c66' } });
+      for (let r = 0; r < 3; r++) {
+        const y = 745 + r * 55, at = 3.8 + r * .45;
+        S.block(1125, y, 230, 26, at, { color: '#0a0a0a', dur: .3 });
+        S.block(1425, y, 160 + r * 30, 26, at + .15, { color: '#0a0a0a', dur: .3 });
+        S.path(checkP(1690, y - 6, 40), at + .35, .25, { w: 7 });
+      }
+    } },
+  { problem: 'The bank and the ledger never agree.',
+    fix: 'Two-pass matching: exact first, then within tolerance, then exceptions with a stated reason.',
+    proof: '<b>RUNS ON MY SITE</b> · 8 EXACT · 2 WITHIN TOLERANCE · 4 EXCEPTIONS (SAMPLE FEEDS)',
+    draw(S) {
+      S.text(1100, 190, 'BANK', 'mono', .4, { anim: 'fade', style: { fontSize: '26px', letterSpacing: '.2em', fontWeight: 700 } });
+      S.text(1560, 190, 'LEDGER', 'mono', .4, { anim: 'fade', style: { fontSize: '26px', letterSpacing: '.2em', fontWeight: 700 } });
+      const rows = 6, L = [], R = [];
+      for (let i = 0; i < rows; i++) {
+        const y = 250 + i * 105;
+        S.path(rectP(1100, y, 220, 70, 5), .5 + i * .12, .3, { w: 4, quiet: i > 0 });
+        S.path(scribLines(1125, y + 36, 150, 1), .6 + i * .12, .2, { w: 3, quiet: 1 });
+        S.path(rectP(1560, y, 220, 70, 5), .55 + i * .12, .3, { w: 4, quiet: 1 });
+        S.path(scribLines(1585, y + 36, 150, 1), .65 + i * .12, .2, { w: 3, quiet: 1 });
+        L.push(y + 35); R.push(y + 35);
+      }
+      const pairs = [[0, 1], [1, 0], [2, 3], [3, 2]];
+      pairs.forEach(([a, b], k) => S.path(line(1330, L[a], 1550, R[b], 10), 1.8 + k * .35, .3, { w: 5 }));
+      const tol = S.path(line(1330, L[4], 1550, R[4], 10), 3.3, .35, { w: 5 }); tol.style.strokeDasharray = '0.04 0.03'; tol.dataset.dashed = 1;
+      S.text(1405, L[4] - 58, '± tol', 'hand', 3.6, { anim: 'pop', style: { fontSize: '34px' } });
+      S.path(ellipseP(1210, L[5], 150, 62), 4.0, .45, { w: 5 });
+      S.path(ellipseP(1670, R[5], 150, 62), 4.2, .45, { w: 5, quiet: 1 });
+      S.text(1395, L[5] - 34, 'why?', 'hand', 4.6, { anim: 'pop', rot: -4, style: { fontSize: '44px' } });
+      S.text(1180, L[5] + 78, 'reason: no ledger entry yet', 'hand', 5.0, { style: { fontSize: '34px', color: '#3a3833' } });
+    } },
+  { problem: 'Sales dropped. Three reports give three different reasons.',
+    fix: 'A root-cause dashboard that keeps sources side by side instead of blending them.',
+    proof: '<b>600+ COMMITS IN SIX WEEKS</b> · AN INDEPENDENT CHECKER RE-DERIVES EVERY VERDICT',
+    draw(S) {
+      S.path(`M${P(1110, 200)} L${P(1110, 600)} L${P(1760, 600)}`, .5, .45, { w: 5 });
+      const H = [220, 260, 240, 290, 270], bars = [];
+      H.forEach((h, i) => { const x = 1150 + i * 110; S.block(x, 600 - h, 70, h, .9 + i * .12, { color: '#0a0a0a', kind: 'growY', origin: 'center bottom', rx: 2 }); });
+      const drop = S.block(1700, 600 - 280, 70, 280, 1.5, { color: '#c8ff00', kind: 'growY', origin: 'center bottom', rx: 2 });
+      S.on(u => { const p = eio(seg(u, 2.2, 2.9)); drop.setAttribute('y', 600 - (280 - 190 * p)); drop.setAttribute('height', 280 - 190 * p); });
+      S.path(arrowP(1650, 230, 1712, 330, 30), 2.3, .35, { w: 6 });
+      S.path(circleP(1735, 420, 62), 2.9, .4, { w: 6 });
+      S.path(line(1780, 465, 1830, 520, 2), 3.2, .2, { w: 10, quiet: 1 });
+      ['A', 'B', 'C'].forEach((s, i) => {
+        const x = 1110 + i * 225, at = 3.5 + i * .35;
+        S.path(rectP(x, 680, 195, 180, 6), at, .35, { w: 5, quiet: i > 0 });
+        S.text(x + 22, 695, 'SOURCE ' + s, 'mono', at + .2, { anim: 'fade', style: { fontSize: '22px', letterSpacing: '.12em', fontWeight: 700 } });
+        S.path(scribLines(x + 22, 760, 120, 2, 28), at + .25, .3, { w: 3, quiet: 1 });
+        S.path(checkP(x + 130, 800, 44), at + .9, .2, { w: 7 });
+      });
+      S.text(1115, 885, 'side by side, with provenance — never blended', 'hand', 5.0, { style: { fontSize: '34px', color: '#3a3833' } });
+    } },
+  { problem: 'Nobody knows when a raw material runs out.',
+    fix: 'A planning engine that turns sales orders into how long each material will last.',
+    proof: '<b>MATERIAL PLANNING + RUNWAY FORECASTING</b> · SHIPPED, NOT A SLIDE',
+    draw(S) {
+      for (let i = 0; i < 3; i++) { S.path(rectP(1090 + i * 22, 230 + i * 22, 200, 250, 5), .5 + i * .2, .35, { w: 4, quiet: i > 0 }); }
+      S.path(scribLines(1150, 330, 120, 4, 30), 1.1, .4, { w: 3 });
+      S.text(1150, 280, 'ORDERS', 'mono', 1.0, { anim: 'fade', style: { fontSize: '22px', letterSpacing: '.14em', fontWeight: 700 } });
+      S.path(arrowP(1350, 380, 1450, 380, -24), 1.5, .3, { w: 5 });
+      const jars = [{ x: 1460, lvl: .72, rate: .18 }, { x: 1585, lvl: .5, rate: .26 }, { x: 1710, lvl: .86, rate: .1 }];
+      jars.forEach((j, i) => {
+        const at = 1.8 + i * .25;
+        const f = S.block(j.x + 8, 250, 74, 330, at + .45, { color: '#c8ff00', kind: 'growY', origin: 'center bottom', rx: 2 });
+        S.on(u => { const lv = clamp(j.lvl - j.rate * seg(u, 2.8, 8.5)); f.setAttribute('y', 580 - 330 * lv); f.setAttribute('height', 330 * lv); });
+        S.path(rectP(j.x, 240, 90, 350, 4), at, .4, { w: 5, quiet: i > 0 });
+        S.path(line(j.x - 8, 240, j.x + 98, 240, 2), at + .3, .2, { w: 7, quiet: 1 });
+        S.text(j.x + 18, 605, 'M' + (i + 1), 'mono', at + .4, { anim: 'fade', style: { fontSize: '26px', fontWeight: 700 } });
+      });
+      // calendar with circled day
+      S.path(rectP(1470, 700, 320, 210, 5), 3.3, .45, { w: 5 });
+      S.path(line(1470, 750, 1790, 750, 2), 3.6, .2, { w: 4, quiet: 1 });
+      for (let r = 0; r < 3; r++) for (let c = 0; c < 6; c++) S.path(line(1500 + c * 50, 785 + r * 40, 1520 + c * 50, 785 + r * 40, 1), 3.7 + (r * 6 + c) * .02, .08, { w: 4, quiet: 1 });
+      S.path(circleP(1660, 825, 34, 1.25), 4.3, .35, { w: 5 });
+      S.text(1100, 740, 'know the date', 'hand', 4.6, { rot: -3, style: { fontSize: '40px' } });
+      S.text(1100, 795, 'before the shortage', 'hand', 4.9, { rot: -3, style: { fontSize: '40px' } });
+      S.path(arrowP(1395, 850, 1455, 835, -20), 5.3, .25, { w: 4, quiet: 1 });
+    } },
+  { problem: 'Research questions wait in a queue for days.',
+    fix: 'A six-agent research pipeline with a novelty gate and a live UI.',
+    proof: '<b>ARAS</b> · RAG OVER 50K+ DOCUMENTS · 88% RETRIEVAL ACCURACY',
+    draw(S) {
+      const cx = 1440, cy = 540, R0 = 280, pts = [];
+      for (let i = 0; i < 6; i++) { const a = -Math.PI / 2 + i * Math.PI / 3; pts.push([cx + Math.cos(a) * R0, cy + Math.sin(a) * R0]); }
+      pts.forEach(([x, y], i) => { S.path(circleP(x, y, 58), .5 + i * .2, .35, { w: 5, quiet: i > 0 }); S.text(x - 40, y - 22, 'A' + (i + 1), 'mono', .7 + i * .2, { anim: 'pop', w: 80, style: { textAlign: 'center', fontSize: '34px', fontWeight: 700 } }); });
+      pts.forEach(([x, y], i) => { const [x2, y2] = pts[(i + 1) % 6]; const k = 66 / Math.hypot(x2 - x, y2 - y); S.path(arrowP(x + (x2 - x) * k, y + (y2 - y) * k, x2 - (x2 - x) * k, y2 - (y2 - y) * k, 18, 18), 1.8 + i * .15, .25, { w: 4, quiet: 1 }); });
+      S.path(rectP(cx - 110, cy - 70, 220, 140, 6), 2.8, .4, { w: 5 });
+      S.text(cx - 88, cy - 55, 'novel?', 'hand', 3.2, { style: { fontSize: '52px' } });
+      S.path(checkP(cx - 30, cy + 10, 56), 3.8, .25, { w: 8 });
+      // note packet travelling the ring
+      const note = S.block(0, 0, 44, 34, 2.4, { color: '#c8ff00', kind: 'popb', rx: 3 });
+      note.style.stroke = '#0a0a0a'; note.style.strokeWidth = 4;
+      S.on(u => { const p = (Math.max(0, u - 2.4) * .45) % 1, k = p * 6, i = Math.floor(k), f = eio(k - i); const [x1, y1] = pts[i % 6], [x2, y2] = pts[(i + 1) % 6]; note.setAttribute('x', x1 + (x2 - x1) * f - 22); note.setAttribute('y', y1 + (y2 - y1) * f - 17 - 72); });
+    } },
+  { problem: 'Customers call after the office closes.',
+    fix: 'Voice agents that pick up, handle the routine, and hand the rest to your team.',
+    proof: '<b>N8N · RETELLAI</b> · VOICE-AGENT WORKFLOWS FOR OVERSEAS CLIENTS',
+    draw(S) {
+      S.path(`${arcP(1180, 270, 60, -2.1, 2.1)} ${arcP(1215, 250, 52, 2.3, -2.3).replace('M', 'L')}`, .4, .45, { w: 5 });
+      S.path(sparkP(1300, 210, 24), .8, .2, { w: 3, quiet: 1 }); S.path(sparkP(1110, 360, 18), .9, .2, { w: 3, quiet: 1 });
+      // phone
+      S.path(rectP(1330, 330, 190, 360, 6), 1.0, .5, { w: 6 });
+      S.path(line(1395, 360, 1455, 360, 1), 1.4, .15, { w: 5, quiet: 1 });
+      S.path(circleP(1425, 655, 14, 1.05), 1.45, .15, { w: 4, quiet: 1 });
+      const waves = [0, 1, 2].map(k => S.path(arcP(1520, 510, 60 + k * 45, -.7, .7), 1.7 + k * .15, .25, { w: 5, quiet: 1 }));
+      S.on(u => waves.forEach((w, k) => { if (u > 2.4) w.style.opacity = .35 + .65 * Math.max(0, Math.sin((u - 2.4) * 6 - k * .9)); }));
+      S.path(rectP(1100, 470, 200, 110, 5), 2.2, .35, { w: 4 });
+      S.text(1115, 490, 'Hi — how can I help?', 'hand', 2.5, { w: 180, style: { fontSize: '32px', lineHeight: '1.05' } });
+      S.path(arrowP(1440, 720, 1560, 820, -30), 3.4, .35, { w: 5 });
+      S.path(rectP(1570, 760, 220, 150, 5), 3.7, .4, { w: 5 });
+      S.text(1595, 780, 'TICKET', 'mono', 4.0, { anim: 'fade', style: { fontSize: '22px', letterSpacing: '.14em', fontWeight: 700 } });
+      S.text(1595, 820, 'to your team', 'hand', 4.2, { style: { fontSize: '34px' } });
+      S.path(checkP(1740, 730, 50), 4.7, .25, { w: 8 });
+    } },
+  { problem: 'Payment messages never quote the invoice cleanly.',
+    fix: 'The model proposes a match. Rules re-verify it. A human approves.',
+    proof: '<b>HISAB</b> · 21 TESTS · 28 END-TO-END CHECKS PASSING',
+    draw(S) {
+      S.path(rectP(1090, 210, 690, 190, 6), .4, .45, { w: 5 });
+      S.text(1115, 225, 'INCOMING PAYMENT MESSAGE', 'mono', .7, { anim: 'fade', style: { fontSize: '20px', letterSpacing: '.14em', color: '#6f6c66' } });
+      S.text(1115, 270, '/RFB/ INV 2<u>O</u>24-<u>OO</u>91 PART PMT', 'mono', .9, { dur: 1.0, style: { fontSize: '36px', fontWeight: 500 } });
+      S.text(1115, 325, 'ORD CUST: US BUYER · USD', 'mono', 1.6, { dur: .7, style: { fontSize: '26px', color: '#3a3833' } });
+      S.path(ellipseP(1432, 294, 140, 36), 2.3, .45, { w: 5 });
+      S.text(1300, 410, 'letter O, not zero', 'hand', 2.7, { rot: -3, style: { fontSize: '36px' } });
+      S.path(arrowP(1435, 470, 1435, 590, -30), 3.1, .3, { w: 5 });
+      S.path(rectP(1090, 610, 420, 200, 6), 3.3, .4, { w: 5 });
+      S.text(1115, 630, 'INVOICE', 'mono', 3.6, { anim: 'fade', style: { fontSize: '20px', letterSpacing: '.14em', color: '#6f6c66' } });
+      S.text(1115, 670, 'INV 2024-0091', 'mono', 3.7, { anim: 'fade', style: { fontSize: '36px', fontWeight: 700 } });
+      S.path(scribLines(1115, 750, 300, 2, 30), 3.9, .3, { w: 3, quiet: 1 });
+      S.text(1560, 640, 'MATCH', 'disp', 4.3, { anim: 'stamp', rot: -8, style: { fontSize: '64px', padding: '6px 18px', background: '#c8ff00', border: '5px solid #0a0a0a' } });
+      S.text(1570, 760, 'rules ✓  human ✓', 'hand', 5.0, { style: { fontSize: '40px' } });
+    } },
+];
+CASES.forEach((c, i) => {
+  const t0 = 33 + i * 10;
+  const S = new Scene(t0, t0 + 10, `Problem 0${i + 1}`, { idx: `0${i + 1} / 07` });
+  badge(S, 194, 190, i + 1, .1);
+  S.text(250, 170, 'THE PROBLEM', 'mono', .2, { anim: 'fade', style: { fontSize: '22px', letterSpacing: '.2em', color: '#6f6c66' } });
+  S.text(160, 250, c.problem, 'hand', .4, { w: 860, style: { fontSize: '66px', lineHeight: '1.08' } });
+  S.text(160, 475, '<span class="mk"><i></i>THE FIX</span>', 'mono', 2.1, { anim: 'fade', style: { fontSize: '24px', letterSpacing: '.2em', fontWeight: 700 } });
+  S.text(160, 520, c.fix, 'disp', 2.3, { anim: 'fade', w: 840, style: { fontSize: '50px', lineHeight: '1.04', letterSpacing: '-.03em' } });
+  S.text(160, 800, c.proof, 'mono chip', 3.6, { anim: 'pop', w: 840, style: { transformOrigin: 'left center' } });
+  c.draw(S);
+});
+
+// ================================================================== proof (102–110)
+{
+  const S = new Scene(103, 111, 'Proof');
+  S.text(160, 150, 'One business.', 'disp', .2, { anim: 'pop', style: { fontSize: '120px', transformOrigin: 'left center' } });
+  S.text(160, 270, 'Ten internal tools.', 'disp', .5, { anim: 'pop', style: { fontSize: '120px', transformOrigin: 'left center' } });
+  S.text(160, 400, '<span class="mk"><i></i>7+ in daily production.</span>', 'disp', .8, { anim: 'pop', style: { fontSize: '120px', transformOrigin: 'left center' } });
+  S.text(165, 560, 'Days of manual work now run unattended.', 'hand', 1.8, { style: { fontSize: '56px' } });
+  const live = [0, 1, 2, 3, 4, 6, 8];
+  for (let i = 0; i < 10; i++) {
+    const x = 160 + (i % 5) * 330, y = 690 + Math.floor(i / 5) * 150, at = 2.4 + i * .18;
+    S.path(rectP(x, y, 290, 110, 5), at, .3, { w: 5, quiet: i > 0 });
+    S.text(x + 22, y + 18, 'TOOL ' + String(i + 1).padStart(2, '0'), 'mono', at + .15, { anim: 'fade', style: { fontSize: '22px', letterSpacing: '.12em', fontWeight: 700 } });
+    if (live.includes(i)) S.text(x + 150, y + 45, 'LIVE', 'mono', 4.4 + live.indexOf(i) * .14, { anim: 'stamp', rot: -6, style: { fontSize: '26px', fontWeight: 700, background: '#c8ff00', padding: '2px 12px', border: '3px solid #0a0a0a' } });
+  }
+  S.text(1400, 180, 'names under NDA —', 'hand', 3.0, { rot: 4, style: { fontSize: '38px', color: '#3a3833' } });
+  S.text(1410, 225, 'patterns, not secrets', 'hand', 3.4, { rot: 4, style: { fontSize: '38px', color: '#3a3833' } });
+}
+
+// ================================================================== offer (110–119)
+{
+  const S = new Scene(111, 120, 'What you get');
+  S.text(160, 140, 'What you get', 'disp', .1, { anim: 'pop', style: { fontSize: '130px', transformOrigin: 'left center' } });
+  const items = ['Scoped with your team, built on your stack', 'Deterministic checks before anything touches money', 'A human in the loop where it matters', 'A system that keeps running after I leave'];
+  items.forEach((s, i) => {
+    const y = 350 + i * 150, at = 1.0 + i * 1.2;
+    S.path(rectP(170, y, 76, 76, 4), at, .3, { w: 5 });
+    S.path(checkP(180, y - 6, 80), at + .35, .3, { w: 10 });
+    S.text(290, y - 2, i === 3 ? '<span class="mk"><i></i>' + s + '</span>' : s, 'hand', at + .15, { style: { fontSize: '66px' } });
+  });
+}
+
+// ================================================================== CTA (119–128), dark like the site
+{
+  const S = new Scene(120, 130, 'Contact', { dark: true });
+  S.text(160, 230, 'Got a process leaking', 'disp', .3, { anim: 'fade', style: { fontSize: '112px', color: '#f0ede8' } });
+  S.text(160, 350, 'time or money?', 'disp', .55, { anim: 'fade', style: { fontSize: '112px', color: '#f0ede8' } });
+  S.text(150, 510, 'Let\'s automate it.', 'disp', 1.6, { anim: 'pop', style: { fontSize: '176px', color: '#c8ff00', transformOrigin: 'left center' } });
+  const line2 = S.path(line(160, 735, 1760, 735, 6), 2.5, .6, { w: 4, color: '#f0ede8' });
+  S.text(160, 775, 'dhoot.bhavya1@gmail.com', 'mono', 2.9, { anim: 'fade', style: { fontSize: '40px', color: '#f0ede8' } });
+  S.text(1000, 775, 'bhavya-dhoot.vercel.app', 'mono', 3.1, { anim: 'fade', style: { fontSize: '40px', color: '#f0ede8' } });
+  S.text(165, 865, 'Open for automation engagements — AI companies and the operators who run on them.', 'hand', 3.6, { style: { fontSize: '44px', color: '#c8ff00' } });
+}
+
+// ------------------------------------------------------------------ wipes between scenes
+const CUTS = scenes.slice(1).map(s => s.t0);
+const WIPE_D = zigFill(-260, -160, 2440, 1400, 11);
+document.getElementById('wipe-p').setAttribute('d', WIPE_D);
+CUTS.forEach(c => SFX.push({ t: c - .35, type: 'whoosh' }));
+const DURATION = scenes[scenes.length - 1].t1;
+
+function render(t) {
+  document.getElementById('turb').setAttribute('seed', 1 + (Math.floor(t * 10) % 5));
+  let cur = scenes[0];
+  for (const s of scenes) { const on = t >= s.t0 && t < s.t1; s.el.style.display = on ? 'block' : 'none'; if (on) cur = s; }
+  if (t >= DURATION) { cur = scenes[scenes.length - 1]; cur.el.style.display = 'block'; }
+  cur.update(t - cur.t0);
+  const dark = cur.dark;
+  document.getElementById('stage').classList.toggle('dark', dark);
+  document.getElementById('grid').style.opacity = dark ? 0 : 1;
+  document.getElementById('grain').style.opacity = dark ? 0 : .35;
+  document.getElementById('hud-b').textContent = cur.chapter;
+  document.getElementById('hud-d').textContent = cur.idx;
+  document.getElementById('hud-c').style.visibility = dark ? 'hidden' : 'visible';
+  // wipe: draw in over [c-.4, c], erase over [c, c+.4]
+  const w = document.getElementById('wipe-p');
+  let off = 1, vis = false, color = '#c8ff00';
+  for (const c of CUTS) {
+    if (t >= c - .4 && t < c + .4) {
+      vis = true; off = t < c ? 1 - eio(seg(t, c - .4, c)) : -eio(seg(t, c, c + .4));
+      if (c === CUTS[CUTS.length - 1]) color = '#0a0a0a';
+    }
+  }
+  w.style.stroke = color; w.style.strokeWidth = 330; w.style.strokeDasharray = '1 1'; w.style.strokeDashoffset = off; w.style.opacity = vis ? 1 : 0;
+}
+window.render = render;
+window.DURATION = DURATION;
+window.SFX = SFX.sort((a, b) => a.t - b.t);
+window.ready = document.fonts.ready.then(() => Promise.all(['400 40px "Patrick Hand"', '800 100px Archivo', '500 40px Archivo', '700 40px Archivo', '400 20px "JetBrains Mono"', '700 20px "JetBrains Mono"'].map(f => document.fonts.load(f))));
+</script>
+</body>
+</html>
