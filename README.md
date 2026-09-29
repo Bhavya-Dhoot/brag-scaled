@@ -2,11 +2,12 @@
 
 **You built it. Now brag — and render it in minutes.**
 
-[![The brag-scaled launch video: 25 seconds, made with brag-scaled. Click to play.](docs/assets/brag-scaled.jpg)](docs/assets/brag-scaled.mp4)
+[![The brag-scaled launch video, silent preview. Click to play it with sound.](docs/assets/brag-scaled-preview.webp)](https://cdn.jsdelivr.net/gh/Bhavya-Dhoot/brag-scaled@87d204e/docs/assets/brag-scaled.mp4)
 
 *This launch video was made with brag-scaled itself: the `patent-office` style, offline
 narration from `narrate`, and 1,500 frames at 60 fps rendered by `fast-render` in 38 s.
-Click the image to play it.*
+The loop above is a silent preview. **[Play the full 25 s video with sound](https://cdn.jsdelivr.net/gh/Bhavya-Dhoot/brag-scaled@87d204e/docs/assets/brag-scaled.mp4)**,
+or see the [poster frame](docs/assets/brag-scaled.jpg).*
 
 `brag-scaled` is a set of agent skills that turn the project you built into a short, shareable launch video, with music, motion, optional narration and share copy.
 
