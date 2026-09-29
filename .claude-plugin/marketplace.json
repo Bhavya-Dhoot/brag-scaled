@@ -1,6 +1,6 @@
 {
   "name": "brag-scaled",
-  "description": "/brag with a fast renderer. Fork of latent-spaces/brag by Shunit Haviv Hakimi.",
+  "description": "You built it. Now brag. Launch videos with GPU rendering and offline narration.",
   "owner": {
     "name": "Bhavya Dhoot",
     "url": "https://github.com/Bhavya-Dhoot"

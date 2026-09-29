@@ -1,20 +1,27 @@
 # brag-scaled
 
-**/brag, with a renderer that uses your GPU.**
+**You built it. Now brag — and render it in minutes.**
 
-This is a fork of [latent-spaces/brag](https://github.com/latent-spaces/brag) by Shunit Haviv Hakimi. It has everything upstream has, plus one addition: a `fast-render` skill that `/brag-slim` uses for stills and the final render.
+[![you built it, now brag](docs/assets/hero.png)](https://github.com/Bhavya-Dhoot/brag-scaled)
 
-### What changed
+`brag-scaled` is a set of agent skills that turn the project you built into a short, shareable launch video, with music, motion, optional narration and share copy.
 
-| | upstream | brag-scaled |
+| Skill | What it does |
+|---|---|
+| `/brag-slim` | The model builds the whole video itself: story, visuals, soundtrack, share copy. It is the default on Claude Opus 5.5. |
+| `/brag` | The classic workflow, which builds and renders through [Hyperframes](https://hyperframes.heygen.com/). |
+| `fast-render` | Renders any `window.render(t)` page to MP4 on the GPU with parallel browsers. `/brag-slim` uses it for stills and the final render. |
+| `narrate` | Offline voiceover with a bundled 82M-parameter TTS model (Kokoro). It gives exact line timings and ducks the music under the voice. |
+
+## Why it's fast
+
+| Step | Typical approach | brag-scaled |
 |---|---|---|
-| Frame drawing | Headless Chromium, often on the CPU (SwiftShader) | Pushed onto the GPU; the renderer in use is printed and checked |
+| Drawing frames | Headless Chromium, often on the CPU (SwiftShader) | Pushed onto the GPU; the renderer in use is printed and checked |
 | Capture | Screenshots, typically written to disk | Captured over CDP and piped straight into video segments by parallel browsers |
 | Encode | One serial pass | Segments encoded in parallel on the best working H.264 encoder (NVENC, Quick Sync, AMF, VideoToolbox, then libx264), after capture finishes |
 
-### Measured
-
-Windows 11, i9-11950H (16 threads), RTX A2000 Laptop GPU, NVMe. The test was a 130-second, 60 fps /brag-slim video (7,800 frames at 1080p).
+Measured on Windows 11 with an i9-11950H (16 threads), an RTX A2000 Laptop GPU and an NVMe drive. The test was a 130-second, 60 fps video (7,800 frames at 1080p).
 
 | | time |
 |---|---|
@@ -22,84 +29,33 @@ Windows 11, i9-11950H (16 threads), RTX A2000 Laptop GPU, NVMe. The test was a 1
 | `fast-render`, default settings | 4 min 46 s |
 | `fast-render --encode-jobs 12` (workstation GPU) | 3 min 46 s |
 
-Single frames went from 1.7 s to 75 ms once Chromium was on the GPU. The output decodes within 43.6 dB PSNR of a lossless capture of the same frame, which is visually identical.
+Single frames went from 1.7 s to 75 ms once Chromium was on the GPU. The output decodes within 43.6 dB PSNR of a lossless capture of the same frame. Only the Windows + NVIDIA path is measured so far. The macOS and Linux GPU flags are the documented ANGLE backends, and the renderer line shows what actually ran.
 
-Only the Windows + NVIDIA path is measured so far. Quick Sync, libx264 and the CPU fallback are tested on the same machine. The macOS and Linux GPU flags are the documented ANGLE backends, but they are unmeasured.
+## Install
 
-### Install
+**Claude Code:**
 
 ```bash
 claude plugin marketplace add Bhavya-Dhoot/brag-scaled
 claude plugin install brag-scaled@brag-scaled
 ```
 
-`fast-render` needs Python 3.9+, `pip install playwright imageio-ffmpeg`, and `playwright install chromium`.
-
-The speed-up is also proposed upstream as guidance only, in [latent-spaces/brag#39](https://github.com/latent-spaces/brag/pull/39).
-
-Licences: code is MIT (see `LICENSE`); bundled music is CC BY 4.0 and the sound effects are CC0 (see [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)).
-
----
-
-*Upstream README follows.*
-
-# /brag
-
-**You built it. Now brag.**
-
-[![the /brag launch site — you built it, now brag](docs/assets/hero.png)](https://latent-spaces.github.io/brag/)
-
-`/brag` is a Claude Code skill that turns the project you created into a short, shareable launch video — music, motion, and share copy included. One command, powered by [Hyperframes](https://hyperframes.heygen.com/).
-
-The looping video on the [launch site](https://latent-spaces.github.io/brag/) was made by `/brag` on this very repo. 
-
-## New: `/brag-slim`
-
-**The same /brag, rebuilt lean for Opus 5.5.**
-
-A smooth launch video, designed for your specific project, with its own soundtrack and share copy.
-
-No Hyperframes, no bundled assets, same creative rules.
-
-Just tell Opus 5.5: *let's /brag about this.*
-
-On Opus 5.5, `/brag` switches to `/brag-slim` automatically. Run `/brag --full` to keep the classic Hyperframes workflow.
-
-**Install just `/brag-slim`:**
+**Any other agent**, through the [`skills`](https://github.com/vercel-labs/skills) CLI (Cursor, Codex, Copilot, Gemini CLI, opencode and more):
 
 ```bash
-npx skills add https://github.com/latent-spaces/brag --skill brag-slim
+npx skills add https://github.com/Bhavya-Dhoot/brag-scaled --skill brag-slim
+npx skills add https://github.com/Bhavya-Dhoot/brag-scaled --skill fast-render
+npx skills add https://github.com/Bhavya-Dhoot/brag-scaled --skill narrate
 ```
 
-Already have the `/brag` plugin? `/brag-slim` is included from version 0.4.0. Run `claude plugin update brag` to get it.
-
-## Install /brag
+**Python tools** (`fast-render`, `narrate`):
 
 ```bash
-/plugin marketplace add latent-spaces/brag
-/plugin install brag@brag
+pip install playwright imageio-ffmpeg kokoro-onnx soundfile
+playwright install chromium
 ```
 
-Then run `/brag` inside any project. The plugin includes `/brag-slim` too.
-
-**Any other agent** — one command via the [`skills`](https://github.com/vercel-labs/skills) CLI (Cursor, Codex, Copilot, Gemini CLI, opencode, and more):
-
-```bash
-npx skills add https://github.com/latent-spaces/brag --skill brag
-```
-
-Add `-g` to install globally (available in every project); drop it to scope to the current one. ([browse on skills.sh](https://www.skills.sh/latent-spaces/brag/brag))
-
-<details>
-<summary>No installer? Copy the skill directly.</summary>
-
-```bash
-rsync -a --exclude '.DS_Store' skills/brag/ ~/.claude/skills/brag/
-rsync -a --exclude '.DS_Store' skills/brag-slim/ ~/.claude/skills/brag-slim/  # optional: the /brag-slim command
-```
-
-Restart Claude Code after copying.
-</details>
+The TTS model (about 120 MB) downloads once on the first narration, from this repo's [`tts-v1` release](https://github.com/Bhavya-Dhoot/brag-scaled/releases/tag/tts-v1). It is checked against a SHA-256 and cached in `~/.cache/brag-scaled/`.
 
 ### Also works with
 
@@ -123,61 +79,42 @@ From any project directory, ask your agent:
 let's /brag
 ```
 
-Or steer the tone:
+Steer the tone, or add narration:
 
 ```text
 /brag --tone "fake Series A launch from 2016"
+/brag-slim --voice
+/brag-slim --voice bf_emma
 ```
 
-Voiceover is off by default. Enable it explicitly with:
-
-```text
-/brag --voice
-```
-
-Narration uses Kokoro through Hyperframes when enabled.
-
-You get a `brag-output/` folder with the plan, a composition brief, share copy, and the rendered `brag.mp4`.
-
-## How it works
-
-`/brag` owns the story — the product angle, tone, and which moments to show. It hands a focused brief to [Hyperframes](https://hyperframes.heygen.com/), which builds, times, and renders the video.
+You get a `brag-output/` folder with the plan, share copy, and the rendered `brag.mp4` with its poster frame.
 
 ## Requirements
 
-- An agent that supports Agent Skills — Claude Code, opencode, Codex CLI, or any agent with custom instructions (see "Also works with" above)
-- Node.js 22+
-- FFmpeg on `PATH`
-- Hyperframes CLI — `npx hyperframes` (check it with `npx hyperframes doctor`)
+- An agent that supports Agent Skills (Claude Code, opencode, Codex CLI, or any agent with custom instructions)
+- Python 3.9+ for `fast-render` and `narrate`
+- Node.js 22+ and the Hyperframes CLI, for the classic `/brag` only
 
 ## What's in this repo
 
-- `skills/brag/` — the skill, references, and bundled music + SFX
-- `skills/brag-slim/` — `/brag-slim`, the single-file skill for Claude Opus 5.5
-- `examples/` — fake product sites used as a benchmark suite
-- `docs/` — the launch site (GitHub Pages)
-- `.claude-plugin/` — plugin manifest + marketplace catalog
-- `.claude/skills/brag/` — symlink → `skills/brag/` (Claude Code discovery)
-- `.agents/skills/brag/` — symlink → `skills/brag/` (Codex CLI + opencode discovery)
-- `.opencode/skills/brag/` — symlink → `skills/brag/` (opencode discovery)
+- `skills/brag-slim/`: the single-file skill
+- `skills/fast-render/`: the GPU renderer (`scripts/fastrender.py`)
+- `skills/narrate/`: offline narration (`scripts/narrate.py`)
+- `skills/brag/`: the classic workflow, with its references and bundled music and SFX
+- `examples/`: fake product sites used as a benchmark suite
+- `docs/`: the launch site
+- `.claude-plugin/`: the plugin manifest and marketplace catalog
+- `.claude/skills/`, `.agents/skills/`, `.opencode/skills/`: symlinks into `skills/` for each agent's discovery path
 
 ## Credits
 
-- Music — [ende.app](https://ende.app/en) "Happy Beats / Business Moves"
-- Sound effects — [Kenney](https://kenney.nl/)
-- Video generation — [Hyperframes](https://hyperframes.heygen.com/)
-- Fake demo sites — built with [Impeccable](https://impeccable.style/)
+- Music: "Happy Beats / Business Moves" by Sascha Ende, [ende.app](https://ende.app/en) (CC BY 4.0)
+- Sound effects: [Kenney](https://kenney.nl/) (CC0)
+- Voice: [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) (Apache-2.0), run through [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx) (MIT)
+- Video generation, in the classic `/brag`: [Hyperframes](https://hyperframes.heygen.com/)
+
+Licences: the code is MIT (see `LICENSE`). Bundled audio and model terms are in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Contributing
 
-Contributions, ideas, and new demo brags are welcome — open an issue or a PR.
-
-## Star History
-
-<a href="https://www.star-history.com/?type=date&repos=latent-spaces%2Fbrag">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=latent-spaces/brag&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=latent-spaces/brag&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=latent-spaces/brag&type=date&legend=top-left" />
- </picture>
-</a>
+Ideas, fixes and new demo brags are welcome. Open an issue or a PR.

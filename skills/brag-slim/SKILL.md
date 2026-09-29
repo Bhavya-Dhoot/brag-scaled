@@ -16,6 +16,7 @@ Usage: `/brag-slim [input] [options]`. Options (flags or plain language):
 | `--tone <preset or freeform>` | inferred; `default` if nothing clearly fits |
 | `--format landscape\|vertical\|square` | landscape (1920×1080; vertical 1080×1920, square 1080×1080), 30fps |
 | `--duration <s>` | about 20s |
+| `--voice [voice]` | off; narration with the `narrate` skill (default voice `af_heart`) |
 
 Write the deliverables to `brag-output/` in the current directory (timestamped `brag-output-YYYY-MM-DD-HHmmss/` if it already exists). Keep every intermediate file (frames, downloads, scripts, stems) in a `work/` subfolder inside it.
 
@@ -87,6 +88,8 @@ Presets are defaults; freeform direction ("fake Series A launch from 2016") refi
 ## Sound
 
 Write the music and sound effects as one piece: effects in the same key and the same space as the music, blended in rather than laid on top. Give it a basic, proper mix, the way a real track is mixed: effects sit softly under the music, nothing harsh or spiky, and repeated little sounds stay in the background.
+
+Narration is off unless asked for (`--voice`, "narrate it", "add a voiceover"). When it's on, use the `narrate` skill beside this one (`../narrate/`). Write the voiceover while planning — one short line per beat, saying what the screen can't — then synthesize it *before* timing scenes, and fit each scene to its line's real duration. Mix the music and effects under the voice (the skill ducks the music); nothing should compete with a spoken word. If `narrate` isn't installed, say so and deliver without narration.
 
 ## 3. Build, check, render
 

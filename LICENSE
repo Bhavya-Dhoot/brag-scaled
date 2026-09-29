@@ -1,5 +1,6 @@
 MIT License
 
+Copyright (c) 2026 Bhavya Dhoot
 Copyright (c) 2026 Shunit Haviv Hakimi
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,6 +21,4 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-brag-scaled modifications (the fast-render skill and the render guidance in
-/brag-slim) Copyright (c) 2026 Bhavya Dhoot, under the same MIT terms above.
-Bundled audio has its own licences; see THIRD_PARTY_NOTICES.md.
+Bundled audio and the downloaded TTS model have their own licences; see THIRD_PARTY_NOTICES.md.
