@@ -11,6 +11,8 @@ You built it. Now let's brag about it.
 
 **Model check.** If you are Claude Opus 5.5 and the invocation doesn't ask for the full workflow (`--full`, "use the full brag"), switch to brag-slim (it narrates with the `narrate` skill when `--voice` is given): read `<skill-dir>/slim.md` (the /brag-slim skill, bundled here) and follow it for the rest of this run instead of this file. Pass along the user's input, and pass any other options (`--no-music`, `--title`, …) as plain-language direction. Tell the user in one line first, e.g. "You're on Opus 5.5, so I'm using /brag-slim: I build the whole video myself. Say 'use the full brag' to switch back." If you are any other model, or can't tell which model you are, skip this check.
 
+**What else is installed.** Three more skills ship beside this one: `brag-styles` (19 art-directed looks, with a recommendation before building), `narrate` (offline Kokoro voiceover with music ducking) and `fast-render` (GPU frame capture for any page that draws its frames in a browser). The Hyperframes workflow below doesn't use the style sets or `fast-render`; /brag-slim does. If the user asks for a style set, style options, or a video longer than 25 seconds, tell them in one line and run /brag-slim (`<skill-dir>/slim.md`) instead, whatever model you are.
+
 Before inspecting the project, parse the complete `/brag` invocation. If the
 invocation contains `--voice`, set `voice.enabled = true`. Enable narration
 only for that run. Do not enable narration automatically and do not fall back

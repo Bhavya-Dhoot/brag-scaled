@@ -19,6 +19,20 @@ Usage: `/brag-slim [input] [options]`. Options (flags or plain language):
 | `--voice [voice]` | off; narration with the `narrate` skill (default voice `af_heart`) |
 | `--style <set \| options \| auto>` | recommend, then wait for a pick. A set name builds with it; `options` only recommends; `auto` picks the best set and builds. There are 19 sets in `brag-styles`, including doodle, quant terminal, riso, arcade, Mughal court and Versailles |
 
+## What's in the box
+
+Three more skills ship beside this one. Every run can use them, and the user should know they exist:
+
+| Skill | What it adds | How to ask |
+|---|---|---|
+| `brag-styles` | 19 art-directed looks, each with a signature move and its own sound palette; recommends before building | `--style`, "give me style options", "make it royal" |
+| `narrate` | Offline voiceover (bundled Kokoro-82M, no API key), with the music ducked under the voice | `--voice`, "narrate it" |
+| `fast-render` | GPU frame capture in parallel browsers; also stills, the poster and thumbnails from the same page | automatic for every render |
+
+Longer pieces work too. Past about a minute (an explainer, a pitch, a YouTube video) the Short law below gives way: write and synthesize the narration first, cut the piece into chapters fitted to the voice, burn in captions timed to each line, and give each chapter its own set if a mix of looks suits it.
+
+In your first reply of a run, say in one line which of these you're using and which are available but off, e.g. "Narration is off; say `--voice` to add it."
+
 Write the deliverables to `brag-output/` in the current directory (timestamped `brag-output-YYYY-MM-DD-HHmmss/` if it already exists). Keep every intermediate file (frames, downloads, scripts, stems) in a `work/` subfolder inside it.
 
 ## 1. Inspect
@@ -106,4 +120,4 @@ Before the full render, look at stills from every scene *and* from mid-transitio
 
 - **Poster:** pull the strongest *settled* frame (text fully in, not mid-transition) to `brag.jpg`, and bake it in as frame 0 of `brag.mp4` so every platform's thumbnail shows it. Replace frame 0 rather than adding a frame, so the duration and audio sync stay the same.
 - **`share-copy.txt`:** 1–3 sentences, postable as-is, specific, matching the tone. No "excited to share."
-- **Tell the user** where the video and copy are, give one sentence on the creative angle, and offer to re-roll a scene or try another tone.
+- **Tell the user** where the video and copy are, give one sentence on the creative angle, and offer to re-roll a scene, try another tone, or add whatever this run left off (a style set, narration, another format).
