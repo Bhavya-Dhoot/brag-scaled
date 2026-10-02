@@ -16,9 +16,9 @@ or see the [poster frame](docs/assets/brag-scaled.jpg).*
 | `/brag-slim` | The model builds the whole video itself: story, visuals, soundtrack, share copy. It is the default on Claude Opus 5.5. |
 | `/brag` | The classic workflow, which builds and renders through [Hyperframes](https://hyperframes.heygen.com/). |
 | `fast-render` | Renders any `window.render(t)` page to MP4 on the GPU with parallel browsers. Also 4K, transparent ProRes, graphics over footage, a setup check and an activity audit. `/brag-slim` uses it for stills and the final render. |
-| `motion-kit` | Keeps a video from playing like a slideshow: 35 named moves, pacing rules, cursor-and-camera demo engines, a beat grid, code-made sound, safe zones, and bundled open-licence fonts. |
+| `motion-kit` | Keeps a video from playing like a slideshow: 41 named moves, pacing rules, cursor-and-camera demo engines, a beat grid, code-made sound and three backing grooves, a QR code that is checked to scan, safe zones, and bundled open-licence fonts. |
 | `narrate` | Offline voiceover with a bundled 82M-parameter TTS model (Kokoro). It gives exact line timings and ducks the music under the voice. `transcribe.py` goes the other way: word timings from a recorded clip. |
-| `brag-styles` | 21 art-directed looks, each with a signature motion trick and a matching sound palette. Ask for options and it recommends one before building anything. |
+| `brag-styles` | 22 art-directed looks, each with a signature motion trick and a matching sound palette. Ask for options and it recommends one before building anything. |
 
 ## Why it's fast
 
@@ -57,6 +57,7 @@ and what one viewer said about each:
 | Ops Desk demo, recut on a beat grid | 6.9% | 5% | accepted |
 | Kinetic Type reference | 7.0% | 2% | not yet judged |
 | The doodle intro again, with a pencil on every stroke and a camera following it | 11.7% | 10% | not yet judged |
+| Brutal Bento reference: rooms inside tiles, cut to 140 BPM | 8.0% | 9% | chosen as the author's introduction |
 
 That is one viewer and a handful of videos, so read it as a prompt to look, not a score. `motion-kit`
 holds what changed between the first two and the third: a performer in every scene, effect straight
@@ -74,9 +75,13 @@ the clip with its size, frame rate, cut and audio untouched. An 18 s, 1080x1920 
 composited in 24 s on the reference laptop. For an editor instead, `--transparent` writes ProRes 4444
 with alpha and a PNG sequence.
 
-## 21 looks, recommended before anything is built
+## 22 looks, recommended before anything is built
 
-![Nineteen of the 21 brag-styles looks; Ops Desk and Kinetic Type are shown above](docs/assets/scaled/styles.jpg)
+![Nineteen of the 22 brag-styles looks; Ops Desk and Kinetic Type are shown above, Brutal Bento below](docs/assets/scaled/styles.jpg)
+
+| Brutal Bento: the smash | a room inside a tile | the end card |
+|---|---|---|
+| ![A headline slammed over a bento board](skills/brag-styles/sets/brutal-bento/frames/f1.webp) | ![A conveyor room with PERFECT across it](skills/brag-styles/sets/brutal-bento/frames/f2.webp) | ![A QR code beside SCAN and DEPLOY](skills/brag-styles/sets/brutal-bento/frames/f4.webp) |
 
 | You say | brag-scaled does |
 |---|---|
@@ -120,6 +125,7 @@ npx skills add https://github.com/Bhavya-Dhoot/brag-scaled --skill brag-styles
 pip install playwright imageio-ffmpeg kokoro-onnx soundfile numpy scipy pillow
 playwright install chromium
 pip install faster-whisper   # only for graphics on recorded footage
+pip install opencv-python    # only for a QR code on screen
 ```
 
 Then check the machine, including whether frames will be drawn on the GPU:
@@ -183,9 +189,9 @@ You get a `brag-output/` folder with the plan, share copy, and the rendered `bra
 
 - `skills/brag-slim/`: the single-file skill
 - `skills/fast-render/`: the GPU renderer (`scripts/fastrender.py`)
-- `skills/motion-kit/`: the moves and pacing rules, `scripts/soundkit.py` (sound made in code), `scripts/fit_scenes.py` (scenes fitted to narration on a beat grid), reference engines in `ref/`, and bundled fonts
+- `skills/motion-kit/`: the moves and pacing rules, `scripts/soundkit.py` (sound made in code), `scripts/fit_scenes.py` (scenes fitted to narration on a beat grid, lines placed on beats), `scripts/qr.py` (a QR grid, and a check that a rendered frame scans), reference engines in `ref/`, and bundled fonts
 - `skills/narrate/`: offline narration (`scripts/narrate.py`) and word timings from a clip (`scripts/transcribe.py`)
-- `skills/brag-styles/`: the 21 visual systems. Each has a `set.md`, which is all a run reads, plus reference frames, `DESIGN.md` tokens and reference markup.
+- `skills/brag-styles/`: the 22 visual systems. Each has a `set.md`, which is all a run reads, plus reference frames, `DESIGN.md` tokens and reference markup.
 - `scripts/import_stitch.py`: turns a Google Stitch export into sanitised sets
 - `skills/brag/`: the classic workflow, with its references and bundled music and SFX
 - `examples/`: fake product sites used as a benchmark suite

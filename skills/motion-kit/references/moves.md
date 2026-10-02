@@ -27,6 +27,7 @@ const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);  // 0 -> 1 -> 0,
 | typewriter | text types itself | 0.03 s a letter | monospace: `width = round(n * p) ch`; other type: `clip-path: inset(0 (1-p)*100% 0 0)` |
 | draw-on | a line draws itself | 0.3-0.7 s | `pathLength=1; stroke-dasharray: 1 1; stroke-dashoffset = 1 - eo(p)` |
 | wipe | a block of colour grows from one edge | 0.35 s | `scaleX(eo(p))`, origin at that edge |
+| shatter | the page breaks into shards from where it was hit, showing what is behind | 0.8 s | cut the frame into triangles from the hit point to the edges (include the four corner angles so every wedge lies on one edge); each is a `clip-path` copy of the page moving `dir * v * u`, falling `1500 * u * u`, spinning, fading after 0.5 s |
 
 ## Proof
 
@@ -38,6 +39,8 @@ const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);  // 0 -> 1 -> 0,
 | badge flip | a label turns over into its opposite | 0.28 s | old `scaleY(1 - 2p)` for `p < .5`, new `scaleY(2p - 1)` after |
 | strike-through | a claim is crossed out | 0.4 s | draw-on of a marker line that follows the cursor |
 | pen mark | an underline, circle or tick drawn by a visible pencil | 0.3-0.7 s | draw-on, with the pencil at `path.getPointAtLength(len * p)`; measure paths on a hidden probe when the scene is not displayed yet |
+| slot roll | a column of values spins and lands on the last | 1 s | `translateY(-rowHeight * (n - 1) * eo(p))` inside a clipped box, a tick per row |
+| unit fall | a readout drops through units to its real value | 1.5-2 s | `v = from * (to / from) ** p`, printed as ms, then µs, then ns; a bar drains with it |
 | compare | two values, one marked | 0.4 s | the odd one shakes `sin(u * 60) * 5 * (1 - u / .4)` and changes colour |
 
 ## The cursor acts
@@ -61,6 +64,8 @@ const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);  // 0 -> 1 -> 0,
 | push | a slow move in while a line is read | the whole hold | `scale(1 + .05 * seg(t, t0, t1))` |
 | dive | one world rushes past, the next settles | 0.5 s | old: `scale(1 + 4.2 * p * p)`, fading late; new: `scale(1.28 - .28 * eo(p))` underneath |
 | follow | the camera leans in to wherever the pen or cursor is working, then eases back out | whole scene | before the first frame, step through the scene at 30 fps and ease the camera 7% of the way to the performer each step (zoom about 1.26 while it works, 1 when it rests); store the path and read it back by time, so frames stay a pure function of `t` |
+| room in a tile | a tile on the board is a whole scene in miniature; the camera flies in until it is the frame | 0.6 s | author the room at 1920x1080, place it in the tile with `scale(tileWidth / 1920)`, fly-to the tile's centre with zoom `1920 / tileWidth` |
+| fold | every tile flies to one point and shrinks as the next thing assembles there | 0.5 s each, staggered | `translate((target - centre) * eio(p)) scale(1 - .97 * eio(p))` |
 | reframe | a full-screen panel shrinks into a card while something new appears | 0.6 s | animate the panel's rect with `eio`; bring the new element in at `p > .5` |
 | shockwave | a ring spreads from a click across the frame | 0.9 s | a circle growing with `eo(p)`, opacity `1 - p`; tiles jolt as it passes |
 
@@ -72,4 +77,5 @@ const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);  // 0 -> 1 -> 0,
 | pip fill | one step of a "3 of 5" counter fills | 0.35 s | colour change with `scale(1 + bump(u / .35) * .5)` |
 | confetti | a small burst from the finished thing | 1.5 s | 16-20 squares: `x = vx * u * (1 - .25u)`, `y = vy * u + 900 * u * u`, fade after 1 s |
 | fly-chip | a value leaves a document and lands in a table | 0.3 s | lerp start to end with `eo`, lift `sin(p * pi) * 26px` on the way |
+| assemble | a code or grid builds from scattered modules, then holds still | 0.7 s | each module `scale(spring(u - delay))` with a random delay; when done, remove the transforms so it is exact |
 | beat pulse | finished things nod on the beat | each beat | `bump(((t - t0) / beat - i * .5) % 4 / .6) * .014` added to scale |

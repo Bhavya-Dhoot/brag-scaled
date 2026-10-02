@@ -7,6 +7,7 @@ Three ways to use it.
 
        python soundkit.py sfx.json --out sfx.wav
        python soundkit.py sfx.json --out score.wav --bed boombap --bpm 110
+       python soundkit.py sfx.json --out score.wav --bed phonk --bpm 140 --t0 0.86 --tail 2.6
 
    The groove's downbeat is at --t0 (default 0) and it resolves --tail seconds before the
    end (default 2.5, for a held end card; 0.5 when the last scene runs to the end).
@@ -21,8 +22,10 @@ Three ways to use it.
 
 Cue format: {"t": seconds, "type": name, "x": optional number}. Names this file knows:
 pop tick click thud stamp drop whoosh dive alert ding chime success confetti scribble type
-count switch glitch brush final. `x` picks the pitch step for pop, tick and success, and
-the length in seconds for scribble and type.
+count switch glitch brush final, and the louder set for a film that plays for laughs:
+shatter slam crash boom lock ratchet motor ping cash coins payout squawk quack step.
+`x` picks the pitch step for pop, tick, success and ping, and the length in seconds for
+scribble and type.
 
 Rule of thumb for levels: effects sit about 20 dB under a voice (`--peak -22` when the track
 goes over someone speaking), and a click belongs on a thing that matters (a tick, a count,
@@ -102,6 +105,36 @@ def counter(d=.7, steps=10):
 def glitch(): t = tt(.3); return bp(noise(.3), 800, 9000) * (np.sin(2*np.pi*40*t) > 0) * np.exp(-t*8)
 def confetti(): t = tt(.35); return bp(noise(.35), 4000, 11000) * np.exp(-t*9)
 def alert(): return np.concatenate([blip(740), blip(622)])
+def _env(t, d, a=.004, r=.03): return np.minimum(1, t / a) * np.minimum(1, (d - t) / r)
+def _over(base, s, at=0.0, g=1.0):
+    i = int(at * SR); s = s[: len(base) - i]; base[i:i + len(s)] += s * g; return base
+def cowbell(f, d=.2): t = tt(d); x = np.sign(np.sin(2*np.pi*f*t)) + np.sign(np.sin(2*np.pi*f*1.504*t)); return bp(x, 450, 6500) * (.6*np.exp(-t*60) + .4*np.exp(-t*14)) * _env(t, d)
+def shatter():
+    x = bp(noise(.7), 2500, 12000) * np.exp(-tt(.7)*8)
+    for _ in range(10): _over(x, blip(rng.uniform(2600, 6200), .14), rng.uniform(0, .45), .5)
+    return x
+def crash(): return _over(bp(noise(.6), 300, 5200) * np.exp(-tt(.6)*7), thud())
+def boom(): d = 1.8; t = tt(d); return 1.4*np.sin(2*np.pi*np.cumsum(34 + 60*np.exp(-t*5))/SR)*np.exp(-t*2.6) + lpf(noise(d), 520)*np.exp(-t*3) + .5*bp(noise(d), 800, 5000)*np.exp(-t*9)
+def lock(): t = tt(.55); return _over(sum(a*np.sin(2*np.pi*f*t)*np.exp(-t*(7 + 3*i)) for i, (f, a) in enumerate([(620, 1), (918, .6), (1283, .45), (1798, .3)])) * np.minimum(1, t/.002), thud())
+def motor(d=.26): t = tt(d); return lpf(2*((np.cumsum(90 + 70*t/d)/SR) % 1) - 1, 900) * _env(t, d, .02, .05)
+def ratchet():
+    x = motor(.34)
+    for k in range(7): _over(x, click(), k * .045, .6)
+    return x
+def ping(step=0): t = tt(.3); return np.sin(2*np.pi*1150*2**(step/24)*t) * np.exp(-t*13) * np.minimum(1, t/.002)
+def coins(n=9, d=.5):
+    x = np.zeros(int((d + .2) * SR))
+    for k in range(n): _over(x, blip(rng.uniform(3200, 5200), .12), k * d / n)
+    return x
+def cash(): t = tt(.7); u = np.maximum(t - .09, 0); return _over(.6*np.sin(2*np.pi*2093*t)*np.exp(-t*9) + .5*np.sin(2*np.pi*2637*u)*np.exp(-u*8)*(t > .09), click())
+def payout():
+    x = np.zeros(int(1.3 * SR))
+    for k, n in enumerate([72, 76, 79, 84, 76, 79, 84, 88, 79, 84, 88, 91]): _over(x, chip(hz(n), .075), k * .052, .5)
+    return _over(x, coins(12, .6), .55)
+def squawk(): d = .4; t = tt(d); f = 620 + 760*np.sin(np.pi*t/d)**.5 + 40*np.sin(2*np.pi*31*t); return bp(np.tanh(3*np.sin(2*np.pi*np.cumsum(f)/SR)), 900, 4200) * _env(t, d, .01, .08)
+def quack():
+    d = .17; t = tt(d); q = bp(2*((np.cumsum(560 - 240*t/d)/SR) % 1) - 1, 650, 2800) * np.sin(np.pi*t/d)**.5
+    return _over(np.concatenate([q, np.zeros(int(.2 * SR))]), q, .2, .85)
 
 
 # ---------------------------------------------------------------- mixing
@@ -154,14 +187,43 @@ def play_cues(mix, events, gain=1.0):
         elif ty == "glitch": mix.add(glitch(), t, g(.12))
         elif ty == "brush": mix.add(whoosh(1.6), t, g(.05))
         elif ty == "final": mix.add(thud(), t, g(.5)); mix.add(chime(), t + .05, g(.16))
+        elif ty == "shatter": mix.add(shatter(), t, g(.5)); mix.add(thud(), t, g(.6))
+        elif ty == "slam": mix.add(thud(), t, g(.34)); mix.add(bp(noise(.1), 200, 2400) * np.exp(-tt(.1) * 40), t, g(.2))
+        elif ty == "crash": mix.add(crash(), t, g(.42))
+        elif ty == "boom": mix.add(boom(), t, g(.75)); mix.add(chime(), t + .05, g(.12))
+        elif ty == "lock": mix.add(lock(), t, g(.26))
+        elif ty == "ratchet": mix.add(ratchet(), t, g(.13))
+        elif ty == "motor": mix.add(motor(), t, g(.1))
+        elif ty == "ping": mix.add(ping(x), t, g(.1), -.2)
+        elif ty == "cash": mix.add(cash(), t, g(.16))
+        elif ty == "coins": mix.add(coins(), t, g(.09))
+        elif ty == "payout": mix.add(payout(), t, g(.13))
+        elif ty == "squawk": mix.add(squawk(), t, g(.2), .3)
+        elif ty == "quack": mix.add(quack(), t, g(.26), .3)
+        elif ty == "step": mix.add(blip(480, .04), t, g(.07), .4)
 
 
 def bed(mix, style="pulse", bpm=120, t0=0.0, t1=None, root=48, tail=2.5):
     """A plain backing groove between t0 and t1, so a cue track is not left bare.
     pulse: four-on-the-floor with a plucked arpeggio. boombap: swung kick and snare with piano.
+    phonk: an 808 on a broken kick pattern, claps, and a cowbell line that enters after two bars;
+    it stops dead at t1 instead of resolving, so put the last hit of the film there.
     Scenes cut on whole bars (4 beats) land on the beat: bar length is 240 / bpm seconds."""
     t1 = mix.dur - tail if t1 is None else t1
     beat = 60 / bpm; prog = [(0, [12, 16, 19]), (-3, [9, 12, 16]), (-7, [9, 12, 17]), (-5, [11, 14, 19])]
+    if style == "phonk":
+        r, step, n = root - 3, beat / 4, 0                    # the relative minor of `root`, on a sixteenth-note grid
+        while t0 + n * step < t1 - .01:
+            t, pos, bar = t0 + n * step, n % 16, n // 16
+            if pos in (0, 6, 10) or (pos == 14 and bar % 2):
+                mix.add(kick(), t, .5); mix.add(bass(hz(r - 12 if pos != 10 else r - 9), beat * (1.3 if pos == 0 else .7)), t, .3)
+            if pos in (4, 12): mix.add(clap(), t, .17)
+            if pos % 2 == 0: mix.add(hat(), t, .05, .3)
+            if bar % 2 and pos >= 12: mix.add(hat(.03), t + step / 2, .035, -.3)
+            m = PHONK[n % 32]
+            if m is not None and (bar >= 2 or pos < 8): mix.add(cowbell(hz(r + 36 + m)), t, .085, .2)
+            n += 1
+        mix.add(pad([r, r + 7, r + 12, r + 15], mix.dur - t1, 900), t1, .05); return
     b, bar = t0, 0
     while b < t1 - .05:
         off, ch = prog[bar % 4]; ch = [root + c for c in ch]
@@ -185,7 +247,8 @@ def bed(mix, style="pulse", bpm=120, t0=0.0, t1=None, root=48, tail=2.5):
     mix.add(pad([root, root + 7, root + 12, root + 16, root + 19], mix.dur - t1), t1, .08)
 
 
-PACK = {"pop": lambda: marimba(hz(84), .3), "tick": lambda: blip(hz(96), .06), "click": click, "thud": thud, "switch": switch,
+PHONK = [0, None, 0, None, 3, None, 0, None, -2, None, 0, None, -5, None, -2, None,   0, None, 0, None, 3, None, 5, None, 3, None, 0, None, -2, 0, None, None]
+PACK = {"shatter": shatter, "boom": boom, "lock": lock, "cash": cash, "payout": payout, "squawk": squawk, "quack": quack, "ping": ping, "pop": lambda: marimba(hz(84), .3), "tick": lambda: blip(hz(96), .06), "click": click, "thud": thud, "switch": switch,
         "chime": chime, "success": success, "counter": counter, "whoosh": whoosh, "scribble": scribble, "alert": alert}
 
 
@@ -193,7 +256,7 @@ def main():
     ap = argparse.ArgumentParser(description="Code-made sound effects and backing for rendered video.")
     ap.add_argument("cues", nargs="?", help="JSON from `fastrender.py page.html --dump-sfx`")
     ap.add_argument("--out", default="sfx.wav")
-    ap.add_argument("--bed", choices=["none", "pulse", "boombap"], default="none")
+    ap.add_argument("--bed", choices=["none", "pulse", "boombap", "phonk"], default="none")
     ap.add_argument("--bpm", type=float, default=120)
     ap.add_argument("--t0", type=float, default=0, help="when the groove's first downbeat falls (the page's first beat)")
     ap.add_argument("--tail", type=float, default=2.5, help="seconds before the end where the groove resolves; 0.5 for a video with no end card")

@@ -20,6 +20,12 @@ Per scene: `lead` seconds before its first line (default 0.4), `gap` between lin
 multiple of `snap` beats (default 2), so each scene starts on a beat and the music never
 needs cutting. A scene with no lines takes `dur` seconds.
 
+A line can also be an object: {"text": ..., "at": 22.5, "cap": "what the caption shows"}. `at` is
+the beat, counted from the start of the video, on which the line begins, so the voice lands on
+the music and each spoken word can drive an action on its own beat (give such scenes `beats`).
+`cap` is copied into layout.js for captions that should differ from the spoken text ("V.I.T."
+spoken, "VIT" shown). A warning is printed when a line would start before the last one ends.
+
 Without probe timings, lines are estimated at 2.7 words a second and a warning is printed:
 fine for a first layout, not for the final render.
 
@@ -36,7 +42,8 @@ def main():
     ap.add_argument("--out-dir", default=".")
     a = ap.parse_args()
     spec = json.loads(pathlib.Path(a.spec).read_text(encoding="utf-8")); out = pathlib.Path(a.out_dir)
-    lines = [tx for sc in spec["scenes"] for tx in sc.get("lines", [])]
+    norm = lambda x: x if isinstance(x, dict) else {"text": x}
+    lines = [norm(x)["text"] for sc in spec["scenes"] for x in sc.get("lines", [])]
     if a.probe:
         (out / "probe.json").write_text(json.dumps([{"t": i * 14.0, "text": tx} for i, tx in enumerate(lines)], indent=1), encoding="utf-8")
         print(f"{len(lines)} lines -> {out / 'probe.json'}"); return
@@ -51,12 +58,22 @@ def main():
         dur = {tx: len(tx.split()) / 2.7 for tx in lines}
     beat = 60 / spec["bpm"] if spec.get("bpm") else None
     snap = spec.get("snap", 2)
-    t, scenes, script = 0.0, {}, []
+    t, scenes, script, last_end = 0.0, {}, [], 0.0
     for sc in spec["scenes"]:
         t0, placed = t, []
         u = t0 + sc.get("lead", .4)
-        for k, tx in enumerate(sc.get("lines", [])):
-            placed.append({"t": round(u, 3), "dur": round(dur[tx], 3), "text": tx}); script.append({"t": round(u, 3), "text": tx})
+        for k, ln in enumerate(map(norm, sc.get("lines", []))):
+            tx = ln["text"]
+            if "at" in ln:
+                if not beat:
+                    sys.exit("a line with 'at' needs 'bpm' in the spec")
+                u = ln["at"] * beat
+            if u < last_end - 1e-6:
+                print(f"WARNING: {tx[:40]!r} starts at {u:.2f}s, before the previous line ends at {last_end:.2f}s")
+            row = {"t": round(u, 3), "dur": round(dur[tx], 3), "text": tx}
+            if ln.get("cap"):
+                row["cap"] = ln["cap"]
+            placed.append(row); script.append({"t": round(u, 3), "text": tx}); last_end = u + dur[tx]
             u += dur[tx] + (sc.get("gap", .45) if k < len(sc["lines"]) - 1 else 0)
         need = (u - t0 + sc.get("tail", .3) + sc.get("hold", 0)) if placed else sc.get("dur", 2.0)
         need = max(need, sc.get("min", 0))

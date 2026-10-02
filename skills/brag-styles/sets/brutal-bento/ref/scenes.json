@@ -1,0 +1,104 @@
+{
+ "bpm": 140,
+ "scenes": [
+  {
+   "id": "hook",
+   "beats": 8,
+   "lines": [
+    {
+     "text": "Not a slideshow.",
+     "at": 3
+    },
+    {
+     "text": "Watch it run.",
+     "at": 5.25
+    }
+   ]
+  },
+  {
+   "id": "who",
+   "beats": 10,
+   "tail": 0,
+   "lines": [
+    {
+     "text": "Bhavya Dhoot.",
+     "at": 7.5
+    },
+    {
+     "text": "Computer science at V.I.T.",
+     "at": 9.75,
+     "cap": "Computer science at VIT."
+    },
+    {
+     "text": "Forward deployed engineer, Dubai.",
+     "at": 14
+    }
+   ]
+  },
+  {
+   "id": "ops",
+   "beats": 14,
+   "tail": 0,
+   "lines": [
+    {
+     "text": "Finds the leak. Ships the tool.",
+     "at": 18.25
+    },
+    {
+     "text": "Sales.",
+     "at": 22
+    },
+    {
+     "text": "Planning.",
+     "at": 23.5
+    },
+    {
+     "text": "Reconciliation.",
+     "at": 25
+    },
+    {
+     "text": "Seven plus tools, live.",
+     "at": 28.9,
+     "cap": "Seven-plus tools, live."
+    }
+   ]
+  },
+  {
+   "id": "markets",
+   "beats": 15,
+   "lines": [
+    {
+     "text": "Markets too.",
+     "at": 32.25
+    },
+    {
+     "text": "Resolver: eight point two nanoseconds.",
+     "at": 34.5,
+     "cap": "Resolver: 8.2 nanoseconds."
+    },
+    {
+     "text": "Python, checked against Rust.",
+     "at": 41
+    },
+    {
+     "text": "To the decimal.",
+     "at": 44.5
+    }
+   ]
+  },
+  {
+   "id": "end",
+   "beats": 13,
+   "lines": [
+    {
+     "text": "Not a prototype. A running system.",
+     "at": 47
+    },
+    {
+     "text": "Scan it. Let's ship.",
+     "at": 51.5
+    }
+   ]
+  }
+ ]
+}

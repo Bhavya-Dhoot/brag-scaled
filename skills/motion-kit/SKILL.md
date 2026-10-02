@@ -61,12 +61,13 @@ each action scene a whole number of bars and land its payoff on a beat (the refe
 uses 140 BPM, 2 bars a scene, payoff on beat 7 of 8). Then the music needs no editing to
 fit, and every fix arrives where the ear expects it. Write the narration first, measure it
 with `narrate`, then round each scene up to the grid: `<motion-kit>/scripts/fit_scenes.py` does
-both steps and writes the `layout.js` the engines read. The page's first scene must start on
+both steps and writes the `layout.js` the engines read. For a film cut to music, give a line
+`{"text": ..., "at": 22}` to start it on that beat, so each spoken word can trigger its own action. The page's first scene must start on
 a beat (time 0, or one beat in), or everything after it is off the grid.
 
 ## Moves
 
-Name the move and build it as a pure function of time. The table of 35 moves, each with its
+Name the move and build it as a pure function of time. The table of 41 moves, each with its
 timing and the one-line formula, is in `references/moves.md`. The ones that carry a demo:
 
 | Move | Use it for |
@@ -86,6 +87,7 @@ timing and the one-line formula, is in `references/moves.md`. The ones that carr
 | `../brag-styles/sets/ops-desk/ref/engine.html` | One board, a camera that flies between tiles, a cursor that clicks, drags and scrubs, a fixed-count HUD, confetti, everything on a beat grid. The reference for a product or service demo. |
 | `ref/worlds.html` | Eight short worlds in eight styles joined by zoom-through dives, one cursor acting in each. The reference for an intro or a story that changes mood. |
 | `../brag-styles/sets/kinetic-type/ref/engine.html` | A script in, one sentence per screen, set as large as fits, words slamming in on the beat. Works at any frame size. The reference for a text-only video. |
+| `../brag-styles/sets/brutal-bento/ref/engine.html` | A page smashed into shards, a board of live miniature rooms, a camera that flies into a tile until it fills the frame, an indexing conveyor, a readout falling through units, and tiles that fold into a QR code. Every time is in beats. The reference for a loud personal intro. |
 | `ref/overlay.html` | Transparent graphics over a recorded clip, each starting on the spoken word. See "Graphics on footage" below. |
 
 Each engine carries its helpers (`seg`, `eo`, `spring`, `bump`, the cursor track, `press`).
@@ -102,14 +104,16 @@ python <motion-kit>/scripts/soundkit.py sfx.json --out score.wav --bed pulse --b
 python <motion-kit>/scripts/soundkit.py --pack sfx/                                       # the sounds as WAV files
 ```
 
-Two beds ship: `pulse` (four-on-the-floor, clap, plucked arpeggio) and `boombap` (swung kick
-and snare, piano). Give `--bpm` the page's own tempo and `--t0` the time of its first beat.
+Three beds ship: `pulse` (four-on-the-floor, clap, plucked arpeggio), `boombap` (swung kick
+and snare, piano) and `phonk` (808, claps and a cowbell line; it stops dead instead of resolving). Give `--bpm` the page's own tempo and `--t0` the time of its first beat.
 The groove resolves `--tail` seconds before the end: 2.5 by default for a held end card,
 0.5 when the last scene runs to the end.
 
 A page lists its cues in `window.SFX` as `{t, type, x}`; the names are in the script's
 header. For a score of your own, `from soundkit import Mix, kick, marimba, pad, play_cues`.
 
+- Beyond the quiet interface sounds there is a louder set for a film that plays for laughs:
+  `shatter slam crash boom lock ratchet motor ping cash coins payout squawk quack step`.
 - Put a sound on a thing that matters: a tick on each list item, a rising run while a bar
   fills, a chime on the last card. Not on every slide-in.
 - Pitched cues climb with `x`, so progress is audible.
@@ -139,6 +143,14 @@ header. For a score of your own, `from soundkit import Mix, kick, marimba, pad, 
    editor instead: `--transparent --out card.mov --png-dir card-png` (ProRes 4444 with alpha).
 5. To change one moment later, name it by the words spoken ("when I say forty a week"), not
    by the timestamp, change only that cue, and render to the same file.
+
+## A code people must scan
+
+`python <motion-kit>/scripts/qr.py https://example.com --out qr.js` writes the module grid
+(`pip install opencv-python`). Draw each module as a solid dark square on a light card with
+four modules of margin. Bring it in however you like, then hold it flat, still and uncovered
+for the last three seconds: a code that spins, glows or is built from texture does not scan.
+Pull a frame from the encoded video and run `qr.py --check frame.png` before delivering.
 
 ## Fonts
 

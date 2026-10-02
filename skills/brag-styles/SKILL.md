@@ -1,6 +1,6 @@
 ---
 name: brag-styles
-description: Twenty-one art-directed visual systems for launch videos, each with a signature motion trick and a matching sound palette. The general sets are doodle, ops desk (a bento board operated by a cursor), kinetic type, quant terminal, riso zine, blueprint, stop-motion collage, newsprint, arcade, receipt, transit map, title sequence and museum placard. The royal sets are Mughal court, Jaipur block print, Versailles, illuminated manuscript, Forbidden City, Ottoman firman, Byzantine mosaic and Maharaja Deco. It recommends a set and waits for a pick when asked for options; it builds straight away when told to. Use when /brag-slim gets --style, when the user asks for style options or a recommendation, when they name a look ("make it royal", "like a newspaper", "arcade style"), or when a video needs a stronger identity than the project's own UI.
+description: Twenty-two art-directed visual systems for launch videos, each with a signature motion trick and a matching sound palette. The general sets are doodle, ops desk (a bento board operated by a cursor), brutal bento (a loud neo-brutalist intro with rooms inside tiles), kinetic type, quant terminal, riso zine, blueprint, stop-motion collage, newsprint, arcade, receipt, transit map, title sequence and museum placard. The royal sets are Mughal court, Jaipur block print, Versailles, illuminated manuscript, Forbidden City, Ottoman firman, Byzantine mosaic and Maharaja Deco. It recommends a set and waits for a pick when asked for options; it builds straight away when told to. Use when /brag-slim gets --style, when the user asks for style options or a recommendation, when they name a look ("make it royal", "like a newspaper", "arcade style"), or when a video needs a stronger identity than the project's own UI.
 ---
 
 # brag-styles
@@ -13,6 +13,7 @@ sets the pacing.
 |---|---|---|
 | `doodle` | Doodle | pitches, services and consulting, how-it-works explainers, friendly B2B, education |
 | `ops-desk` | Ops Desk | B2B tools, services and automation, dashboards; a demo that is operated on screen |
+| `brutal-bento` | Brutal Bento | personal intros, creators, developer tools, hiring posts; loud, funny, ends on a QR code |
 | `kinetic-type` | Kinetic Type | a script with no footage, hooks, opinions, vertical video for phones |
 | `exchange-floor` | Exchange Floor | fintech, data tools, dev infrastructure, anything with real metrics |
 | `riso-zine` | Riso Zine | indie apps, creative tools, community products, anything with personality |
@@ -60,7 +61,7 @@ Don't ask again.
 
 **Reading the fit.** Numbers-heavy fintech, data or infrastructure → `exchange-floor`,
 `the-receipt`, `patent-office`. A workflow or pipeline → `transit-map`, `patent-office`.
-A pitch, service or explainer → `doodle`. A product or service whose value is something broken now working → `ops-desk`. A script and nothing else → `kinetic-type`. Consumer, with personality → `riso-zine`,
+A pitch, service or explainer → `doodle`. A product or service whose value is something broken now working → `ops-desk`. A person introducing themselves, loudly → `brutal-bento`. A script and nothing else → `kinetic-type`. Consumer, with personality → `riso-zine`,
 `stop-motion-collage`, `insert-coin`. A big announcement → `extra-extra`, `sultans-firman`,
 `title-sequence`. Premium or luxury → `court-of-versailles`, `maharaja-deco`,
 `museum-placard`. An Indian audience → `shahi-darbar`, `jaipur-block-print`,
