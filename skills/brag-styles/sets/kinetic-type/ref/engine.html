@@ -17,11 +17,12 @@
   .w { position:absolute; white-space:nowrap; line-height:1; letter-spacing:-.03em; will-change:transform, opacity; }
   #count { position:absolute; left:6%; bottom:5%; font:400 1.6vmin 'JetBrains Mono'; letter-spacing:.2em; color:#6f6c66; }
   #bar { position:absolute; left:0; bottom:0; height:.9vmin; background:#c8ff00; }
+  @media (orientation: portrait) { #count, #bar { display:none; } }   /* a phone's own buttons and captions own the bottom of a vertical frame */
 </style>
 </head>
 <body>
 <div id="stage"><div id="count"></div><div id="bar"></div></div>
-<script src="layout.js"></script><!-- optional: narration timings; without it the page times itself -->
+<script src="layout.js"></script><!-- optional: narration timings. If the file is absent the page times itself; the failed load is harmless -->
 <script>
 // ------------------------------------------------------------------ edit these
 // The speaker's exact words, one sentence per screen. *Stars* mark the one word that takes the accent.
@@ -47,7 +48,7 @@ let screens = [], DURATION = 0;
 function build() {
   const W = innerWidth, H = innerHeight; ctx.font = '400 100px "Archivo Black"';
   const wide = s => ctx.measureText(s.toUpperCase()).width * .97 / 100;      // width of a word at 1px
-  let t = .3;
+  let t = BEAT;   // the first screen starts on a beat, so a backing track at the same BPM lines up
   screens = SCRIPT.map((raw, k) => {
     const words = raw.split(/\s+/).map(w => ({ text: w.replace(/\*/g, ''), hot: w.includes('*') }));
     // try every way of breaking the sentence into 1..5 balanced lines; keep the largest type that fits
@@ -74,7 +75,7 @@ function build() {
         x += (wide(w.text) + .28) * best.size; i++; }); });
     t = start + len; return { el, echo, t0: start, t1: start + len, items, invert: k % 3 === 2 };
   });
-  DURATION = t + .2;
+  DURATION = t + .2; window.MARKS = { screens: screens.map(s => +s.t0.toFixed(3)), beat: BEAT };
 }
 
 function draw(t) {
@@ -99,6 +100,7 @@ function draw(t) {
 }
 window.render = t => { if (!screens.length) build(); draw(t); };
 window.SFX = SFX;
+window.MARKS = {};   // filled in build(): when each screen starts, for stills and for a score
 window.ready = document.fonts.ready.then(() => Promise.all(['400 100px "Archivo Black"', '400 20px "JetBrains Mono"'].map(f => document.fonts.load(f)))).then(() => { build(); window.DURATION = DURATION; });
 </script>
 </body>

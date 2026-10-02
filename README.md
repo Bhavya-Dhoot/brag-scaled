@@ -55,7 +55,7 @@ and what one viewer said about each:
 | Doodle intro, scene by scene | 0.9% | 52% of the time | "feels like a slide show" |
 | Newspaper, page by page | 1.2% | 43% | "feels like a slide show" |
 | Ops Desk demo, recut on a beat grid | 6.9% | 5% | accepted |
-| Kinetic Type reference | 4.6% | 2% | not yet judged |
+| Kinetic Type reference | 7.0% | 2% | not yet judged |
 
 That is one viewer and a handful of videos, so read it as a prompt to look, not a score. `motion-kit`
 holds what changed between the first two and the third: a performer in every scene, effect straight

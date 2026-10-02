@@ -18,6 +18,10 @@ how much of the picture changes:
 python <fast-render>/scripts/fastrender.py video.html --audit
 ```
 
+(`<fast-render>`, `<narrate>` and `<motion-kit>` are the skill folders beside each other: this
+one is `<motion-kit>`. Run every command from the project's work folder with the full path to
+the script.)
+
 It prints the median activity, the share of the time that is quiet (under 1% of pixels
 changing), and every quiet stretch of 1.5 s or longer. Calibration so far is one viewer and
 four videos: two he called "a slide show" measured 52% and 42% quiet; a cursor-driven demo he
@@ -54,7 +58,9 @@ Pick a tempo and cut on it: at `bpm`, a beat is `60 / bpm` s and a bar is four b
 each action scene a whole number of bars and land its payoff on a beat (the reference demo
 uses 140 BPM, 2 bars a scene, payoff on beat 7 of 8). Then the music needs no editing to
 fit, and every fix arrives where the ear expects it. Write the narration first, measure it
-with `narrate`, then round each scene up to the grid.
+with `narrate`, then round each scene up to the grid: `<motion-kit>/scripts/fit_scenes.py` does
+both steps and writes the `layout.js` the engines read. The page's first scene must start on
+a beat (time 0, or one beat in), or everything after it is off the grid.
 
 ## Moves
 
@@ -85,13 +91,19 @@ Copy the helpers and the mechanism; replace every word and number with the proje
 
 ## Sound
 
-`scripts/soundkit.py` makes every sound in code, so nothing needs a licence.
+`<motion-kit>/scripts/soundkit.py` makes every sound in code, so nothing needs a licence
+(`pip install numpy scipy`).
 
 ```
-python <fast-render>/scripts/fastrender.py video.html --dump-sfx sfx.json   # the page's cues
-python scripts/soundkit.py sfx.json --out score.wav --bed boombap --bpm 110  # cues + a backing groove
-python scripts/soundkit.py --pack sfx/                                       # the sounds as WAV files
+python <fast-render>/scripts/fastrender.py video.html --dump-sfx sfx.json                 # the page's cues, and its marks
+python <motion-kit>/scripts/soundkit.py sfx.json --out score.wav --bed pulse --bpm 120    # cues + a backing groove
+python <motion-kit>/scripts/soundkit.py --pack sfx/                                       # the sounds as WAV files
 ```
+
+Two beds ship: `pulse` (four-on-the-floor, clap, plucked arpeggio) and `boombap` (swung kick
+and snare, piano). Give `--bpm` the page's own tempo and `--t0` the time of its first beat.
+The groove resolves `--tail` seconds before the end: 2.5 by default for a held end card,
+0.5 when the last scene runs to the end.
 
 A page lists its cues in `window.SFX` as `{t, type, x}`; the names are in the script's
 header. For a score of your own, `from soundkit import Mix, kick, marimba, pad, play_cues`.

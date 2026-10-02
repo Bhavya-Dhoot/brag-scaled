@@ -8,6 +8,9 @@ Three ways to use it.
        python soundkit.py sfx.json --out sfx.wav
        python soundkit.py sfx.json --out score.wav --bed boombap --bpm 110
 
+   The groove's downbeat is at --t0 (default 0) and it resolves --tail seconds before the
+   end (default 2.5, for a held end card; 0.5 when the last scene runs to the end).
+
 2. Write the standard sounds out as WAV files for an editor:
 
        python soundkit.py --pack sfx/
@@ -153,11 +156,11 @@ def play_cues(mix, events, gain=1.0):
         elif ty == "final": mix.add(thud(), t, g(.5)); mix.add(chime(), t + .05, g(.16))
 
 
-def bed(mix, style="pulse", bpm=120, t0=0.0, t1=None, root=48):
+def bed(mix, style="pulse", bpm=120, t0=0.0, t1=None, root=48, tail=2.5):
     """A plain backing groove between t0 and t1, so a cue track is not left bare.
     pulse: four-on-the-floor with a plucked arpeggio. boombap: swung kick and snare with piano.
     Scenes cut on whole bars (4 beats) land on the beat: bar length is 240 / bpm seconds."""
-    t1 = mix.dur - 2.5 if t1 is None else t1
+    t1 = mix.dur - tail if t1 is None else t1
     beat = 60 / bpm; prog = [(0, [12, 16, 19]), (-3, [9, 12, 16]), (-7, [9, 12, 17]), (-5, [11, 14, 19])]
     b, bar = t0, 0
     while b < t1 - .05:
@@ -192,6 +195,8 @@ def main():
     ap.add_argument("--out", default="sfx.wav")
     ap.add_argument("--bed", choices=["none", "pulse", "boombap"], default="none")
     ap.add_argument("--bpm", type=float, default=120)
+    ap.add_argument("--t0", type=float, default=0, help="when the groove's first downbeat falls (the page's first beat)")
+    ap.add_argument("--tail", type=float, default=2.5, help="seconds before the end where the groove resolves; 0.5 for a video with no end card")
     ap.add_argument("--peak", type=float, default=-1.5, help="peak level in dBFS; about -22 to sit under a voice")
     ap.add_argument("--pack", help="write each standard sound as a WAV in this folder")
     a = ap.parse_args()
@@ -207,9 +212,9 @@ def main():
     dur = (data.get("dur") if isinstance(data, dict) else 0) or (max(e["t"] for e in events) + 2)
     mix = Mix(dur)
     if a.bed != "none":
-        bed(mix, a.bed, a.bpm)
+        bed(mix, a.bed, a.bpm, t0=a.t0, tail=a.tail)
     play_cues(mix, events)
-    mix.save(a.out, peak_db=a.peak, fade=1.5 if a.bed != "none" else 0)
+    mix.save(a.out, peak_db=a.peak, fade=min(1.5, a.tail) if a.bed != "none" else 0)
     print(f"{len(events)} cues over {dur:.1f}s -> {a.out}")
 
 

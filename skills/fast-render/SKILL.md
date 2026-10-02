@@ -5,8 +5,10 @@ description: Render an HTML motion page that exposes window.render(t) to video f
 
 # fast-render
 
-Run `scripts/fastrender.py` from this skill's directory. It needs Python 3.9+,
-`pip install playwright imageio-ffmpeg`, and `playwright install chromium`.
+Run it from the project's work folder, giving the full path to this skill's
+`scripts/fastrender.py`, so outputs land beside the page. It needs Python 3.9+,
+`pip install playwright imageio-ffmpeg pillow`, and `playwright install chromium`
+(Pillow is only used by `--audit`).
 
 ## Page contract
 - `window.render(t)` draws the frame at `t` seconds, as a pure function of `t`.
@@ -44,6 +46,9 @@ since their GPU flags or drivers need attention; the video still renders correct
 - `--audit` samples four frames a second and prints the median share of pixels changing, the share of time that is quiet (under 1%), and every quiet stretch of 1.5 s or more. The bottom 14% of the frame is ignored so captions do not pass for action (`--audit-mask-bottom 0` to include it). Two videos a viewer called slideshows measured 52% and 42% quiet; a demo he accepted measured 5%. Fix the listed stretches before rendering.
 
 ## Flags worth knowing
+- `--width W --height H`: the page size, 1920x1080 by default. For vertical pass `--width 1080 --height 1920` on **every** command (stills, audit, dump-sfx, render); nothing warns you if you forget.
+- `--poster T`: bakes the settled frame at T seconds in as frame 0, the cover every platform shows; `--poster-jpg` also saves it. Optional, but a video whose first frame is empty gets a blank cover without it.
+- `--dump-sfx file.json`: writes the page's `window.SFX` cues, `window.MARKS` (scene starts, if the page sets them) and its duration.
 - `--scale 2`: re-rasterises at twice the size, so text and edges are sharper, not stretched. Four times the pixels: 2.6 fps per browser measured at 4K.
 - `--crf N`: quality, lower is better. It maps onto each encoder's own knob. Grain and noise make large files; 23 roughly halves them.
 - `--lufs`: loudness target for `--audio`, default -16; use -14 for YouTube.
