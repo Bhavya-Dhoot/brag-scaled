@@ -32,7 +32,9 @@ the scene something to do.
 ## Rules that remove the slideshow
 
 1. **Something acts.** Every scene has a performer: a cursor, a pen, a hand, a character, a
-   camera. Text that fades in is not a performer.
+   camera. Text that fades in is not a performer. A sparse style (line drawings, a printed page)
+   needs this most: put a pencil on every stroke and let the camera follow it. That alone took
+   a hand-drawn intro from 52% quiet to 10%, and a newspaper from 43% to 33%.
 2. **Cause, then effect, at once.** A click is followed within 0.3 s by what it caused, and
    the effect is bigger than the click.
 3. **Nothing waits after its payoff.** When the action of a scene has landed, leave within
@@ -64,7 +66,7 @@ a beat (time 0, or one beat in), or everything after it is off the grid.
 
 ## Moves
 
-Name the move and build it as a pure function of time. The table of 33 moves, each with its
+Name the move and build it as a pure function of time. The table of 35 moves, each with its
 timing and the one-line formula, is in `references/moves.md`. The ones that carry a demo:
 
 | Move | Use it for |

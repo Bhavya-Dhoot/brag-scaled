@@ -16,7 +16,7 @@ or see the [poster frame](docs/assets/brag-scaled.jpg).*
 | `/brag-slim` | The model builds the whole video itself: story, visuals, soundtrack, share copy. It is the default on Claude Opus 5.5. |
 | `/brag` | The classic workflow, which builds and renders through [Hyperframes](https://hyperframes.heygen.com/). |
 | `fast-render` | Renders any `window.render(t)` page to MP4 on the GPU with parallel browsers. Also 4K, transparent ProRes, graphics over footage, a setup check and an activity audit. `/brag-slim` uses it for stills and the final render. |
-| `motion-kit` | Keeps a video from playing like a slideshow: 33 named moves, pacing rules, cursor-and-camera demo engines, a beat grid, code-made sound, safe zones, and bundled open-licence fonts. |
+| `motion-kit` | Keeps a video from playing like a slideshow: 35 named moves, pacing rules, cursor-and-camera demo engines, a beat grid, code-made sound, safe zones, and bundled open-licence fonts. |
 | `narrate` | Offline voiceover with a bundled 82M-parameter TTS model (Kokoro). It gives exact line timings and ducks the music under the voice. `transcribe.py` goes the other way: word timings from a recorded clip. |
 | `brag-styles` | 21 art-directed looks, each with a signature motion trick and a matching sound palette. Ask for options and it recommends one before building anything. |
 
@@ -56,6 +56,7 @@ and what one viewer said about each:
 | Newspaper, page by page | 1.2% | 43% | "feels like a slide show" |
 | Ops Desk demo, recut on a beat grid | 6.9% | 5% | accepted |
 | Kinetic Type reference | 7.0% | 2% | not yet judged |
+| The doodle intro again, with a pencil on every stroke and a camera following it | 11.7% | 10% | not yet judged |
 
 That is one viewer and a handful of videos, so read it as a prompt to look, not a score. `motion-kit`
 holds what changed between the first two and the third: a performer in every scene, effect straight
