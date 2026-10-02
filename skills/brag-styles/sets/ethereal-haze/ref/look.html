@@ -1,0 +1,156 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; background:#F6F3FA; }
+#stage { position:absolute; inset:0; overflow:hidden; }
+#world, #mesh, #motes, #ring { position:absolute; inset:0; }
+/* big serif lines, wide tracking, plum so they never sit white on pastel */
+.line { position:absolute; left:0; width:1920px; top:372px; height:156px; text-align:center; white-space:nowrap;
+  font:400 156px/156px 'Instrument Serif'; letter-spacing:.05em; color:#3B3550; }
+#ghost { filter:blur(11px); display:none; }
+#sweep { position:absolute; top:-100px; height:1280px; width:760px; transform-origin:50% 550px; opacity:0;
+  background:linear-gradient(90deg, transparent 49.8%, rgba(214,190,120,.85) 50%, transparent 50.2%),
+    linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,243,214,.55) 36%, rgba(255,255,255,.96) 50%, rgba(255,243,214,.55) 64%, rgba(255,255,255,0) 100%); }
+#proof { position:absolute; left:0; width:1920px; top:808px; height:110px; display:flex; justify-content:center; align-items:baseline;
+  gap:26px; color:#3B3550; opacity:0; }
+#num { font:400 112px/110px 'Instrument Serif'; width:70px; text-align:center; }
+#unit { font:400 42px/110px 'Inter'; letter-spacing:.06em; }
+#tag { position:absolute; left:50%; top:4px; margin-left:-110px; font:400 24px/26px 'Inter'; letter-spacing:.24em; color:#3B3550; }
+.hl { position:absolute; height:1.5px; background:#3B3550; opacity:.55; left:960px; margin-left:-190px; width:380px; transform:scaleX(0); }
+#url { position:absolute; left:0; width:1920px; top:652px; text-align:center; font:400 40px/48px 'Inter'; letter-spacing:.24em; text-indent:.24em; color:#3B3550; opacity:0; }
+#bloom { position:absolute; inset:-60px; opacity:0; pointer-events:none;
+  background:radial-gradient(circle at 50% 46%, #fff 0%, rgba(255,255,255,.92) 55%, rgba(255,248,236,.85) 100%); }
+</style></head><body>
+<div id="stage">
+  <div id="world">
+    <div id="mesh"></div>
+    <div id="motes"></div>
+    <svg id="ring" viewBox="0 0 1920 1080">
+      <defs><radialGradient id="gl"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".6" stop-color="#fff" stop-opacity=".3"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
+      <circle id="rg" cx="960" cy="450" r="100" fill="url(#gl)"/>
+      <circle id="r3" cx="960" cy="450" r="100" fill="none" stroke="#B9AEE0" stroke-width="12" opacity=".3"/>
+      <circle id="r2" cx="960" cy="450" r="100" fill="none" stroke="#C9AE66" stroke-width="2.5"/>
+      <circle id="r4" cx="960" cy="450" r="100" fill="none" stroke="#3B3550" stroke-width="2"/>
+      <circle id="r1" cx="960" cy="450" r="100" fill="none" stroke="#3B3550" stroke-width="2.5"/>
+    </svg>
+    <div id="sweep"></div>
+    <div class="line" id="hook">Breathe in for four.</div>
+    <div class="line" id="ghost">Out for six.</div>
+    <div class="line" id="sharp">Out for six.</div>
+    <div class="hl" id="hlProof" style="top:790px; margin-left:-230px; width:460px"></div>
+    <div id="proof"><span id="num">0</span><span id="unit">minute<span id="pl">s</span> a day</span><span id="tag">sample</span></div>
+    <div id="bloom"></div>
+    <div class="line" id="begin">Begin tonight.</div>
+    <div class="hl" id="hlL" style="top:676px; margin-left:-405px; width:150px; transform-origin:100% 50%"></div>
+    <div class="hl" id="hlR" style="top:676px; margin-left:255px; width:150px; transform-origin:0 50%"></div>
+    <div id="url">yourbrand.com</div>
+  </div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+window.DURATION = 10;
+window.SFX = [{t:.35, type:'chime', x:-.2}, {t:2.5, type:'whoosh', x:0}, {t:4.0, type:'count', x:0},
+              {t:5.4, type:'chime', x:.2}, {t:6.9, type:'chime', x:0}];
+
+const mild = x => lerp(x, eio(x), .45);                       // gentler than eio, so the light never stalls
+const breath = x => (1 - Math.cos(Math.PI * clamp(x))) / 2;   // one slow inhale or exhale
+const world = $('#world'), mesh = $('#mesh'), hook = $('#hook'), ghost = $('#ghost'), sharp = $('#sharp');
+const proof = $('#proof'), num = $('#num'), begin = $('#begin'), url = $('#url'), sweep = $('#sweep'), bloom = $('#bloom');
+const rings = ['#rg', '#r3', '#r2', '#r1', '#r4'].map(s => $(s));
+
+// dust motes, built once; render only moves them
+const motes = [...Array(56)].map((_, i) => {
+  const d = document.createElement('div'), s = 6 + rnd(i + 7) * 10;
+  const core = i % 3 ? 'rgba(255,255,255,.98) 0 22%, rgba(226,205,140,.8) 46%' : 'rgba(255,255,255,.95) 0 20%, rgba(176,164,222,.75) 46%';
+  d.style.cssText = `position:absolute;left:0;top:0;width:${s}px;height:${s}px;border-radius:50%;background:radial-gradient(circle, ${core}, transparent 72%)`;
+  $('#motes').appendChild(d);
+  return { d, s, x0: rnd(i) * 1920, sp: 22 + rnd(i + 3) * 40, off: rnd(i + 11) * 1240, ph: rnd(i + 5) * 6.28 };
+});
+
+function render(t) {
+  world.style.transform = `scale(${1 + .06 * seg(t, 0, 10)})`;      // the slow push never stops
+
+  // colour mesh: five soft pools of colour, always drifting
+  const b = (x, y, r, c) => `radial-gradient(${r}px ${r * .8}px at ${x}px ${y}px, ${c} 0%, transparent 100%)`;
+  mesh.style.background = [
+    b(520 + 260 * Math.sin(.55 * t + .2), 330 + 160 * Math.cos(.45 * t), 900, 'rgba(217,210,245,.95)'),
+    b(1450 + 240 * Math.cos(.5 * t), 300 + 180 * Math.sin(.6 * t + 1), 800, 'rgba(247,214,224,.9)'),
+    b(1100 + 300 * Math.sin(.42 * t + 2), 900 + 120 * Math.cos(.5 * t), 900, 'rgba(207,230,247,.9)'),
+    b(300 + 200 * Math.cos(.6 * t + 1), 900 + 140 * Math.sin(.5 * t), 620, 'rgba(232,217,168,.55)'),
+    b(1700 + 180 * Math.sin(.5 * t), 860 + 120 * Math.cos(.7 * t + 2), 620, 'rgba(217,210,245,.9)'), '#F6F3FA'].join(',');
+
+  // the light: a soft band that crosses once, and where it is right now
+  const g = seg(t, 2.3, 5.8), c = lerp(-300, 2500, lerp(g, eio(g), .12));
+  sweep.style.left = (c - 380) + 'px';
+  sweep.style.transform = 'skewX(-12deg)';
+  sweep.style.opacity = Math.min(seg(t, 2.3, 2.7), 1 - seg(t, 5.4, 5.8));
+
+  // dust: rises forever, brightens when the light passes it
+  motes.forEach((m, i) => {
+    const y = 1160 - ((t * m.sp + m.off) % 1240), x = m.x0 + Math.sin(t * .7 + m.ph) * 22;
+    const fade = clamp(y / 160) * clamp((1080 - y) / 160), lit = Math.exp(-Math.pow((x - c) / 280, 2)) * seg(t, 2.3, 2.7) * (1 - seg(t, 5.4, 5.8));
+    m.d.style.transform = `translate(${x}px,${y}px) scale(${1 + lit * .5})`;
+    m.d.style.opacity = clamp((.5 + .4 * Math.sin(t * 1.7 + m.ph * 3)) * fade + lit * .6);
+  });
+
+  // the breathing ring: in for four, out for six, then a slow third breath behind the end card
+  const B = u => u < 3.6 ? breath(u / 3.6) : u < 7.0 ? 1 - breath((u - 3.6) / 3.4) : .4 * (1 - Math.exp(-(u - 7.0) / 1.5));
+  const rr = lerp(110, 280, B(t)), re = lerp(110, 280, B(t - .8)), ro = t < 7.0 ? .35 + .65 * seg(t, 0, 1) : lerp(1, .55, seg(t, 7.0, 8.4));
+  [rr * 1.25, rr * 1.08, rr * .86, rr, re * .94].forEach((r, k) => rings[k].setAttribute('r', r));
+  [ro, .3 * ro, .8 * ro, .45 * ro, .28 * ro * seg(t, .6, 1.4)].forEach((o, k) => rings[k].style.opacity = o);
+
+  const fl = (ph, a = 26) => `translate(${a * Math.cos(t * .85 + ph)}px,${a * Math.sin(t * .85 + ph)}px)`;   // everything drifts in a slow circle, never still
+
+  // hook: resolves out of haze as its tracking closes in; the light wipes it away later
+  const pH = eo(seg(t, 0, 1.6));
+  hook.style.letterSpacing = lerp(.2, .05, eo(seg(t, 0, 2.2))) + 'em';
+  hook.style.filter = pH < 1 ? `blur(${(1 - pH) * 10}px)` : 'none';
+  hook.style.opacity = .5 + .5 * pH;
+  hook.style.display = t < 4.9 ? 'block' : 'none';
+  hook.style.maskImage = hook.style.webkitMaskImage = `linear-gradient(90deg, transparent ${c - 120}px, #000 ${c + 100}px)`;
+  hook.style.transform = `${fl(0)} translateY(${(1 - pH) * 20}px)`;
+
+  // "Out for six." resolves in the light's wake: blurred just behind it, sharp further back
+  const outA = 1 - seg(t, 6.0, 6.6);
+  ghost.style.display = t > 2.5 && t < 5.4 ? 'block' : 'none';
+  ghost.style.opacity = .75 * outA;
+  ghost.style.maskImage = ghost.style.webkitMaskImage = `linear-gradient(90deg, transparent ${c - 440}px, #000 ${c - 260}px, #000 ${c - 140}px, transparent ${c - 20}px)`;
+  sharp.style.maskImage = sharp.style.webkitMaskImage = `linear-gradient(90deg, #000 ${c - 420}px, transparent ${c - 200}px)`;
+  sharp.style.opacity = outA;
+  [ghost, sharp].forEach(e => e.style.transform = fl(.8));
+
+  // proof: the number rolls up while the light passes
+  const pIn = eo(seg(t, 3.5, 4.1)), pOut = 1 - seg(t, 6.0, 6.6), landed = seg(t, 5.3, 5.8);
+  const n = Math.round(5 * mild(seg(t, 4.0, 5.4)));
+  num.textContent = n;
+  $('#pl').style.visibility = n === 1 ? 'hidden' : 'visible';   // one minute, then minutes
+  num.style.transform = `scale(${1 + .14 * bump(landed)})`;
+  proof.style.opacity = pIn * pOut;
+  proof.style.transform = `${fl(2, 14)} translateY(${(1 - pIn) * 22}px)`;
+  $('#hlProof').style.transform = `${fl(2, 14)} scaleX(${eo(seg(t, 3.5, 4.4))})`;
+  $('#hlProof').style.opacity = .55 * pOut;
+
+  // end card: blooms to white, then "Begin tonight." resolves
+  const bp = eo(seg(t, 6.4, 8.1)), bo = eo(seg(t, 6.4, 7.1)), pu = eo(seg(t, 7.5, 8.2));
+  begin.style.letterSpacing = lerp(.12, .05, bp) + 'em';
+  begin.style.filter = bp < 1 ? `blur(${(1 - bp) * 18}px)` : 'none';
+  begin.style.opacity = bo;
+  begin.style.transform = `${fl(1.7)} translateY(${(1 - bp) * 16}px)`;
+  url.style.opacity = pu;
+  url.style.transform = `${fl(2.4, 14)} translateY(${(1 - pu) * 14}px)`;
+  $('#hlL').style.transform = $('#hlR').style.transform = `${fl(2.4, 14)} scaleX(${eo(seg(t, 7.5, 8.2))})`;
+  const up = t < 6.7 ? eio(seg(t, 6.2, 6.7)) : 1 - eo(seg(t, 6.7, 8.0));
+  bloom.style.opacity = .92 * up;
+}
+window.render = render;
+window.ready = Promise.all([document.fonts.load('400 40px "Instrument Serif"'), document.fonts.load('400 40px "Inter"'), document.fonts.ready]).then(() => render(0));
+</script></body></html>

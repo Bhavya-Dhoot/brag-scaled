@@ -18,7 +18,7 @@ Usage: `/brag-slim [input] [options]`. Options (flags or plain language):
 | `--fps <n>`, `--4k`, `--transparent` | 30 fps, 1080p, opaque MP4. `--4k` renders at twice the size; `--transparent` writes ProRes 4444 with alpha (and a PNG sequence) for an editor |
 | `--duration <s>` | about 20s |
 | `--voice [voice]` | off; narration with the `narrate` skill (default voice `af_heart`) |
-| `--style <set \| options \| auto>` | recommend, then wait for a pick. A set name builds with it; `options` only recommends; `auto` picks the best set and builds. There are 22 sets in `brag-styles`, including doodle, ops desk, brutal bento, kinetic type, quant terminal, riso, arcade, Mughal court and Versailles |
+| `--style <set \| options \| auto>` | recommend, then wait for a pick. A set name builds with it; `options` only recommends; `auto` picks the best set and builds. There are 34 sets in `brag-styles`. A design style can be named directly (claymorphism, glassmorphism, neumorphism, neo-brutalism, Swiss, cybercore, synthwave, Y2K, surreal, ethereal, bohemian, wabi-sabi, luxury typography). The sets include doodle, ops desk, brutal bento, kinetic type, quant terminal, riso, arcade, Mughal court and Versailles |
 
 ## What's in the box
 
@@ -26,7 +26,7 @@ Four more skills ship beside this one. Every run can use them, and the user shou
 
 | Skill | What it adds | How to ask |
 |---|---|---|
-| `brag-styles` | 22 art-directed looks, each with a signature move and its own sound palette; recommends before building | `--style`, "give me style options", "make it royal" |
+| `brag-styles` | 34 art-directed looks, each with a signature move and its own sound palette; recommends before building | `--style`, "give me style options", "make it royal" |
 | `motion-kit` | The moves, pacing rules, cursor-and-camera engines, code-made sound and the activity audit that keep a video from playing like a slideshow | automatic for every build; "make it interactive", "it feels like slides" |
 | `narrate` | Offline voiceover (bundled Kokoro-82M, no API key), with the music ducked under the voice; also word timings from a recorded clip | `--voice`, "narrate it" |
 | `fast-render` | GPU frame capture in parallel browsers; stills, poster, 4K, transparent export, graphics laid over footage, and a setup check (`--doctor`) | automatic for every render |

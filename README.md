@@ -18,7 +18,7 @@ or see the [poster frame](docs/assets/brag-scaled.jpg).*
 | `fast-render` | Renders any `window.render(t)` page to MP4 on the GPU with parallel browsers. Also 4K, transparent ProRes, graphics over footage, a setup check and an activity audit. `/brag-slim` uses it for stills and the final render. |
 | `motion-kit` | Keeps a video from playing like a slideshow: 41 named moves, pacing rules, cursor-and-camera demo engines, a beat grid, code-made sound and three backing grooves, a QR code that is checked to scan, safe zones, and bundled open-licence fonts. |
 | `narrate` | Offline voiceover with a bundled 82M-parameter TTS model (Kokoro). It gives exact line timings and ducks the music under the voice. `transcribe.py` goes the other way: word timings from a recorded clip. |
-| `brag-styles` | 22 art-directed looks, each with a signature motion trick and a matching sound palette. Ask for options and it recommends one before building anything. |
+| `brag-styles` | 34 art-directed looks, each with a signature motion trick and a matching sound palette. Ask for options and it recommends one before building anything. |
 
 ## Why it's fast
 
@@ -75,13 +75,27 @@ the clip with its size, frame rate, cut and audio untouched. An 18 s, 1080x1920 
 composited in 24 s on the reference laptop. For an editor instead, `--transparent` writes ProRes 4444
 with alpha and a PNG sequence.
 
-## 22 looks, recommended before anything is built
+## 34 looks, recommended before anything is built
 
-![Nineteen of the 22 brag-styles looks; Ops Desk and Kinetic Type are shown above, Brutal Bento below](docs/assets/scaled/styles.jpg)
+![Nineteen of the 34 brag-styles looks; Ops Desk and Kinetic Type are shown above, Brutal Bento below](docs/assets/scaled/styles.jpg)
 
 | Brutal Bento: the smash | a room inside a tile | the end card |
 |---|---|---|
 | ![A headline slammed over a bento board](skills/brag-styles/sets/brutal-bento/frames/f1.webp) | ![A conveyor room with PERFECT across it](skills/brag-styles/sets/brutal-bento/frames/f2.webp) | ![A QR code beside SCAN and DEPLOY](skills/brag-styles/sets/brutal-bento/frames/f4.webp) |
+
+### Ask for a style by name
+
+Twelve of the sets exist because people ask for a design style, not a set: claymorphism, glassmorphism,
+neumorphism, Swiss and minimal, luxury typography, cybercore, synthwave, Y2K, surrealism, ethereal, bohemian and
+wabi-sabi. Each has a ten-second working reference (`ref/look.html`) that passed the activity audit. The other
+names map to sets that already existed: neo-brutalism and bento grid, editorial, pixel art, scrapbook, sketch, maximalism.
+
+| | | |
+|---|---|---|
+| ![Swiss Grid](skills/brag-styles/sets/swiss-grid/frames/f3.webp)<br>`swiss-grid` | ![Cyber Core](skills/brag-styles/sets/cyber-core/frames/f3.webp)<br>`cyber-core` | ![Glass Layers](skills/brag-styles/sets/glass-layers/frames/f2.webp)<br>`glass-layers` |
+| ![Clay Toys](skills/brag-styles/sets/clay-toys/frames/f3.webp)<br>`clay-toys` | ![Soft Press](skills/brag-styles/sets/soft-press/frames/f2.webp)<br>`soft-press` | ![Y2K Chrome](skills/brag-styles/sets/y2k-chrome/frames/f3.webp)<br>`y2k-chrome` |
+| ![Synthwave Drive](skills/brag-styles/sets/synthwave-drive/frames/f3.webp)<br>`synthwave-drive` | ![Luxe Type](skills/brag-styles/sets/luxe-type/frames/f2.webp)<br>`luxe-type` | ![Dream Logic](skills/brag-styles/sets/dream-logic/frames/f2.webp)<br>`dream-logic` |
+| ![Ethereal Haze](skills/brag-styles/sets/ethereal-haze/frames/f2.webp)<br>`ethereal-haze` | ![Boho Market](skills/brag-styles/sets/boho-market/frames/f3.webp)<br>`boho-market` | ![Wabi-Sabi](skills/brag-styles/sets/wabi-sabi/frames/f3.webp)<br>`wabi-sabi` |
 
 | You say | brag-scaled does |
 |---|---|
@@ -191,7 +205,7 @@ You get a `brag-output/` folder with the plan, share copy, and the rendered `bra
 - `skills/fast-render/`: the GPU renderer (`scripts/fastrender.py`)
 - `skills/motion-kit/`: the moves and pacing rules, `scripts/soundkit.py` (sound made in code), `scripts/fit_scenes.py` (scenes fitted to narration on a beat grid, lines placed on beats), `scripts/qr.py` (a QR grid, and a check that a rendered frame scans), reference engines in `ref/`, and bundled fonts
 - `skills/narrate/`: offline narration (`scripts/narrate.py`) and word timings from a clip (`scripts/transcribe.py`)
-- `skills/brag-styles/`: the 22 visual systems. Each has a `set.md`, which is all a run reads, plus reference frames, `DESIGN.md` tokens and reference markup.
+- `skills/brag-styles/`: the 34 visual systems. Each has a `set.md`, which is all a run reads, plus reference frames, `DESIGN.md` tokens and reference markup.
 - `scripts/import_stitch.py`: turns a Google Stitch export into sanitised sets
 - `skills/brag/`: the classic workflow, with its references and bundled music and SFX
 - `examples/`: fake product sites used as a benchmark suite

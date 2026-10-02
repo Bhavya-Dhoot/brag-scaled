@@ -1,0 +1,164 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; background:#fff; }
+body { font-family:'Inter',sans-serif; color:#0A0A0A; }
+#stage { position:absolute; inset:0; overflow:hidden; }
+#stage div, #stage svg { position:absolute; }
+#clip { inset:0; clip-path:inset(0 120px 0 120px); }
+.band { top:160px; width:118px; height:790px; background:rgba(10,10,10,.035); transform-origin:50% 0; }
+#act { top:160px; width:118px; height:790px; background:rgba(10,10,10,.12); }
+#rule { left:120px; top:159px; width:1680px; height:2px; background:#0A0A0A; transform-origin:0 50%; }
+.rl { top:124px; font:400 22px/26px 'JetBrains Mono'; color:#8A8A8A; }
+.h1 { left:120px; width:1680px; font:700 200px/200px 'Inter'; letter-spacing:-.05em; white-space:nowrap; }
+.mono { left:0; top:0; font:400 170px/205px 'JetBrains Mono'; letter-spacing:-.04em; white-space:nowrap; -webkit-text-stroke:3px currentColor; }
+.col { top:0; width:544px; height:1px; }
+.fig { left:0; top:205px; width:544px; height:205px; overflow:hidden; }
+.frule { left:0; top:419px; width:544px; height:2px; background:#0A0A0A; transform-origin:0 50%; }
+#btn { left:120px; top:600px; width:402px; height:96px; }
+.b { inset:0; border:3px solid #0A0A0A; font:700 40px/90px 'Inter'; padding-left:28px; }
+.fill { left:-3px; top:-3px; width:0; height:96px; overflow:hidden; background:#0A0A0A; color:#fff; }
+.fill span { display:block; padding-left:31px; line-height:96px; white-space:nowrap; }
+#proof { left:688px; top:0; width:1112px; height:1px; }
+#plab { left:0; top:545px; font:400 40px/48px 'Inter'; color:#8A8A8A; }
+#tag { right:0; top:546px; font:400 26px/30px 'JetBrains Mono'; border:2px solid #0A0A0A; padding:5px 14px; }
+#pnum { top:590px; width:1112px; font-size:250px; line-height:270px; transform-origin:0 70%; }
+#drain { left:0; top:870px; width:1112px; height:2px; background:#0A0A0A; }
+#e1 { top:300px; font-size:270px; line-height:270px; }
+#erule { left:120px; top:659px; width:1680px; height:2px; background:#0A0A0A; transform-origin:0 50%; }
+#e2 { left:120px; top:690px; font:400 60px/70px 'Inter'; letter-spacing:-.02em; white-space:nowrap; }
+#bar { background:#E10600; }
+#ring { border:3px solid #0A0A0A; }
+</style></head><body>
+<div id="stage">
+  <div id="act"></div><div id="rule"></div>
+  <div id="clip">
+    <div class="h1" style="top:230px">three reports.</div>
+    <div class="h1" style="top:430px">three different</div>
+    <div class="h1" style="top:630px">totals.</div>
+    <div class="col"><div class="fig"><div class="mono">1,204</div></div><div class="frule"></div></div>
+    <div class="col"><div class="fig"><div class="mono">1,187</div></div><div class="frule"></div></div>
+    <div class="col"><div class="fig"><div class="mono">1,211</div></div><div class="frule"></div></div>
+    <div id="btn"><div class="b">reconcile<div class="fill"><span>reconcile</span></div></div></div>
+    <div id="proof"><div id="plab">unexplained</div><div id="tag">sample</div>
+      <div id="pnum" class="mono">0.4%</div><div id="drain"></div></div>
+    <div class="h1" id="e1"><span>one number.</span></div>
+    <div id="erule"></div><div id="e2">yourbrand.com</div>
+  </div>
+  <div id="bar"></div><div id="ring"></div>
+  <svg id="cur" width="30" height="42" viewBox="-2 -2 30 42"><polygon points="0,0 0,32 8,25 14,38 20,35 14,23 25,23" fill="#0A0A0A" stroke="#fff" stroke-width="2.5" stroke-linejoin="miter"/></svg>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));                         // 0..1 progress between two times
+const eo = x => 1 - Math.pow(1 - x, 3);                                     // ease out: fast, then settles
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;          // ease in and out: for travel
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);   // overshoots, then settles
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);            // 0 -> 1 -> 0, for a pulse
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+window.DURATION = 10;
+window.SFX = [
+  {t:.5,type:'tick',x:-.6},{t:.72,type:'tick',x:-.5},{t:.94,type:'tick',x:-.5},{t:2.3,type:'whoosh',x:0},
+  {t:2.7,type:'tick',x:-.5},{t:2.85,type:'tick',x:0},{t:3,type:'tick',x:.5},
+  {t:3.4,type:'tick',x:-.1},{t:4.1,type:'tick',x:.5},{t:4.95,type:'stamp',x:-.5},
+  {t:5.2,type:'click',x:-.7},{t:5.3,type:'count',x:0},
+  {t:5.75,type:'tick',x:.2},{t:6.05,type:'tick',x:.2},{t:6.35,type:'tick',x:.2},{t:6.65,type:'stamp',x:.2},
+  {t:7,type:'whoosh',x:0},{t:7.85,type:'lock',x:-.5},{t:8,type:'stamp',x:-.3},{t:8.35,type:'chime',x:-.3}];
+
+// twelve columns, 118 wide with 24 gutters, inside 120 px margins
+const COL = i => 120 + 142 * i;
+const snapIn = p => Math.ceil((1 - eo(p)) * 3) * 142;       // arrives three columns at a time
+const colsOut = p => Math.round(eio(p) * 12) * 142;         // leaves one column at a time
+const fmt = n => { n = Math.round(n); return Math.floor(n / 1000) + ',' + String(n % 1000).padStart(3, '0'); };
+const mk = (cls, parent, css, txt) => { const d = document.createElement('div'); d.className = cls; d.style.cssText = css; if (txt) d.textContent = txt; parent.appendChild(d); return d; };
+const bands = [], labels = [];
+for (let i = 0; i < 12; i++) {
+  const b = mk('band', $('#stage'), `left:${COL(i)}px`); $('#stage').insertBefore(b, $('#act')); bands.push(b);
+  labels.push(mk('rl', $('#stage'), `left:${COL(i)}px`, String(i + 1).padStart(2, '0')));
+}
+const hook = [...document.querySelectorAll('.h1')].slice(0, 3);
+const cols = [...document.querySelectorAll('.col')];
+const pp = n => { n = n % 22; return n < 12 ? n : 22 - n; };  // the active band walks out and back
+let END_W = 1538;
+
+function render(t) {
+  // grid draws on, then an active band steps along on the beat
+  bands.forEach((b, i) => b.style.transform = `scaleY(${eo(seg(t, .1 + .04 * i, .6 + .04 * i))})`);
+  labels.forEach((l, i) => l.style.opacity = seg(t, .3 + .04 * i, .5 + .04 * i));
+  $('#rule').style.transform = `scaleX(${eio(seg(t, 0, .8))})`;
+  const tb = Math.min(t, 8.5), beat = Math.floor(tb / .5), now = pp(beat), gl = eio(seg(tb - beat * .5, 0, .42));   // the marker rests once the end card has settled
+  $('#act').style.left = lerp(COL(pp(beat - 1 < 0 ? 0 : beat - 1)), COL(now), gl) + 'px';
+  $('#act').style.opacity = seg(t, .7, 1);
+  labels.forEach((l, i) => l.style.color = i === now && t > 1 ? '#0A0A0A' : '#8A8A8A');
+
+  // hook: lines snap in column by column, then slide out along the grid
+  hook.forEach((h, i) => {
+    const a = .45 + .22 * i, p = seg(t, a, a + .7), k = Math.ceil(eo(p) * 12);
+    h.style.clipPath = p <= 0 ? 'inset(0 1680px 0 0)' : `inset(-40px ${1680 - (k * 142 - 24)}px -80px 0)`;
+    h.style.transformOrigin = '0 0';
+    h.style.transform = `translateX(${-colsOut(seg(t, 2.3 + .08 * i, 2.75 + .08 * i))}px) scale(${1 + .03 * seg(t, .5, 2.4)})`;
+  });
+
+  // three totals snap into their columns; the bar visits the odd two, the cursor clicks, all three land on one
+  const val = [1204, lerp(1187, 1204, eo(seg(t, 5.3, 6.3))), lerp(1211, 1204, eo(seg(t, 5.45, 6.6)))];
+  const seen = [0, 3.4, 4.1], done = [0, 6.3, 6.6];
+  cols.forEach((c, k) => {
+    const a = 2.7 + .15 * k, p = seg(t, a, a + .35), f = c.firstChild.firstChild;
+    c.style.left = COL(4 * k) + 'px';
+    c.style.transform = `translateX(${-colsOut(seg(t, 7 + .08 * k, 7.45 + .08 * k))}px)`;
+    const u = t - seen[k], shake = k && u > 0 && u < .4 ? Math.sin(u * 60) * 5 * (1 - u / .4) : 0;
+    f.textContent = fmt(val[k]);
+    f.style.visibility = p > 0 ? 'visible' : 'hidden';
+    f.style.color = k && t >= seen[k] && t < done[k] ? '#8A8A8A' : '#0A0A0A';
+    f.style.transformOrigin = '0 60%';
+    f.style.transform = `translateX(${snapIn(p) + shake}px) scale(${1 + (k ? .04 * bump(seg(t, done[k], done[k] + .3)) : 0)})`;
+    c.lastChild.style.transform = `scaleX(${eo(seg(t, 2.8 + .15 * k, 3.3 + .15 * k))})`;
+  });
+
+  // the button: outline first, fill wipes in as the cursor lands, sinks on the click
+  const bp = seg(t, 3.2, 3.55), press = bump((t - 5.2) / .2);
+  $('#btn').style.visibility = bp > 0 ? 'visible' : 'hidden';
+  $('#btn').style.transform = `translateX(${snapIn(bp) - colsOut(seg(t, 7, 7.45))}px)`;
+  $('.b').style.transform = `translate(${4 * press}px,${4 * press}px)`;
+  $('.fill').style.width = 402 * eo(seg(t, 4.9, 5.15)) + 'px';
+
+  // proof: unexplained share counts down to nothing, a rule drains beside it
+  const pv = .4 * (1 - seg(t, 5.6, 6.8)), pin = seg(t, 5.25, 5.6);
+  $('#proof').style.visibility = pin > 0 ? 'visible' : 'hidden';
+  $('#proof').style.transform = `translateX(${snapIn(pin) - colsOut(seg(t, 7.1, 7.55))}px)`;
+  $('#pnum').textContent = (Math.round(pv * 10) / 10).toFixed(1) + '%';
+  $('#pnum').style.transform = `scale(${1 + .04 * bump(seg(t, 6.65, 6.95))})`;
+  $('#drain').style.width = 1112 * pv / .4 + 'px';
+
+  // cursor in, click ring (square, no radius), cursor out
+  const c1 = eio(seg(t, 4.45, 5.05)), c2 = eio(seg(t, 5.7, 6.3)), rp = seg(t, 5.2, 5.75), rs = 150 * eo(rp);
+  $('#cur').style.transform = `translate(${lerp(1960, 430, c1) - 170 * c2}px,${lerp(900, 650, c1) - 90 * bump(c1) + 520 * c2}px)`;
+  $('#ring').style.cssText = `display:${rp > 0 && rp < 1 ? 'block' : 'none'};left:${430 - rs / 2}px;top:${650 - rs / 2}px;width:${rs}px;height:${rs}px;opacity:${1 - rp}`;
+
+  // end card: the red bar drops under the closing line
+  const ep = seg(t, 7.8, 8.15), e2 = seg(t, 8, 8.35);
+  $('#e1').style.visibility = ep > 0 ? 'visible' : 'hidden';
+  $('#e1').style.transform = `translateX(${snapIn(ep)}px)`;
+  $('#e2').style.visibility = e2 > 0 ? 'visible' : 'hidden';
+  $('#e2').style.transform = `translateX(${snapIn(e2)}px)`;
+  $('#erule').style.transform = `scaleX(${eo(seg(t, 7.95, 8.4))})`;
+
+  // the one red mark: draws on, hunts along the top rule, settles on the figure that matters, then underlines the last line
+  const hunt = eio(seg(t, 2.95, 3.4)), fly = eio(seg(t, 7.35, 7.9));
+  const bx = COL(0) + 568 * hunt + 568 * eio(seg(t, 3.65, 4.1)) - 1136 * eio(seg(t, 4.3, 4.95));
+  const bw = 118 * eo(seg(t, .3, .7)) + 426 * hunt + (END_W - 544) * fly;
+  const bh = 16 + 10 * (bump(seg(t, 3.4, 3.7)) + bump(seg(t, 4.1, 4.4)) + bump(seg(t, 4.95, 5.25)));
+  const by = 152 + 413 * fly;
+  Object.assign($('#bar').style, { left: bx + 'px', top: by - (bh - 16) / 2 + 'px', width: bw + 'px', height: bh + 'px' });
+}
+window.render = render;
+window.ready = Promise.all([document.fonts.load('700 40px "Inter"'), document.fonts.load('400 40px "Inter"'),
+  document.fonts.load('400 40px "JetBrains Mono"'), document.fonts.ready]).then(() => {
+  const w = $('#e1 span').getBoundingClientRect().width;
+  END_W = Math.min(1680, Math.ceil((w + 24) / 142) * 142 - 24);
+  render(0);
+});
+</script></body></html>

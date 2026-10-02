@@ -1,0 +1,166 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; background:#12052B; }
+#stage, #world, #glt, #scan { position:absolute; inset:0; overflow:hidden; }
+#scan { background:repeating-linear-gradient(transparent 0 3px, rgba(0,0,0,.15) 3px 4px); }
+.a { position:absolute; left:0; }
+#sky { top:0; width:1920px; height:600px; background:linear-gradient(#12052B 0%, #220a52 50%, #5c1480 82%, #a3207f 100%); }
+#hz { top:598px; width:1920px; background:#FF2E97; }
+#wipe { top:0; width:1920px; background:rgba(18,5,43,.8); border-top:6px solid #21E6F0; display:none; }
+/* chrome heading: a magenta outline copy underneath, the gradient copy on top */
+.hk { position:absolute; left:0; width:1920px; text-align:center; font:400 150px/1 'Archivo Black'; white-space:nowrap; filter:drop-shadow(0 0 16px rgba(255,46,151,.55)); }
+.hk .b { color:#FF2E97; -webkit-text-stroke:14px #FF2E97; }
+.hk .f { position:absolute; left:0; top:0; width:100%; color:transparent; -webkit-background-clip:text; background-clip:text;
+  background-image:linear-gradient(105deg, transparent 46%, rgba(255,255,255,.95) 50%, transparent 54%), linear-gradient(#fff 12%, #eafcff 40%, #6fe6f0 50%, #a77bff 54%, #ff6fc0 88%);
+  background-size:300% 100%, 100% 100%; background-repeat:no-repeat; background-position:200% 0, 0 0; }
+.sg { position:absolute; left:0; top:0; transform-origin:0 0; }
+.post { position:absolute; left:-8px; top:-515px; width:16px; height:515px; background:linear-gradient(#7A2BFF, #2c0f66); }
+.bd { position:absolute; left:-250px; top:-745px; width:500px; height:230px; background:#12052B; border:9px solid #fff;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; font-family:'Archivo Black'; }
+.bd b { font-size:120px; line-height:1; font-weight:400; }
+.bd span { font-size:48px; line-height:1.1; }
+.gb { position:absolute; left:0; width:1920px; }
+#url { top:478px; left:960px; transform:translateX(-50%); width:max-content; padding:4px 26px; background:rgba(18,5,43,.8);
+  font:400 54px 'JetBrains Mono'; color:#fff; letter-spacing:2px; }
+</style></head><body>
+<div id="stage"><div id="world">
+ <div id="sky" class="a"><svg id="stars" width="1920" height="600"></svg></div>
+ <div class="a" style="top:0;width:1920px;height:600px;overflow:hidden"><svg width="1920" height="600" style="position:absolute;left:0;top:0">
+  <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB03A"/><stop offset="1" stop-color="#FF2E97"/></linearGradient>
+  <mask id="sm" maskUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1400"><rect width="1920" height="1400" fill="#fff"/><g id="bars" fill="#000"></g></mask></defs>
+  <circle id="sun" cx="960" cy="860" r="200" fill="url(#sg)" mask="url(#sm)"/></svg></div>
+ <svg class="a" style="top:600px" width="1920" height="480" viewBox="0 600 1920 480">
+  <defs><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a1072"/><stop offset=".35" stop-color="#1d0846"/><stop offset="1" stop-color="#12052B"/></linearGradient></defs>
+  <rect x="0" y="600" width="1920" height="480" fill="url(#fg)"/>
+  <polygon points="960,600 1340,1080 580,1080" fill="#0a0220" opacity=".6"/>
+  <g id="vl" stroke="#7A2BFF"></g><g id="hl" stroke="#7A2BFF"></g><g id="cd" stroke="#FFB03A"></g></svg>
+ <div id="hz" class="a"></div>
+ <div id="signs"></div>
+ <div id="dash" class="a" style="left:380px;top:690px;width:1160px;height:390px;clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);background:linear-gradient(#1c0b44,#0b031c)">
+  <svg width="1160" height="390" font-family="JetBrains Mono">
+   <line x1="93" y1="2" x2="1067" y2="2" stroke="#21E6F0" stroke-width="4"/>
+   <rect x="100" y="52" width="280" height="160" rx="10" fill="#12052B" stroke="#7A2BFF" stroke-width="2"/>
+   <rect x="780" y="52" width="280" height="160" rx="10" fill="#12052B" stroke="#7A2BFF" stroke-width="2"/>
+   <path d="M410 215A170 170 0 0 1 750 215" fill="none" stroke="#3a1480" stroke-width="16"/>
+   <path id="arc" d="M410 215A170 170 0 0 1 750 215" pathLength="1" fill="none" stroke="#21E6F0" stroke-width="16"/>
+   <g id="ticks" stroke="#fff" stroke-width="3" fill="#fff" font-size="20" text-anchor="middle"></g>
+   <g id="eq"></g>
+   <g id="nd" transform="translate(580 215)"><line x1="0" y1="0" x2="-150" y2="0" stroke="#FF2E97" stroke-width="7" stroke-linecap="round"/><circle r="14" fill="#21E6F0"/></g>
+   <text id="num" x="952" y="152" font-size="88" fill="#fff" text-anchor="end">0</text>
+   <text x="964" y="152" font-size="30" fill="#fff">BPM</text>
+   <text x="800" y="196" font-size="26" fill="#21E6F0" letter-spacing="3">sample</text>
+  </svg></div>
+ <div id="wipe" class="a"></div>
+ <div id="hook" class="a" style="top:0;width:1920px;height:600px;transform-origin:960px 600px"></div>
+ <div id="end"><div id="url" class="a">yourbrand.com</div></div>
+</div><div id="glt"></div><div id="scan"></div></div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+window.DURATION = 10;
+window.SFX = [{t:.1,type:'glitch',x:0},{t:.2,type:'whoosh',x:0},{t:.7,type:'whoosh',x:0},{t:2.3,type:'dive',x:0},
+  {t:3,type:'count',x:0},{t:4.6,type:'whoosh',x:-.6},{t:5.95,type:'whoosh',x:.6},{t:6.3,type:'ping',x:0},
+  {t:6.9,type:'glitch',x:0},{t:7.1,type:'whoosh',x:0},{t:7.45,type:'stamp',x:0},{t:7.7,type:'stamp',x:0},{t:8.05,type:'type',x:0}];
+const BEAT = 60 / 110;            // the grid and the pulses all run on 110 beats a minute
+const NS = 'http://www.w3.org/2000/svg';
+const mk = (p, tag, a) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); $(p).appendChild(e); return e; };
+
+// build the scene once: stars, sun stripes, road lines, gauge ticks, equaliser, signs, headings
+const stars = [...Array(44)].map((_, i) => mk('#stars', 'circle', {cx: rnd(i*3)*1920, cy: rnd(i*3+1)*540, r: 1 + rnd(i*3+2)*1.8, fill: i % 5 ? '#fff' : '#21E6F0'}));
+const bars = [...Array(9)].map(() => mk('#bars', 'rect', {x: 0, width: 1920}));
+for (let k = -14; k <= 14; k++) mk('#vl', 'line', {x1: 960, y1: 600, x2: 960 + 190*k, y2: 1080, 'stroke-width': Math.abs(k) == 2 ? 4 : 1.5, stroke: Math.abs(k) == 2 ? '#21E6F0' : '#7A2BFF'});
+const N = 36;
+const hl = [...Array(N)].map(() => mk('#hl', 'line', {x1: 0, x2: 1920}));
+const cd = [...Array(N/2)].map(() => mk('#cd', 'line', {x1: 960, x2: 960}));
+for (let i = 0; i <= 10; i++) {
+  const a = Math.PI * (1 + i/10), c = Math.cos(a), s = Math.sin(a), r0 = i % 5 ? 138 : 126;
+  mk('#ticks', 'line', {x1: 580 + r0*c, y1: 215 + r0*s, x2: 580 + 154*c, y2: 215 + 154*s});
+  if (i % 5 == 0) { const l = mk('#ticks', 'text', {x: 580 + 100*c, y: 222 + 100*s, stroke: 'none'}); l.textContent = i * 20; }
+}
+const eq = [...Array(12)].map((_, i) => mk('#eq', 'rect', {x: 112 + 23*i, width: 16, fill: i % 2 ? '#FF2E97' : '#21E6F0'}));
+const SG = [['128', 'NEW SAMPLES', '#FF2E97', 2.55, -1], ['ZERO', 'ROYALTIES', '#21E6F0', 3.9, 1]].map(([n, l, c, t0, side]) => {
+  const e = document.createElement('div'); e.className = 'sg';
+  e.innerHTML = `<div class=post></div><div class=bd style="border-color:${c}"><b>${n}</b><span>${l}</span></div>`;
+  $('#signs').appendChild(e); return {e, t0, side};
+});
+function head(txt, size, top, into) {
+  const d = document.createElement('div'); d.className = 'hk'; d.style.cssText = `top:${top}px;font-size:${size}px`;
+  d.innerHTML = `<span class=b>${txt}</span><span class=f>${txt}</span>`; $(into).appendChild(d); return d;
+}
+const H = [head('YOUR WEEKEND', 150, 130, '#hook'), head('SOUNDS FLAT.', 150, 300, '#hook')];
+const E = [head('DROP IT', 170, 70, '#end'), head('TONIGHT.', 170, 250, '#end')];
+const GB = [...Array(5)].map((_, i) => { const e = document.createElement('div'); e.className = 'gb'; e.style.background = i % 2 ? '#21E6F0' : '#FF2E97'; $('#glt').appendChild(e); return e; });
+
+function render(t) {
+  const b = t / BEAT, pulse = Math.pow(1 - b % 1, 3), fr = Math.floor(t * 24);
+
+  // tracking glitch: bars flick across and the world shudders, at the start and into the end card
+  const g = Math.max(t < .7 ? 1 - seg(t, .1, .7) : 0, bump(seg(t, 6.85, 7.4)));
+  $('#world').style.transform = `translateX(${g * (rnd(fr) - .5) * 50}px)`;
+  GB.forEach((e, i) => {
+    e.style.opacity = rnd(fr*7 + i) < g * 1.1 ? .7 : 0; e.style.top = rnd(fr*5 + i + 9) * 1000 + 'px';
+    e.style.height = 4 + rnd(fr*3 + i) * 28 + 'px'; e.style.transform = `translateX(${(rnd(fr + i*11) - .5) * 120}px)`;
+  });
+
+  // sky, and a striped sun that rises after the hook and sinks again on the end card
+  stars.forEach((s, i) => s.setAttribute('opacity', .35 + .65 * Math.abs(Math.sin(t * 1.7 + i * 2.1))));
+  const sy = 860 - 340 * eo(seg(t, 2.3, 3.7)) + 90 * eio(seg(t, 7.2, 10)), ph = (t * .45) % 1;
+  $('#sun').setAttribute('cy', sy);
+  bars.forEach((r, k) => { const d = (k + ph) * 38, th = 2 + (k + ph) * 5.5; r.setAttribute('y', sy + d - th/2); r.setAttribute('height', th); });
+
+  // the road: one grid line per beat, edge lines, amber centre dashes
+  const hz = $('#hz'); hz.style.height = 4 + 4 * pulse + 'px'; hz.style.opacity = .7 + .3 * pulse;
+  hl.forEach((l, i) => {
+    const d = 1 + (((i - b) % N) + N) % N * .5, y = 600 + 480 / d;
+    l.setAttribute('y1', y); l.setAttribute('y2', y); l.setAttribute('stroke-width', 1 + 2.5 / d); l.setAttribute('opacity', clamp((y - 600) / 30));
+    if (i % 2 == 0) { const c = cd[i / 2]; c.setAttribute('y1', y); c.setAttribute('y2', 600 + 480 / (d + .5)); c.setAttribute('stroke-width', 18 / d); c.setAttribute('opacity', clamp((y - 600) / 30)); }
+  });
+
+  // road signs: grow from the horizon, hold readable for most of a second, then fly off the side
+  for (const s of SG) {
+    const u = seg(t, s.t0, s.t0 + 2.6);
+    const L = u < .5 ? -3 + 5*u : u < .82 ? -.5 + (u - .5) / .32 * .5 : (u - .82) / .18 * 1.28, q = Math.exp(L);
+    s.e.style.opacity = u <= 0 || u >= 1 ? 0 : seg(u, 0, .06);
+    s.e.style.transform = `translate(${960 + s.side * 520 * q}px,${600 + 480 * q}px) scale(${q})`;
+  }
+
+  // dashboard: slides up, the needle climbs to 140, the readout counts with it
+  const c = seg(t, 3, 6.3), v = 140 * (1 - Math.pow(1 - c, 2.2)), tr = c <= 0 ? 0 : 1.8 * (1 - c) + .4;
+  $('#dash').style.transform = `translateY(${(1 - eo(seg(t, 2.8, 3.5))) * 420 + eio(seg(t, 7, 7.5)) * 420}px)`;
+  $('#nd').setAttribute('transform', `translate(580 215) rotate(${v / 200 * 180 + Math.sin(t * 41) * tr})`);
+  $('#arc').setAttribute('stroke-dasharray', `${v / 200} 2`);
+  $('#num').textContent = Math.round(v);
+  eq.forEach((r, i) => { const h = 12 + (50 + 80 * rnd(i)) * (.2 + .8 * Math.abs(Math.sin(Math.PI * (b * (1 + i % 3) / 2 + i * .37)))); r.setAttribute('y', 200 - h); r.setAttribute('height', h); });
+
+  // hook: each line climbs out of the horizon, a slow push, then the lot flies past the camera
+  const ex = seg(t, 2.2, 2.6), hk = $('#hook');
+  hk.style.display = t > 2.6 ? 'none' : 'block'; hk.style.opacity = 1 - ex;
+  hk.style.transform = `scale(${1 + .04 * seg(t, .65, 2.2) + 5 * ex * ex})`;
+  H.forEach((e, k) => {
+    const p = seg(t, .15 + .5*k, .65 + .5*k), j = (1 - p) * (1 - p) * (rnd(fr*3 + k) - .5) * 220, pn = 1 + .06 * bump(seg(t, .6 + .5*k, .9 + .5*k));
+    e.style.opacity = clamp(p * 3);
+    e.style.transform = `translate(${j}px,${(1 - eo(p)) * 330}px) scale(${(.25 + .75 * eo(p)) * pn}) skewX(-8deg)`;
+  });
+
+  // end card: the horizon wipes up, the lines slam in, the address types itself
+  const wp = eio(seg(t, 7, 7.55)), wipe = $('#wipe');
+  wipe.style.display = wp > 0 ? 'block' : 'none'; wipe.style.top = 600 * (1 - wp) + 'px'; wipe.style.height = 600 * wp + 'px';
+  wipe.style.borderTopColor = `rgba(33,230,240,${1 - seg(t, 7.55, 7.9)})`;
+  E.forEach((e, k) => {
+    const u = t - (7.45 + .25 * k);
+    e.style.opacity = u >= 0 ? 1 : 0; e.style.transform = `scale(${2.3 - 1.3 * eo(clamp(u / .14))}) skewX(-8deg)`;
+    const sw = (((t - 7.9) / 1.4 + k * .5) % 1 + 1) % 1;      // a light glint crosses each line in turn, so the card never goes dead
+    e.lastChild.style.backgroundPosition = `${t < 7.9 ? 200 : 95 - 90 * sw}% 0, 0 0`;
+  });
+  $('#url').style.clipPath = `inset(0 ${(1 - Math.round(13 * seg(t, 8, 8.5)) / 13) * 100}% 0 0)`;
+}
+window.render = render;
+window.ready = Promise.all([document.fonts.load('400 40px "Archivo Black"'), document.fonts.load('400 40px "JetBrains Mono"'), document.fonts.ready]).then(() => render(0));
+</script></body></html>

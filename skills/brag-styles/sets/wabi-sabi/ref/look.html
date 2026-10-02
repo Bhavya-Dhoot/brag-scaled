@@ -1,0 +1,154 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; background:#EDE6D8; }
+#stage { position:absolute; inset:0; overflow:hidden; background:#EDE6D8; }
+#cam { position:absolute; inset:0; transform-origin:700px 540px; }
+.full { position:absolute; left:0; top:0; width:1920px; height:1080px; }
+.serif { position:absolute; left:190px; font-family:'Instrument Serif',serif; color:#2A2622; white-space:pre; }
+.ch { display:inline-block; }
+.lab { position:absolute; left:190px; font:700 24px/1 'Inter',sans-serif; letter-spacing:.42em; color:#6B705C; white-space:pre; }
+#h1 { top:200px; font-size:220px; line-height:200px; }
+#h2 { top:680px; left:430px; font-size:100px; line-height:100px; font-style:italic; color:#A8643C; }
+#sample { top:516px; }
+#big { top:552px; font-size:150px; line-height:150px; word-spacing:.08em; }
+#endt { top:230px; font-size:210px; line-height:200px; }
+#url { top:776px; }
+</style></head><body>
+<div id="stage">
+ <div id="cam">
+  <div id="h1" class="serif"><div></div><div></div></div>
+  <div id="h2" class="serif"></div>
+  <div id="sample" class="lab">sample</div>
+  <div id="big" class="serif">1 of <span id="num" style="display:inline-block;min-width:1.45ch">1</span> made</div>
+  <div id="endt" class="serif"><div></div><div></div></div>
+  <div id="url" class="lab" style="color:#2A2622">yourbrand.com</div>
+  <svg class="full" viewBox="0 0 1920 1080">
+   <defs><filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter></defs>
+   <g id="tally"></g>
+   <g filter="url(#rough)">
+    <path id="bowlInk" fill="#2A2622"/><path id="crackInk" fill="#2A2622"/>
+    <path id="crackGold" fill="#C9A227"/><path id="endInk" fill="#6B705C"/>
+   </g>
+   <g id="brush"><path id="bt" d="M0 0 C-7 -20 -13 -48 -15 -90 L15 -90 C13 -48 7 -20 0 0Z"/>
+    <path d="M-14 -130 L14 -130 L9 -330 L-9 -330Z" fill="#A8643C"/>
+    <rect x="-16" y="-130" width="32" height="46" fill="#2A2622"/></g>
+   <g id="probe" opacity="0"></g>
+  </svg>
+ </div>
+ <svg class="full" viewBox="0 0 1920 1080" style="mix-blend-mode:multiply;pointer-events:none">
+  <defs>
+   <filter id="g1" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="4"/>
+    <feColorMatrix values="0 0 0 0 .2  0 0 0 0 .16  0 0 0 0 .12  1.7 0 0 0 -.68"/></filter>
+   <filter id="g2" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".006 .008" numOctaves="3" seed="9"/>
+    <feColorMatrix values="0 0 0 0 .42  0 0 0 0 .36  0 0 0 0 .26  1.4 0 0 0 -.5"/></filter>
+  </defs>
+  <rect width="1920" height="1080" filter="url(#g2)" opacity=".15"/>
+  <rect width="1920" height="1080" filter="url(#g1)" opacity=".5"/>
+ </svg>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));                         // 0..1 progress between two times
+const eo = x => 1 - Math.pow(1 - x, 3);                                     // ease out: fast, then settles
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;          // ease in and out: for travel
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);   // overshoots, then settles
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);            // 0 -> 1 -> 0, for a pulse
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+window.DURATION = 10;
+window.SFX = [{t:.35,type:'chime',x:-.3},{t:3,type:'brush',x:.3},{t:4.85,type:'scribble',x:.3},{t:5.6,type:'brush',x:.3},
+  {t:6.75,type:'chime',x:.2},{t:7.2,type:'brush',x:-.2},{t:8.5,type:'chime',x:0}];
+const NS = 'http://www.w3.org/2000/svg';
+const INK = [42,38,34], MOSS = [107,112,92], GOLD = [201,162,39];
+const mix = (a, b, p) => `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], p)))})`;
+const slow = u => lerp(u, eio(u), .3) + .015 * Math.sin(u * 6 * Math.PI);   // a hand: steady, a little uneven
+
+// paths the brush follows (bowl and crack sit in a local frame, scaled 1.2 onto the stage)
+const CR = [[330,134],[316,176],[340,208],[312,248],[328,288],[300,326],[302,338]];
+const lineD = a => 'M' + a.map(p => p.join(' ')).join('L');
+function mk(d, ox, oy, k) { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); $('#probe').appendChild(p);
+  p.len = p.getTotalLength(); p.m = [ox, oy, k]; return p; }
+const bowl = mk('M30 110 C36 250 130 330 215 340 L222 368 L298 368 L305 340 C390 330 484 250 490 110 Q260 156 30 110', 1000, 330, 1.2);
+const crack = mk(lineD(CR), 1000, 330, 1.2), crackR = mk(lineD(CR.slice().reverse()), 1000, 330, 1.2);
+const endP = mk('M790 700 C730 690 730 686 590 702 C450 718 320 686 190 700', 0, 0, 1);
+function pt(p, s) {                                  // stage point and unit normal at fraction s of a path
+  const L = clamp(s) * p.len, a = p.getPointAtLength(L), b = p.getPointAtLength(Math.min(p.len, L + 1.5)), c = p.getPointAtLength(Math.max(0, L - 1.5));
+  const dx = b.x - c.x, dy = b.y - c.y, n = Math.hypot(dx, dy) || 1;
+  return { x: p.m[0] + a.x * p.m[2], y: p.m[1] + a.y * p.m[2], nx: -dy / n, ny: dx / n };
+}
+function ribbon(p, u, wf) {                          // an uneven brush stroke, drawn as a polygon, up to fraction u
+  if (u <= 0) return '';
+  const K = Math.ceil(u * 220) + 1, A = [], B = [];
+  for (let j = 0; j <= K; j++) { const s = u * j / K, q = pt(p, s), w = wf(s) / 2;
+    A.push((q.x + q.nx * w).toFixed(1) + ',' + (q.y + q.ny * w).toFixed(1)); B.push((q.x - q.nx * w).toFixed(1) + ',' + (q.y - q.ny * w).toFixed(1)); }
+  return 'M' + A.join('L') + 'L' + B.reverse().join('L') + 'Z';
+}
+const press = s => .5 + .5 * Math.sin(Math.min(1, s * 9) * Math.PI / 2);
+const wBowl = s => 22 * press(s) * (1 - .55 * s * s) * (.84 + .16 * Math.sin(s * 41 + 1.3));
+const wCrack = s => 4 * (.8 + .4 * Math.sin(s * 23));
+const wGold = s => 10 + 6 * Math.sin(Math.PI * s) + 1.5 * Math.sin(s * 29);
+const wEnd = s => 20 * press(s) * (1 - .55 * s * s) * (.86 + .14 * Math.sin(s * 31));
+
+// text built from letters so each can arrive on its own
+function letters(el, str) { return [...str].map(c => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = c; el.appendChild(s); return s; }); }
+const hook = [...letters($('#h1').children[0], 'Nothing here'), ...letters($('#h1').children[1], 'is perfect.')];
+const endL = [...letters($('#endt').children[0], 'Small'), ...letters($('#endt').children[1], 'batches.')];
+const words = 'That is the point.'.split(' ').map((w, i) => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = w;
+  $('#h2').appendChild(s); if (i < 3) $('#h2').appendChild(document.createTextNode(' ')); return s; });
+const dots = [...Array(40)].map((_, i) => { const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', 199 + i * 18); c.setAttribute('cy', 812);
+  c.setAttribute('r', 4.5); c.setAttribute('fill', i ? '#2A2622' : '#A8643C'); $('#tally').appendChild(c); return c; });
+const dotT = i => 4.3 + 2.3 * (1 - Math.pow(1 - i / 39, 1 / 3));              // time the counter reaches i + 1
+function layout() {                                                            // the end card's ink spreads out from the bowl
+  const d = endL.map(s => Math.hypot(190 + s.offsetLeft + s.offsetWidth / 2 - 1300, 230 + s.offsetTop + s.offsetHeight / 2 - 520));
+  const lo = Math.min(...d), hi = Math.max(...d); endL.forEach((s, i) => s.dl = .4 * (d[i] - lo) / (hi - lo));
+}
+const set = (el, op, blur, ty, sc = 1) => { el.style.opacity = op; el.style.filter = blur > .05 ? `blur(${blur.toFixed(1)}px)` : 'none';
+  el.style.transform = `translateY(${ty.toFixed(1)}px) scale(${sc.toFixed(3)})`; };
+
+// where the brush is, which way it leans, how visible, what colour the tip is
+function brushAt(t) {
+  const A = pt(bowl, 0), C0 = pt(crack, 0), C1 = pt(crack, 1), E0 = pt(endP, 0), pos = (q, u) => ({ x: q.x, y: q.y, op: u });
+  let b;
+  if (t < 2.95) { const u = eio(seg(t, 2.4, 2.95)); b = { x: lerp(1640, A.x, u), y: lerp(80, A.y, u), op: seg(t, 2.4, 2.7) }; }
+  else if (t < 4.6) b = pos(pt(bowl, slow(seg(t, 2.95, 4.6))), 1);
+  else if (t < 4.85) { const u = eio(seg(t, 4.6, 4.85)); b = { x: lerp(A.x, C0.x, u), y: lerp(A.y, C0.y, u) - bump(u) * 60, op: 1 }; }
+  else if (t < 5.4) b = pos(pt(crack, slow(seg(t, 4.85, 5.4))), 1);
+  else if (t < 5.6) b = { x: C1.x, y: C1.y + bump(seg(t, 5.4, 5.6)) * 18, op: 1 };
+  else if (t < 6.7) b = pos(pt(crackR, slow(seg(t, 5.6, 6.7))), 1);
+  else if (t < 7.2) { const u = eio(seg(t, 6.7, 7.2)); b = { x: lerp(C0.x, E0.x, u), y: lerp(C0.y, E0.y, u) - bump(u) * 70, op: 1 }; }
+  else if (t < 7.85) b = pos(pt(endP, slow(seg(t, 7.2, 7.85))), 1);
+  else { const u = eio(seg(t, 7.85, 8.3)), q = pt(endP, 1); b = { x: lerp(q.x, 90, u), y: lerp(q.y, -150, u), op: 1 - seg(t, 7.95, 8.25) }; }
+  const col = t < 6.8 ? mix(INK, GOLD, seg(t, 5.35, 5.6)) : mix(GOLD, MOSS, seg(t, 6.85, 7.1));
+  b.rot = 22 + 3 * Math.sin(t * 5); b.col = col; return b;
+}
+
+function render(t) {
+  $('#cam').style.transform = `scale(${1 + .12 * seg(t, 0, 10)})`;                        // slow push, never stops
+  hook.forEach((s, i) => { const p = eo(seg(t, i * .035, .55 + i * .035)), q = eo(seg(t, 2.3 + rnd(i) * .3, 2.75 + rnd(i) * .3));
+    set(s, p * (1 - q), (1 - p) * 9 + q * 10, (1 - p) * 16 - q * 14, 1 + (1 - p) * .05); });
+  words.forEach((s, i) => { const p = eo(seg(t, 1.0 + i * .2, 1.6 + i * .2)), q = eo(seg(t, 2.3 + i * .08, 2.75 + i * .08));
+    set(s, p * (1 - q), q * 8, (1 - p) * 22 - q * 10); });
+  const lp = eo(seg(t, 4.05, 4.5)), bp = eo(seg(t, 4.2, 4.75)), cl = eo(seg(t, 6.85, 7.35));
+  set($('#sample'), lp * (1 - cl), cl * 6, -cl * 8);
+  set($('#big'), bp * (1 - cl), (1 - bp) * 6 + cl * 10, (1 - bp) * 20 - cl * 14);
+  $('#num').textContent = Math.round(1 + 39 * eo(seg(t, 4.3, 6.6)));
+  dots.forEach((c, i) => { const k = spring((t - dotT(i)) * 2.4), q = eo(seg(t, 6.9 + i * .006, 7.3 + i * .006));
+    c.setAttribute('opacity', (t >= dotT(i) ? (i ? .4 : 1) : 0) * (1 - q)); c.setAttribute('r', (4.5 * clamp(k, 0, 1.4)).toFixed(2)); });
+  endL.forEach(s => { const p = eo(seg(t, 7.65 + (s.dl || 0), 8.1 + (s.dl || 0))); set(s, p, (1 - p) * 8, (1 - p) * 14, 1 + (1 - p) * .06); });
+  const up = eo(seg(t, 7.95, 8.45)); $('#url').style.opacity = up; $('#url').style.transform = `translateY(${((1 - up) * 14).toFixed(1)}px)`;
+  $('#bowlInk').setAttribute('d', ribbon(bowl, slow(seg(t, 2.95, 4.6)), wBowl));
+  $('#crackInk').setAttribute('d', ribbon(crack, slow(seg(t, 4.85, 5.4)), wCrack));
+  $('#crackGold').setAttribute('d', ribbon(crackR, slow(seg(t, 5.6, 6.7)), wGold));
+  $('#endInk').setAttribute('d', ribbon(endP, slow(seg(t, 7.2, 7.85)), wEnd));
+  const b = brushAt(t), br = $('#brush'); br.setAttribute('transform', `translate(${b.x.toFixed(1)} ${b.y.toFixed(1)}) rotate(${b.rot.toFixed(2)})`);
+  br.setAttribute('opacity', b.op.toFixed(3)); $('#bt').setAttribute('fill', b.col);
+}
+window.render = render;
+window.ready = Promise.all(['400 40px "Instrument Serif"', 'italic 400 40px "Instrument Serif"', '700 40px "Inter"']
+  .map(f => document.fonts.load(f)).concat(document.fonts.ready)).then(() => { layout(); render(0); });
+</script></body></html>

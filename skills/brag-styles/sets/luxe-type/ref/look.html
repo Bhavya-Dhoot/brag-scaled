@@ -1,0 +1,140 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; background:#0B0B0B; }
+#stage { position:absolute; inset:0; overflow:hidden; }
+#cam, #panel { position:absolute; inset:0; }
+#cam { transform-origin:50% 50%; }
+#panel { background:#F3EEE4; color:#0B0B0B; clip-path:inset(0 0 100% 0); }
+#wl { position:absolute; left:0; width:1920px; height:3px; background:#C8B68A; opacity:0; }
+/* the big two-line headline; the same markup is used on black and on ivory */
+.grp { position:absolute; left:0; top:250px; width:1920px; height:580px; color:#F3EEE4; }
+#panel .grp { color:#0B0B0B; }
+.ln { position:absolute; left:0; width:1920px; height:290px; }
+.ln.B { top:290px; }
+.mk { position:absolute; inset:0; overflow:hidden; }
+.w { position:absolute; inset:0; padding-top:4px; display:flex; justify-content:center; align-items:flex-start;
+     font:400 250px/1 'Instrument Serif',serif; letter-spacing:-.01em; white-space:nowrap; }
+.w span { display:block; }
+.it { font-style:italic; }
+.n { padding:0 .14em .3em; margin:0 -.14em; color:transparent; -webkit-background-clip:text; background-clip:text; background-size:300% 100%;
+     background-image:linear-gradient(105deg,#C8B68A 0%,#C8B68A 44%,#F3EEE4 50%,#C8B68A 56%,#C8B68A 100%); }
+.hl { position:absolute; left:120px; width:1680px; top:290px; height:2px; background:currentColor; opacity:.38; }
+.pv { position:absolute; left:-1px; top:-6px; width:2px; height:302px; background:#C8B68A; }
+/* the proof: counted number under its own hairline */
+#pm { position:absolute; left:0; top:726px; width:1920px; height:120px; overflow:hidden; color:#F3EEE4; }
+#pt { position:absolute; inset:0; padding-bottom:6px; display:flex; justify-content:center; align-items:center; gap:.2em;
+      font:400 100px/1 'Instrument Serif',serif; }
+#num { display:inline-block; width:3.1ch; }
+#ph { position:absolute; left:120px; width:1680px; top:846px; height:2px; background:#F3EEE4; opacity:.38; }
+#smp { position:absolute; left:0; width:1920px; top:876px; text-align:center; color:#F3EEE4; opacity:0;
+       font:400 24px/1 'Inter',sans-serif; letter-spacing:.5em; text-indent:.5em; text-transform:uppercase; }
+/* the end card, on ivory */
+#e1 { position:absolute; left:0; top:330px; width:1920px; height:270px; overflow:hidden; }
+#e1 div { position:absolute; inset:0; padding-bottom:10px; display:flex; justify-content:center; align-items:center; gap:.22em;
+          font:400 190px/1 'Instrument Serif',serif; letter-spacing:-.01em; white-space:nowrap; }
+#eh { position:absolute; left:120px; width:1680px; top:600px; height:2px; background:#0B0B0B; opacity:.3; }
+#egw { position:absolute; left:120px; width:1680px; top:600px; height:2px; overflow:hidden; }
+#eg { position:absolute; top:0; width:320px; height:2px; background:linear-gradient(90deg,rgba(11,11,11,0),#0B0B0B,rgba(11,11,11,0)); }
+#eu { position:absolute; left:0; width:1920px; top:650px; text-align:center; opacity:0;
+      font:400 32px/1 'Inter',sans-serif; letter-spacing:.34em; text-indent:.34em; }
+</style></head><body>
+<div id="stage">
+  <div id="cam">
+    <div id="pm"><div id="pt"><span>Edition of</span><span id="num">0</span></div></div>
+    <i id="ph"></i><div id="smp">sample</div>
+    <div id="panel">
+      <div id="e1"><div>By <i>appointment.</i></div></div>
+      <i id="eh"></i><div id="egw"><i id="eg"></i></div><div id="eu">yourbrand.com</div>
+    </div>
+    <i id="wl"></i>
+  </div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));                         // 0..1 progress between two times
+const eo = x => 1 - Math.pow(1 - x, 3);                                     // ease out: fast, then settles
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;          // ease in and out: for travel
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);   // overshoots, then settles
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);            // 0 -> 1 -> 0, for a pulse
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+window.DURATION = 10;
+window.SFX = [{t:.1,type:'tick',x:0},{t:.7,type:'chime',x:0},{t:2.8,type:'whoosh',x:0},{t:4.6,type:'count',x:0},
+              {t:6.3,type:'chime',x:0},{t:7,type:'whoosh',x:0},{t:8.15,type:'chime',x:0}];
+
+// headline markup, inserted twice: once on black, once inside the ivory panel
+const GRP = `<div class="grp">
+ <div class="ln A"><div class="mk mA"><div class="w"><span class="p1">Not for</span></div><div class="w"><span class="p2">For</span></div></div><i class="hl hA"></i></div>
+ <div class="ln B"><div class="mk mB"><div class="w wo"><span class="o">everyone.</span></div><div class="w wn"><span class="n it">you.</span></div></div><i class="hl hB"></i><i class="pv"></i></div>
+</div>`;
+$('#cam').insertAdjacentHTML('afterbegin', GRP);
+$('#panel').insertAdjacentHTML('afterbegin', GRP);
+const L = {};
+['grp','mA','mB','p1','p2','o','n','wo','wn','hA','hB','pv'].forEach(c => L[c] = [...document.querySelectorAll('.' + c)]);
+const M = { l: 420, r: 1500 };                       // where the moving hairline starts and ends
+const Y = (els, y, x = 0) => els.forEach(e => e.style.transform = `translate(${x}px,${y * 120}%)`);
+const each = (els, fn) => els.forEach(fn);
+
+function render(t) {
+  // the slow push never stops: in during the hook, eased back as the proof arrives, then in again to the end
+  const push = .09 * seg(t, .4, 3.7) * (1 - eio(seg(t, 3.5, 4.4))) + .06 * seg(t, 4.4, 8) + .06 * seg(t, 8, 10);
+  $('#cam').style.transform = `scale(${1 + push})`;
+  const sw = eio(seg(t, 2.75, 3.55)), hx = lerp(M.l, M.r, sw), drift = 70 * seg(t, .8, 8);          // the hairline crossing the second line
+  each(L.grp, g => g.style.transform = `translateY(${-120 * eio(seg(t, 3.5, 4.35))}px)`);
+
+  // line one: rises, then "Not for" sinks and "For" rises; both sink out under the inversion
+  Y(L.p1, Math.max(1 - eo(seg(t, .05, .85)), eio(seg(t, 2.45, 2.95))));
+  Y(L.p2, Math.max(1 - eo(seg(t, 2.6, 3.3)), eio(seg(t, 7.6, 8.05))));
+  // line two: rises, then the hairline wipes "everyone." away and italic "you." slides in behind it
+  Y(L.o, 1 - eo(seg(t, .55, 1.5)), 50 * sw);
+  Y(L.n, eio(seg(t, 7.7, 8.15)), -70 * (1 - eo(seg(t, 2.85, 3.7))));
+  each(L.wo, e => e.style.clipPath = `inset(0 0 0 ${hx}px)`);
+  each(L.wn, e => e.style.clipPath = `inset(0 ${1920 - hx}px 0 0)`);
+  const ps = Math.min(eo(seg(t, 2.1, 2.6)), 1 - eio(seg(t, 3.55, 3.95)));
+  each(L.pv, e => e.style.transform = `translateX(${hx + drift}px) scaleY(${ps})`);
+  each(L.mA, e => e.style.transform = `translateX(${-drift}px)`);   // the two lines drift apart, slowly
+  each(L.mB, e => e.style.transform = `translateX(${drift}px)`);
+
+  // the sheen over the one champagne word, twice
+  const sh = t < 5 ? eio(seg(t, 3.5, 4.4)) : eio(seg(t, 5.7, 6.5));
+  each(L.n, e => e.style.backgroundPosition = `${sh * 100}% 0`);
+
+  // hairlines under the lines
+  const fade = .38 * (1 - seg(t, 7.85, 8.2));
+  each(L.hA, e => { e.style.transform = `scaleX(${eo(seg(t, 0, .5))})`; e.style.opacity = fade; });
+  each(L.hB, e => { e.style.transform = `scaleX(${eo(seg(t, .45, .95))})`; e.style.opacity = fade; });
+
+  // proof: the edition number counts up and the word "sample" sits under it
+  $('#pt').style.transform = `translateY(${Math.max(1 - eo(seg(t, 4.55, 5.25)), eio(seg(t, 6.55, 7))) * 100}%)`;
+  $('#num').textContent = Math.round(300 * seg(t, 4.6, 6.3));
+  $('#ph').style.transform = `scaleX(${eo(seg(t, 4.35, 4.95))})`;
+  $('#ph').style.opacity = .38 * (1 - seg(t, 6.75, 7.05));
+  const sp = eo(seg(t, 5.1, 5.6));
+  $('#smp').style.opacity = .75 * sp * (1 - seg(t, 6.5, 6.8));
+  $('#smp').style.transform = `translateY(${(1 - sp) * 10}px)`;
+
+  // the screen inverts along a hairline travelling down
+  const hy = 1080 * eio(seg(t, 6.95, 7.7));
+  $('#panel').style.clipPath = `inset(0 0 ${1080 - hy}px 0)`;
+  $('#wl').style.top = `${hy - 1}px`;
+  $('#wl').style.opacity = t > 6.95 && t < 7.7 ? 1 : 0;
+
+  // end card on ivory, with a glint that keeps travelling along its hairline
+  $('#e1 div').style.transform = `translateY(${(1 - eo(seg(t, 7.9, 8.5))) * 100}%)`;
+  $('#eh').style.transform = `scaleX(${eo(seg(t, 7.95, 8.45))})`;
+  const pu = eo(seg(t, 8.1, 8.5));
+  $('#eu').style.opacity = pu;
+  $('#eu').style.transform = `translateY(${(1 - pu) * 14}px)`;
+  $('#eg').style.left = `${lerp(-320, 1680, eio(seg(t, 8.3, 10)))}px`;
+  $('#eg').style.opacity = seg(t, 8.3, 8.6);
+}
+window.render = render;
+window.ready = Promise.all(["400 100px 'Instrument Serif'", "italic 400 100px 'Instrument Serif'", "400 24px 'Inter'"]
+  .map(f => document.fonts.load(f))).then(() => document.fonts.ready).then(() => {
+  const w = $('.o').offsetWidth; M.l = 960 - w / 2 - 40; M.r = 960 + w / 2 + 80;
+  render(0);
+});
+</script></body></html>

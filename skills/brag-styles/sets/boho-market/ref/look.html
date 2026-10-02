@@ -1,0 +1,145 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; background:#F4EBDD; }
+#stage { position:absolute; inset:0; overflow:hidden; }
+.serif { font-family:'Instrument Serif',serif; font-style:italic; color:#2B3A67; white-space:nowrap; line-height:1; }
+.lab { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; white-space:nowrap; line-height:1; }
+.w { display:inline-block; }
+</style></head><body>
+<div id="stage"></div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));                         // 0..1 progress between two times
+const eo = x => 1 - Math.pow(1 - x, 3);                                     // ease out: fast, then settles
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;          // ease in and out: for travel
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);   // overshoots, then settles
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);            // 0 -> 1 -> 0, for a pulse
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+window.DURATION = 10;
+
+const C = { t:'#C8553D', m:'#E0A526', s:'#8A9A5B', i:'#2B3A67', c:'#F4EBDD', p:'#6D2E46' };
+const stage = $('#stage');
+const mk = (p, css = '', html = '', cls = '') => { const e = document.createElement('div'); e.style.cssText = 'position:absolute;' + css; e.className = cls; e.innerHTML = html; p.appendChild(e); return e; };
+const words = s => s.split(' ').map(w => `<span class="w">${w}</span>`).join(' ');
+
+// a woven strip from plain geometry: bars, zigzag or diamonds
+function weave(k, w, h, a, b, c) {
+  let s = `<rect width="${w}" height="${h}" fill="${a}"/>`;
+  if (k === 'bars') for (let x = 0; x < w; x += h * 2.2) s += `<rect x="${x}" width="${h*.55}" height="${h}" fill="${b}"/><rect x="${x + h*.8}" width="${h*.2}" height="${h}" fill="${c}"/>`;
+  if (k === 'zig') { let p = ''; for (let i = 0; i <= w / (h / 2) + 1; i++) p += `${i*h/2},${i % 2 ? h*.22 : h*.78} `;
+    s += `<polyline points="${p}" fill="none" stroke="${b}" stroke-width="${h*.16}"/><polyline points="${p}" transform="translate(${h/2} 0)" fill="none" stroke="${c}" stroke-width="${h*.07}"/>`; }
+  if (k === 'dia') for (let x = 0; x < w; x += h) s += `<polygon points="${x+h/2},2 ${x+h-2},${h/2} ${x+h/2},${h-2} ${x+2},${h/2}" fill="${b}"/><polygon points="${x+h/2},${h*.3} ${x+h*.7},${h/2} ${x+h/2},${h*.7} ${x+h*.3},${h/2}" fill="${c}"/>`;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block">${s}</svg>`;
+}
+// nested paper-cut arches that stand on one baseline
+const arches = (p, cx, base, R, cols) => R.map((r, j) => mk(p, `left:${cx-r}px;top:${base-r}px;width:${2*r}px;height:${r}px;border-radius:${r}px ${r}px 0 0;background:${cols[j]};transform-origin:50% 100%;box-shadow:2px 4px 10px rgba(43,58,103,.3);transform:scaleY(0)`));
+const popArches = (a, t, t0, seed) => a.forEach((e, j) => { const u = seg(t, t0 + j * .15, t0 + j * .15 + .45);
+  e.style.transform = `scaleY(${eo(u) + .06 * bump(u) + .012 * u * Math.sin(t * 2.4 + j)}) rotate(${(rnd(j + seed) - .5) * 1.4}deg)`; });
+// a patterned band that wipes across the frame
+const wipeBand = () => { const b = mk(stage, 'left:0;top:0;width:360px;height:1080px;overflow:hidden', `<div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,${C.s} 0 50px,${C.c} 50px 60px,${C.t} 60px 150px,${C.m} 150px 170px,${C.i} 170px 260px,${C.c} 260px 270px,${C.p} 270px 360px)"></div>`);
+  mk(b, 'left:202px;top:0;width:1080px;height:44px;transform-origin:0 0;transform:rotate(90deg)', weave('dia', 1080, 44, C.c, C.i, C.t)); return b; };
+
+// scene two: arches and a sun behind a rug that gets woven
+const s2 = mk(stage, 'inset:0');
+const ac = mk(s2, 'left:0;top:0;width:1920px;height:560px;overflow:hidden');
+const arc = arches(ac, 960, 560, [380, 336, 292, 248, 204, 160], [C.t, C.m, C.s, C.p, C.i, C.c]);
+const sun = (p, css) => mk(p, css + ';width:300px;height:300px', `<svg width="300" height="300" viewBox="-150 -150 300 300"><circle r="80" fill="${C.m}"/><g class="rays" fill="${C.t}">${[...Array(14)].map((_, i) => `<polygon points="-7,-92 7,-92 0,-128" transform="rotate(${i * 360 / 14})"/>`).join('')}</g></svg>`);
+const sunW = sun(ac, 'left:810px;top:0');
+const RX = 360, RW = 1200, H = 40, OFF = 1700;
+const rug = mk(s2, 'inset:0;transform-origin:960px 745px');
+mk(rug, `left:${RX-14}px;top:552px;width:${RW+28}px;height:386px;background:repeating-linear-gradient(90deg,rgba(244,235,221,.3) 0 2px,transparent 2px 13px),${C.p}`);
+const cut = k => { const a = 3 + rnd(k) * 4, b = 3 + rnd(k + 5) * 4; return `polygon(${a}px 0,100% 0,calc(100% - ${b}px) 50%,100% 100%,0 100%,${b}px 50%)`; };
+const defs = [[560,'bars',C.i,C.m,C.c],[600,'zig',C.p,C.m,C.c],[640,'dia',C.s,C.c,C.t],[810,'bars',C.t,C.c,C.i],[850,'zig',C.m,C.p,C.c],[890,'dia',C.i,C.m,C.c]];
+const sp = defs.map((d, k) => mk(rug, `left:${RX}px;top:${d[0]}px;width:${RW}px;height:${H}px;clip-path:${cut(k)}`, weave(d[1], RW, H, d[2], d[3], d[4])));
+const band = mk(rug, `left:${RX}px;top:680px;width:${RW}px;height:130px;background:${C.i};box-shadow:inset 0 6px 0 ${C.m},inset 0 -6px 0 ${C.m};clip-path:${cut(7)}`);
+const grp = mk(band, 'inset:0;display:flex;align-items:center;justify-content:center;padding-right:140px', `<span class="serif" id="num" style="font-size:112px;width:150px;text-align:right;color:${C.m}">0</span><span class="lab" style="font-size:38px;letter-spacing:.05em;color:${C.c};margin-left:30px;margin-top:6px">MAKERS THIS WEEKEND</span>`);
+const tag = mk(band, `right:60px;top:20px;padding:7px 18px;background:${C.m};color:${C.i};font-size:28px;letter-spacing:.04em`, 'sample', 'lab');
+const hand = mk(s2, 'left:0;top:0;transform-origin:30px 40px;filter:drop-shadow(3px 4px 0 rgba(43,58,103,.28))', `<svg width="64" height="88" viewBox="0 0 64 88" fill="${C.c}" stroke="${C.i}" stroke-width="3.5" stroke-linejoin="round"><rect x="22" y="3" width="15" height="42" rx="7.5"/><rect x="10" y="34" width="46" height="46" rx="17"/><rect x="3" y="46" width="26" height="14" rx="7" transform="rotate(-24 16 53)"/><path d="M26 58v14M36 58v14M46 58v14" fill="none" stroke-width="2.5"/></svg>`);
+
+// the end card sits on plum, under the second wipe
+const en = mk(stage, `inset:0;background:${C.p}`);
+const E1 = mk(en, 'left:140px;top:320px;font-size:190px;transform:rotate(-1.2deg);transform-origin:0 50%', words('Find the market.'), 'serif');
+E1.style.color = C.c; const ew = [...E1.querySelectorAll('.w')]; ew[2].style.color = C.m;
+const ul2 = mk(en, 'left:150px;top:570px;width:1100px;height:28px', weave('zig', 1100, 28, C.m, C.c, C.t));
+const dom = mk(en, `left:150px;top:690px;padding:20px 42px;background:${C.m};color:${C.i};font-size:64px;letter-spacing:.03em`, 'yourbrand.com', 'lab');
+const eArc = arches(en, 1640, 800, [170, 126, 82], [C.m, C.t, C.c]);
+const sunE = sun(mk(en, 'left:1558px;top:690px;width:164px;height:110px;overflow:hidden'), 'left:-68px;top:0;transform-origin:150px 150px');
+
+// the hook, first on screen
+const hk = mk(stage, `inset:0;background:${C.c}`);
+const ht = mk(hk, 'inset:0;transform-origin:500px 500px');
+mk(ht, 'left:140px;top:290px;font-size:176px;transform:rotate(-1.5deg);transform-origin:0 50%', words('Made by a person,'), 'serif');
+mk(ht, 'left:170px;top:480px;font-size:176px;transform:rotate(1deg);transform-origin:0 50%', words('not a factory.'), 'serif');
+const hw = [...hk.querySelectorAll('.w')]; hw[3].style.color = C.t;
+const ul = mk(ht, 'left:150px;top:700px;width:1100px;height:28px', weave('zig', 1100, 28, C.i, C.m, C.t));
+const hArc = arches(hk, 1620, 760, [170, 126, 82], [C.t, C.m, C.s]);
+
+// a woven top band with swaying tassels, always on
+const bar = mk(stage, 'inset:0');
+mk(bar, 'left:0;top:0;width:1920px;height:54px;box-shadow:0 4px 0 rgba(43,58,103,.3)', weave('zig', 1920, 54, C.t, C.m, C.c));
+const tas = [...Array(16)].map((_, i) => { const L = 22 + rnd(i) * 16, S = 42 + rnd(i + 9) * 14, col = [C.t, C.m, C.s, C.c][i % 4];
+  return mk(bar, `left:${50 + i * 120}px;top:50px;transform-origin:20px 0`, `<svg width="40" height="130" viewBox="0 0 40 130" stroke="${C.i}" stroke-width="2" stroke-linejoin="round"><path d="M20 0V${L}" fill="none"/><ellipse cx="20" cy="${L+2}" rx="9" ry="11" fill="${col}"/><path d="M12 ${L+13}H28L33 ${L+13+S}H7Z" fill="${col}"/><path d="M16 ${L+16}V${L+10+S}M20 ${L+16}V${L+10+S}M24 ${L+16}V${L+10+S}" fill="none" stroke-width="1.5" opacity=".5"/></svg>`); });
+const bandA = wipeBand(), bandB = wipeBand();
+const num = $('#num');
+
+// the hand follows the leading edge of each strip, then lets go
+const S = defs.map((d, k) => ({ y: d[0] + H / 2, s: 2.85 + k * .26, d: .45, dir: k % 2 ? 1 : -1 })).concat([{ y: 745, s: 4.75, d: 1, dir: -1 }]);
+const off = (q, t) => q.dir * OFF * (1 - (q.d > .5 ? eio : eo)(seg(t, q.s, q.s + q.d)));
+const edge = (q, x) => q.dir < 0 ? RX + RW + x : RX + x;
+function handAt(t) {
+  let k = 0; S.forEach((q, i) => { if (t >= q.s) k = i; });
+  const q = S[k], p = S[Math.max(0, k - 1)], ang = r => r.dir < 0 ? 90 : -90, cl = x => clamp(x, 80, 1840);
+  const px = k ? edge(p, 0) : cl(edge(q, off(q, q.s))), b = eio(seg(t, q.s, q.s + .14)), e = eio(seg(t, 5.75, 6.3));
+  return [lerp(lerp(px, cl(edge(q, off(q, t))), b), 1720, e), lerp(lerp(k ? p.y : q.y, q.y, b), 1190, e) + Math.sin(t * 18) * 2, lerp(lerp(ang(p), ang(q), b), 20, e)];
+}
+
+window.SFX = [{t:.3,type:'pop',x:-.5},{t:.65,type:'pop'},{t:1,type:'pop',x:.3},{t:1.5,type:'brush'},{t:2.3,type:'whoosh'}]
+  .concat(defs.map((_, k) => ({ t: 3.3 + k * .26, type: 'tick', x: k % 2 ? .5 : -.5 })))
+  .concat([0, 1, 2, 3, 4, 5].map(j => ({ t: 3.4 + j * .15, type: 'pop' })))
+  .concat([{t:4.75,type:'brush'},{t:5.5,type:'count'},{t:5.85,type:'stamp'},{t:6.75,type:'whoosh'},{t:7.7,type:'pop'},{t:8,type:'pop'},{t:8.3,type:'stamp'},{t:8.45,type:'chime'}]);
+
+function render(t) {
+  tas.forEach((e, i) => { const u = seg(t, .1 + i * .04, .6 + i * .04);
+    e.style.transform = `translateY(${-(1 - eo(u)) * 200}px) rotate(${Math.sin(t * 2.2 + i * .8) * 4}deg)`; });
+  // hook: words rise one by one, a zigzag underline wipes in, then a band wipes it away
+  hw.forEach((e, i) => { const u = seg(t, .3 + i * .17, .8 + i * .17), q = 1 - eo(u);
+    e.style.opacity = clamp(u * 2.5); e.style.transform = `translateY(${q * 50}px) rotate(${q * (i % 2 ? 5 : -5)}deg)`; });
+  ht.style.transform = `scale(${1 + .05 * seg(t, .3, 2.4)})`;
+  ul.style.clipPath = `inset(0 ${(1 - eo(seg(t, 1.5, 2.1))) * 100}% 0 0)`;
+  popArches(hArc, t, .5, 3);
+  const c1 = lerp(-220, 2140, eio(seg(t, 2.3, 2.95)));
+  hk.style.clipPath = `inset(0 0 0 ${Math.max(0, c1)}px)`; bandA.style.transform = `translateX(${c1 - 180}px)`;
+  // weaving: strips lock in from alternate sides, arches stack, the sun rises, the last strip is pulled across
+  popArches(arc, t, 3.3, 11);
+  sunW.style.transform = `translateY(${lerp(700, 540, eio(seg(t, 4.25, 5.3))) - 150}px)`;
+  document.querySelectorAll('.rays').forEach(g => g.setAttribute('transform', `rotate(${t * 14})`));
+  S.forEach((q, k) => { const u = t - q.s - q.d, w = u > 0 ? Math.sin(u * 45) * 6 * Math.exp(-u * 9) * q.dir : 0;
+    (k < 6 ? sp[k] : band).style.transform = `translateX(${off(q, t) + w}px) rotate(${(rnd(k + 20) - .5) * .5}deg)`; });
+  const [hx, hy, ha] = handAt(t);
+  hand.style.opacity = seg(t, 2.75, 2.9);
+  hand.style.transform = `translate(${hx - 30}px,${hy - 40}px) rotate(${ha}deg) scale(1.9)`;
+  grp.style.opacity = seg(t, 5.45, 5.65);
+  num.textContent = Math.round(86 * eo(seg(t, 5.5, 6.35)));
+  const ts = t - 5.85;
+  tag.style.opacity = ts >= 0 ? 1 : 0;
+  tag.style.transform = `rotate(4deg) scale(${ts < 0 ? 0 : 2.3 - 1.3 * eo(clamp(ts / .14))})`;
+  rug.style.transform = `scale(${1 + .025 * bump(seg(t, 6.35, 6.8))})`;
+  // end card: a second band wipes the other way, words rise, the address is stamped
+  const c2 = lerp(2140, -220, eio(seg(t, 6.75, 7.4)));
+  en.style.clipPath = `inset(0 0 0 ${Math.max(0, c2)}px)`; bandB.style.transform = `translateX(${c2 - 180}px)`;
+  ew.forEach((e, i) => { const u = seg(t, 7.4 + i * .2, 7.9 + i * .2), q = 1 - eo(u);
+    e.style.opacity = clamp(u * 2.5); e.style.transform = `translateY(${q * 50}px) rotate(${q * (i % 2 ? 5 : -5)}deg)`; });
+  ul2.style.clipPath = `inset(0 ${(1 - eo(seg(t, 8, 8.5))) * 100}% 0 0)`;
+  const te = t - 8.3;
+  dom.style.opacity = te >= 0 ? 1 : 0;
+  dom.style.transform = `rotate(1.5deg) scale(${te < 0 ? 0 : 2.3 - 1.3 * eo(clamp(te / .14))})`;
+  popArches(eArc, t, 7.6, 5);
+  sunE.style.transform = `translateY(${lerp(170, 104, eio(seg(t, 8.05, 8.6))) - 150}px) scale(.5)`;
+}
+window.render = render;
+window.ready = Promise.all([document.fonts.load('italic 400 40px "Instrument Serif"'), document.fonts.load('800 40px "Bricolage Grotesque"'), document.fonts.ready]).then(() => render(0));
+</script></body></html>

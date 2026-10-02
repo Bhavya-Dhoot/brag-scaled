@@ -1,0 +1,175 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; }
+body { background:#EEF0FF; color:#2B2A4C; font-family:'Inter',sans-serif; }
+#stage { position:absolute; inset:0; overflow:hidden; background:#EEF0FF; }
+.abs { position:absolute; left:0; top:0; }
+/* moulded clay: soft drop shadow, top highlight, bottom shade, no borders */
+.clay { background-color:var(--c); box-shadow:0 22px 30px -10px rgba(43,42,76,.28), inset 0 10px 12px rgba(255,255,255,.6), inset 0 -12px 16px rgba(43,42,76,.15); }
+.ball { border-radius:50%; background-image:radial-gradient(circle at 32% 26%, rgba(255,255,255,.55), rgba(255,255,255,0) 42%); }
+/* a swelling ball that holds the next scene inside it */
+.orb { border-radius:50%; overflow:hidden; box-shadow:0 40px 60px -10px rgba(43,42,76,.28); }
+.rim { border-radius:50%; width:100%; height:100%; box-shadow:inset 0 16px 26px rgba(255,255,255,.6), inset 0 -26px 40px rgba(43,42,76,.2); }
+</style></head><body>
+<div id="stage"></div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));                         // 0..1 progress between two times
+const eo = x => 1 - Math.pow(1 - x, 3);                                     // ease out: fast, then settles
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;          // ease in and out: for travel
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);   // overshoots, then settles
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);            // 0 -> 1 -> 0, for a pulse
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+window.DURATION = 10;
+window.SFX = [];
+
+const C = { cloud:'#EEF0FF', ink:'#2B2A4C', lilac:'#B8A9FF', peach:'#FFB8A1', mint:'#9FE3C5', butter:'#FFE08A' };
+const PAL = [C.lilac, C.peach, C.mint, C.butter];
+const stage = $('#stage');
+
+// small builders
+const mk = (parent, cls, css = '', html = '') => { const d = document.createElement('div'); d.className = cls; d.style.cssText = css; d.innerHTML = html; parent.appendChild(d); return d; };
+const ball = (parent, c, r, css = '') => mk(parent, 'clay ball abs', `--c:${c};width:${2*r}px;height:${2*r}px;${css}`);
+const rgb = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
+const mix = (a, b, p) => 'rgb(' + rgb(a).map((v, i) => Math.round(lerp(v, rgb(b)[i], p))) + ')';
+const setOrb = (el, inner, cx, cy, r) => {
+  Object.assign(el.style, { left:(cx - r) + 'px', top:(cy - r) + 'px', width:2 * r + 'px', height:2 * r + 'px', display:r > 1 ? 'block' : 'none' });
+  inner.style.left = (r - cx) + 'px'; inner.style.top = (r - cy) + 'px';
+};
+// a thing drops in, flattens on landing, springs back (squash on impact only)
+const plop = (t, t0, h = 400, fall = .3) => {
+  const p = seg(t, t0, t0 + fall), a = t - t0 - fall, sq = a > 0 ? Math.exp(-a * 8) * Math.cos(a * 20) : 0, st = a > 0 ? 0 : p;
+  return { tf:`translateY(${-h * (1 - p * p)}px) scale(${1 - .05*st + .16*sq},${1 + .1*st - .3*sq})`, vis:t >= t0 ? 1 : 0 };
+};
+
+// hook: five words drop onto the page, balls pop in around them
+const WORDS = ['Pocket', 'money,', 'without', 'the', 'arguing.'], WT = [0, .3, .6, .8, 1];
+const hook = mk(stage, 'abs', 'left:120px;top:290px;font:800 140px/1.08 "Bricolage Grotesque";letter-spacing:-.02em;');
+const spans = WORDS.map((w, i) => {
+  const s = mk(hook, '', 'display:inline-block;margin-right:.24em;transform-origin:50% 100%;', w);
+  if (i == 1) hook.appendChild(document.createElement('br'));
+  return s;
+});
+const DEC = [[1680, 250, 76, C.peach, .5], [1400, 150, 44, C.mint, .8], [210, 870, 64, C.butter, 1], [1240, 900, 38, C.peach, .65]];
+const decEls = DEC.map(d => ball(stage, d[3], d[2]));
+
+// scene 2 sits inside the lilac ball, so the swelling ball reveals it
+const A = mk(stage, 'orb abs');
+const inA = mk(A, 'abs', 'width:1920px;height:1080px;background:#EEF0FF;');
+const fillA = mk(A, 'abs ball', `width:100%;height:100%;background-color:${C.lilac}`);
+mk(A, 'abs rim');
+
+// timing: twelve presses that speed up, one ball per press
+const P = Array.from({ length:12 }, (_, k) => 3.1 + .42 * (1 - Math.pow(.92, k)) / .08);
+const T0 = P.map(p => p + .1), FLY = .42, LAND = T0.map(x => x + FLY);
+const slot = j => j < 7 ? [1100 + j * 100, 814] : [1150 + (j - 7) * 100, 727];
+const shift = t => P.reduce((a, p) => a + eo(seg(t, p + .06, p + .42)), 0);   // how far the chore list has scrolled
+const TB = 6.85;                       // when the last ball starts to swell
+const Y0 = T0.map((t0, j) => 250 + (j - shift(t0)) * 130 + 50);
+
+// the chore list: a checkbox and two placeholder lines per row
+const CHK = '<svg viewBox="0 0 24 24" width="60" height="60" style="position:absolute;left:0;top:0"><path d="M6.5 12.5l3.8 3.8 7.2-8" fill="none" stroke="#2B2A4C" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1"/></svg>';
+const bar = (top, w, h) => `<i style="position:absolute;left:112px;top:${top}px;width:${w}px;height:${h}px;border-radius:10px;background:rgba(43,42,76,.2)"></i>`;
+const rows = Array.from({ length:16 }, (_, j) => {
+  const r = mk(inA, 'clay abs', `--c:${C.cloud};width:640px;height:100px;border-radius:50px;transform-origin:50% 100%;`,
+    `<div class="clay" style="--c:#F7F8FF;position:absolute;left:22px;top:20px;width:60px;height:60px;border-radius:30px">${CHK}</div>` +
+    bar(30, 200 + rnd(j) * 220, 20) + bar(62, 120 + rnd(j + 40) * 120, 14));
+  r.chk = r.querySelector('path');
+  return r;
+});
+
+// the button, the tray, the counter, the press ripples and the cursor
+const btn = mk(inA, 'clay abs', `--c:${C.lilac};left:120px;top:770px;width:640px;height:140px;border-radius:70px;display:flex;align-items:center;justify-content:center;font:700 54px Inter;transform-origin:50% 100%;`, 'Mark done');
+const tray = mk(inA, 'abs', 'left:1000px;top:600px;width:800px;height:290px;border-radius:80px;background:#DDE0F8;box-shadow:inset 0 16px 24px rgba(43,42,76,.2), inset 0 -10px 14px rgba(255,255,255,.7);transform-origin:50% 100%;');
+const rip = P.map(() => mk(inA, 'abs', 'width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;background:rgba(255,255,255,.7);'));
+const bs = PAL.concat(PAL, PAL).map((c, j) => ball(inA, c, 46, 'transform-origin:50% 100%;'));
+const cnt = mk(inA, 'abs', 'left:1000px;top:120px;width:800px;transform-origin:0 100%;',
+  '<div style="font:800 240px/1 \'Bricolage Grotesque\';letter-spacing:-.03em;display:inline-block;transform-origin:0 100%">0</div>' +
+  '<div style="display:flex;align-items:center;gap:28px;margin-top:10px"><span style="font:700 64px Inter">chores done</span>' +
+  `<span class="clay" style="--c:${C.butter};padding:10px 28px;border-radius:40px;font:700 30px Inter">sample</span></div>`);
+const num = cnt.firstChild;
+const cur = mk(inA, 'abs', '', '<svg width="50" height="60" viewBox="0 0 34 50"><path d="M2 2 L2 42 L12 33 L19 48 L27 44.5 L20 30 L33 30 Z" fill="#2B2A4C" stroke="#EEF0FF" stroke-width="3" stroke-linejoin="round"/></svg>');
+
+// scene 3 sits inside the butter ball that grows out of the last chore ball
+const B = mk(stage, 'orb abs');
+const inB = mk(B, 'abs', `width:1920px;height:1080px;background:${C.butter};`);
+const hiB = mk(B, 'abs ball', 'width:100%;height:100%');
+mk(B, 'abs rim');
+const head = mk(inB, 'abs', 'left:0;top:300px;width:1920px;text-align:center;font:800 250px/1 "Bricolage Grotesque";letter-spacing:-.025em;');
+const HW = [['Start', 7.6], ['free.', 7.78]].map(([w, t0]) => ({ t0, el:mk(head, '', 'display:inline-block;margin:0 .12em;transform-origin:50% 100%;', w) }));
+const pill = mk(inB, 'clay abs', `--c:${C.lilac};left:660px;top:660px;width:600px;height:120px;border-radius:60px;display:flex;align-items:center;justify-content:center;font:700 54px Inter;`, 'yourbrand.com');
+const DEC3 = [[200, 170, 70, C.peach, 7.9], [1700, 190, 56, C.lilac, 8], [1640, 840, 84, C.mint, 8.1], [270, 830, 66, C.lilac, 8.2]];
+const dec3 = DEC3.map(d => ball(inB, d[3], d[2]));
+
+function render(t) {
+  const fl = (i, amp) => Math.sin(t * 2.2 + i * 1.7) * amp;      // gentle float, position only
+  // hook
+  const showHook = t < 3 ? 'block' : 'none';
+  hook.style.display = showHook;
+  spans.forEach((s, i) => { const q = plop(t, WT[i]); s.style.transform = q.tf; s.style.opacity = q.vis; });
+  DEC.forEach((d, i) => { const e = decEls[i]; e.style.display = showHook; e.style.transform = `translate(${d[0] - d[2]}px,${d[1] - d[2] + fl(i, 12)}px) scale(${spring((t - d[4]) * 1.15)})`; });
+
+  // the lilac ball pops in, then swells to fill the frame
+  const rA = t < 2.05 ? (140 + 90 * seg(t, 1.4, 2.05)) * spring((t - .7) * 1.15) : 230 + 1870 * eio(seg(t, 2.05, 2.95));
+  setOrb(A, inA, 1580, 780 + fl(9, 12) * (1 - seg(t, 1.8, 2.05)), rA);
+  fillA.style.opacity = 1 - seg(t, 2.45, 2.85);
+
+  // scene 2: list, button, tray, counter
+  const sh = shift(t);
+  rows.forEach((r, j) => {
+    const d = j - sh, td = j < 12 ? P[j] + .08 : 99, q = plop(t, j < 4 ? 2.65 + j * .07 : -9, 140, .22);
+    r.style.transform = `translate(120px,${250 + d * 130}px) ${q.tf} scale(${1 + bump((t - td) / .45) * .04})`;
+    r.style.opacity = q.vis * (d < 0 ? clamp(1 + (d + 1) * 4) : clamp((3.4 - d) / .4));
+    r.style.setProperty('--c', mix(C.cloud, C.mint, eo(seg(t, td, td + .2))));
+    r.chk.style.strokeDashoffset = 1 - eo(seg(t, td, td + .25));
+  });
+  const pr = Math.max(0, ...P.map(p => bump((t - p) / .16)));
+  const qb = plop(t, 2.7, 200);
+  btn.style.opacity = qb.vis;
+  btn.style.transform = `${qb.tf} translateY(${10 * pr}px) scale(${1 + .03 * pr},${1 - .13 * pr})`;
+  btn.style.boxShadow = `0 ${22 - 14*pr}px ${30 - 14*pr}px -10px rgba(43,42,76,.28), inset 0 10px 12px rgba(255,255,255,${.6 - .35*pr}), inset 0 -12px 16px rgba(43,42,76,.15), inset 0 ${8*pr}px 14px rgba(43,42,76,${.2*pr})`;
+  const qt = plop(t, 2.55, 160); tray.style.opacity = qt.vis; tray.style.transform = qt.tf;
+  const qc = plop(t, 2.65, 160, .26); cnt.style.opacity = qc.vis; cnt.style.transform = qc.tf;
+
+  // cursor: arrives, presses twelve times, slips away
+  const tx = 640, ty = 835, pin = eio(seg(t, 2.85, 3.1)), pout = eio(seg(t, 6.4, 6.85));
+  const cx = lerp(lerp(1000, tx, pin), 780, pout), cy = lerp(lerp(560, ty, pin), 1030, pout);
+  cur.style.opacity = seg(t, 2.85, 2.95) * (1 - seg(t, 6.6, 6.85));
+  cur.style.transform = `translate(${cx}px,${cy + 7 * pr}px) scale(${1 - .08 * pr})`;
+  rip.forEach((r, k) => { const u = seg(t, P[k], P[k] + .3); r.style.opacity = t >= P[k] ? .55 * (1 - u) : 0; r.style.transform = `translate(${tx}px,${ty}px) scale(${.15 + .85 * eo(u)})`; });
+
+  // balls fly from a ticked row into the tray and squash on landing
+  bs.forEach((b, j) => {
+    const u = seg(t, T0[j], LAND[j]), [xt, yt] = slot(j), a = t - LAND[j];
+    const x = lerp(172, xt, eio(u)), y = lerp(Y0[j], yt, u) - 60 * Math.sin(Math.PI * u);
+    const sq = a > 0 ? Math.exp(-a * 9) * Math.cos(a * 24) : 0, sc = (.72 + .28 * u) * eo(seg(t, T0[j], T0[j] + .1));
+    b.style.opacity = t >= T0[j] && !(j == 11 && t >= TB) ? 1 : 0;
+    b.style.transform = `translate(${x - 46}px,${y - 46}px) scale(${sc * (1 + .16 * sq)},${sc * (1 - .3 * sq)})`;
+  });
+  const landed = LAND.filter(l => t >= l), nb = bump((t - Math.max(-9, ...landed)) / .2);
+  num.textContent = landed.length;
+  num.style.transform = `scale(${1 + .03 * nb},${1 - .07 * nb})`;
+
+  // the last ball swells and the end card is inside it
+  const pb = seg(t, TB, TB + .75);
+  setOrb(B, inB, 1550, 727, t >= TB ? 46 + 2054 * eio(pb) : 0);
+  hiB.style.opacity = 1 - seg(pb, 0, .3);
+  HW.forEach((h, i) => { const q = plop(t, h.t0, 300); h.el.style.transform = q.tf; h.el.style.opacity = q.vis; });
+  pill.style.transform = `scale(${spring((t - 8.05) * 1.15)})`;
+  DEC3.forEach((d, i) => { dec3[i].style.transform = `translate(${d[0] - d[2]}px,${d[1] - d[2] + fl(i + 4, 12)}px) scale(${spring((t - d[4]) * 1.15)})`; });
+}
+window.render = render;
+
+// sound cues
+SFX.push({ t:2.05, type:'whoosh', x:.4 }, { t:2.7, type:'pop', x:0 }, { t:6.8, type:'success', x:0 }, { t:TB, type:'whoosh', x:.4 },
+  { t:7.9, type:'thud', x:0 }, { t:8.08, type:'thud', x:0 }, { t:8.1, type:'pop', x:0 }, { t:8.35, type:'chime', x:0 });
+WT.forEach((w, i) => SFX.push({ t:w + .3, type:'thud', x:-.3 + i * .15 }));
+P.forEach((p, k) => SFX.push({ t:p, type:'click', x:-.3 }, { t:LAND[k], type:'drop', x:.4 }));
+SFX.sort((a, b) => a.t - b.t);
+
+window.ready = Promise.all([document.fonts.load('800 40px "Bricolage Grotesque"'), document.fonts.load('400 40px "Inter"'), document.fonts.load('700 40px "Inter"'), document.fonts.ready]).then(() => render(0));
+</script></body></html>

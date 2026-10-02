@@ -1,0 +1,154 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; background:#E6EAF0; }
+#stage { position:absolute; inset:0; overflow:hidden; }
+#rig, .g, .f { position:absolute; inset:0; }
+#rig { transform-origin:960px 520px; }
+.a { position:absolute; background:#E6EAF0; }
+.c { border-radius:50%; }
+.t { position:absolute; text-align:center; white-space:nowrap; color:#2D3440; font:700 48px/1 'Inter',sans-serif; letter-spacing:-.03em; }
+.w { display:inline-block; }
+#cur { position:absolute; left:0; top:0; transform-origin:0 0; filter:drop-shadow(3px 4px 3px rgba(184,192,204,.95)); }
+</style></head><body>
+<div id="stage"><div id="rig">
+ <div id="panel" class="a" style="left:160px;top:140px;width:1600px;height:760px;border-radius:84px"></div>
+ <div id="rc" style="position:absolute;left:160px;top:140px;width:1600px;height:760px;border-radius:84px;overflow:hidden"></div>
+ <div class="g" id="gh"><div id="hook" class="t" style="left:160px;top:140px;width:1600px;height:760px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:230px;line-height:.98">
+  <div><span class="w h">Warm</span> <span class="w h">when</span></div><div><span class="w h">you</span> <span class="w h">wake.</span></div></div></div>
+ <div class="g" id="g1">
+  <div id="tg" class="a" style="left:320px;top:390px;width:300px;height:150px;border-radius:75px;overflow:hidden">
+   <div id="to" class="f" style="border-radius:75px"></div><div id="tf" style="position:absolute;left:14px;top:14px;height:122px;border-radius:61px;background:#3D7BFF"></div>
+   <div id="th" class="a c" style="top:20px;width:110px;height:110px"></div></div>
+  <div class="t" style="left:270px;top:590px;width:400px;height:60px;line-height:60px;letter-spacing:0">Morning</div></div>
+ <div class="g" id="g2">
+  <svg id="tk" width="640" height="640" style="position:absolute;left:640px;top:200px"></svg>
+  <div id="well" class="a c" style="left:710px;top:270px;width:500px;height:500px;overflow:hidden"><div id="dov" class="f c"></div><div id="df" class="c" style="position:absolute;inset:14px;-webkit-mask-image:radial-gradient(circle,transparent 187px,#000 188px)"></div></div>
+  <div id="knob" class="a c" style="left:780px;top:340px;width:360px;height:360px">
+   <div id="rot" style="position:absolute;inset:0"><div id="nt" class="a c" style="left:167px;top:7px;width:26px;height:26px"></div></div>
+   <div id="dish" class="a c" style="left:40px;top:40px;width:280px;height:280px"></div>
+   <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#2D3440">
+    <b id="num" style="font:700 136px/1 'Space Grotesk',sans-serif;width:250px;text-align:center">12°</b>
+    <span style="font:400 34px/1 'Inter',sans-serif;margin-top:6px">sample</span></div></div></div>
+ <div class="g" id="g3">
+  <div id="gv" class="a" style="left:1414px;top:280px;width:72px;height:480px;border-radius:36px;overflow:hidden">
+   <div id="go" class="f" style="border-radius:36px"></div><div id="sf" style="position:absolute;left:8px;width:56px;border-radius:28px;background:#3D7BFF"></div></div>
+  <div id="sk" class="a c" style="left:1390px;width:120px;height:120px"><div id="sd" class="a c" style="left:46px;top:46px;width:28px;height:28px"></div></div></div>
+ <div class="g" id="ge"><div id="end" class="t" style="left:160px;top:330px;width:1600px;height:250px;font-size:250px;line-height:250px">
+  <span class="w y">Set</span> <span class="w y">it</span> <span class="w y">once.</span></div>
+  <div id="pill" class="a t" style="left:670px;top:640px;width:580px;height:120px;border-radius:60px;display:flex;align-items:center;justify-content:center;gap:24px;font-size:54px;letter-spacing:0">
+   <i id="led" class="a c" style="position:relative;width:22px;height:22px"></i>yourbrand.com</div></div>
+ <svg id="cur" width="62" height="80" viewBox="0 0 24 31"><path d="M1 1 L1 25 L7 19.5 L11.5 29 L15.5 27 L11 18 L19 18 Z" fill="#2D3440" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+</div></div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));                         // 0..1 progress between two times
+const eo = x => 1 - Math.pow(1 - x, 3);                                     // ease out: fast, then settles
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;          // ease in and out: for travel
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);   // overshoots, then settles
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);            // 0 -> 1 -> 0, for a pulse
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+window.DURATION = 10;
+window.SFX = [{t:.2,type:'pop',x:0},{t:2.2,type:'thud',x:0},{t:2.7,type:'pop',x:0},{t:3,type:'switch',x:-.5},{t:3.7,type:'click',x:0},
+  {t:5.35,type:'click',x:.6},{t:6.95,type:'thud',x:0},{t:7.3,type:'pop',x:0},{t:7.8,type:'chime',x:0}];
+
+// colour and the raised/pressed shadow pair (r: 1 raised, 0 pressed; k grows it out of the surface; part picks outer or inset)
+const SHD = '#B8C0CC', SRF = '#E6EAF0', ACC = '#3D7BFF';
+const rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, p) => `rgb(${rgb(a).map((v, i) => Math.round(lerp(v, rgb(b)[i], clamp(p)))).join()})`;
+const soft = (r, k, d, b, part) => { const o = d * k, n = b * k, u = clamp(k * 2), a = r * u, c = (1 - r) * u;
+  const out = `${-o}px ${-o}px ${n}px rgba(255,255,255,${a}),${o}px ${o}px ${n}px rgba(184,192,204,${a})`;
+  const ins = `inset ${-o}px ${-o}px ${n}px rgba(255,255,255,${c}),inset ${o}px ${o}px ${n}px rgba(184,192,204,${c})`;
+  return part === 'o' ? out : part === 'i' ? ins : out + ',' + ins; };
+const css = (el, o) => Object.assign(el.style, o);
+const rise = (el, p) => { const e = eo(p);                                  // a word pushing out of the surface
+  css(el, { opacity: p, transform: `translateY(${(1 - e) * 34}px)`,
+    textShadow: `${-6*e}px ${-6*e}px ${12*e}px rgba(255,255,255,${e}),${8*e}px ${8*e}px ${16*e}px rgba(184,192,204,${e})` }); };
+
+// the hand: where the dial notch is, how far it has turned, the slider, and when each press is held
+const TH0 = -135, TH1 = 16.875, A0 = [640, 610], T0 = [492, 472], K0 = [1458, 736], K1 = [1458, 430];
+const notch = a => [960 + 160 * Math.sin(a * Math.PI / 180), 520 - 160 * Math.cos(a * Math.PI / 180)];
+const N0 = notch(TH0), N1 = notch(TH1);
+const evenly = u => lerp(u, u * u * (3 - 2 * u), .5);                       // a hand turning a knob: almost steady, softer at the ends
+const theta = t => lerp(TH0, TH1, evenly(seg(t, 3.76, 4.9))) + 4 * bump(seg(t, 4.55, 4.95));
+const val = a => Math.round(12 + 16 * (a - TH0) / 270);
+const sy = t => lerp(730, 372, evenly(seg(t, 5.43, 6))) + 52 * eio(seg(t, 6, 6.2));
+const DN = [[3, 3.2], [3.7, 4.95], [5.35, 6.2]];
+const held = (t, i) => seg(t, DN[i][0], DN[i][0] + .1) - seg(t, DN[i][1], DN[i][1] + .12);
+function curPos(t) {
+  const m = (p, a, b) => [lerp(a[0], b[0], p), lerp(a[1], b[1], p)];
+  if (t < 3.3) return m(eio(seg(t, 2.75, 3)), A0, T0);
+  if (t < 3.7) return m(eio(seg(t, 3.3, 3.65)), T0, N0);
+  if (t < 5) return notch(theta(t));
+  if (t < 5.35) return m(eo(seg(t, 5, 5.3)), N1, K0);
+  return [1458, sy(t) + 6];
+}
+for (let v = 13, s = 3.76; v <= 21; v++) { while (val(theta(s)) < v) s += .01; SFX.push({ t: +s.toFixed(2), type: 'tick', x: 0 }); }
+
+// build once: the dial's ticks, and one ripple ring for each press and release
+const ticks = Array.from({ length: 17 }, (_, i) => {
+  const a = (TH0 + 270 * i / 16) * Math.PI / 180, r1 = i % 4 ? 274 : 266, l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  for (const [k, v] of Object.entries({ x1: 320 + r1 * Math.sin(a), y1: 320 - r1 * Math.cos(a), x2: 320 + 304 * Math.sin(a), y2: 320 - 304 * Math.cos(a),
+    'stroke-width': i % 4 ? 5 : 8, 'stroke-linecap': 'round' })) l.setAttribute(k, v);
+  $('#tk').appendChild(l); return l; });
+const EV = [[3, T0], [3.12, T0], [3.2, T0], [3.7, N0], [3.82, N0], [4.95, N1], [5.07, N1], [5.35, K0], [5.47, K0], [6.2, K1], [6.32, K1]];
+const rings = EV.map(() => { const d = document.createElement('div'); d.className = 'c'; d.style.position = 'absolute'; $('#rc').appendChild(d); return d; });
+const H = [...document.querySelectorAll('.h')], Y = [...document.querySelectorAll('.y')];
+
+function render(t) {
+  const out = 1 - seg(t, 6.95, 7.3);
+  const br = t > 8.5 ? .5 - .5 * Math.cos((t - 8.5) * 2 * Math.PI / 1.6) : 0;   // the end card's slow breath
+  // the one panel: rises, presses in for the next scene, rises again as the controls, presses in once more for the end card
+  const pr = clamp(1 - eo(seg(t, 2.15, 2.5)) + eo(seg(t, 2.6, 3)) - eo(seg(t, 6.95, 7.2)) + eo(seg(t, 7.25, 7.7)));
+  const p0 = .25 + .75 * eo(seg(t, 0, .7));
+  // the camera leans toward whichever control the hand is on, and eases back out before the end card
+  const zf = eio(seg(t, 2.9, 3.4)) - eio(seg(t, 6.55, 7)), fx = lerp(lerp(T0[0], 960, eio(seg(t, 3.35, 3.9))), K0[0], eio(seg(t, 4.95, 5.5)));
+  css($('#rig'), { transform: `translate(${((960 - fx) * .34 * zf).toFixed(1)}px,0) scale(${((1 - .022 * (1 - pr)) * (1 - .024 * br) * (1 + .22 * zf)).toFixed(4)})` });
+  css($('#panel'), { boxShadow: soft(pr, p0, 22, 44), transform: `scale(${.96 + .04 * p0})` });
+  // the hook
+  H.forEach((w, i) => rise(w, seg(t, .05 + .27 * i, .55 + .27 * i)));
+  css($('#gh'), { opacity: 1 - seg(t, 2.2, 2.5), transform: `scale(${1 + .03 * eio(seg(t, 1.4, 2.3))})` });
+  // controls come up out of the surface one after another
+  const kT = eo(seg(t, 2.55, 3)), kD = eo(seg(t, 2.6, 3.05)), kS = eo(seg(t, 2.65, 3.1));
+  [[kT, '#g1'], [kD, '#g2'], [kS, '#g3']].forEach(([k, id]) => css($(id), { opacity: clamp(k * 2) * out, transform: `translateY(${(1 - k) * 22}px)` }));
+  // toggle: the pill sinks, the track lights from the left, the thumb slides over and turns pale
+  const tp = eo(seg(t, 3.05, 3.4)), pr1 = 1 - eo(seg(t, 3, 3.2));
+  css($('#tg'), { boxShadow: soft(pr1, kT, 14, 28, 'o') });
+  css($('#tf'), { width: 272 * eo(seg(t, 3, 3.35)) + 'px' });
+  css($('#to'), { boxShadow: soft(pr1, kT, 14, 28, 'i') });
+  css($('#th'), { left: lerp(20, 170, tp) + 'px', background: mix(SHD, SRF, tp), transform: `scale(${1 + .08 * bump(seg(t, 3, 3.45))})`, boxShadow: soft(1, kT, 4, 8) });
+  // dial: knob sinks while held, turns, and the ring, ticks and notch light as the number counts
+  const th = theta(t), vf = 12 + 16 * (th - TH0) / 270, on = seg(t, 3.7, 3.95), g2 = held(t, 1);
+  css($('#df'), { background: `conic-gradient(from -135deg,${ACC} 0deg,${ACC} ${th - TH0}deg,transparent ${th - TH0}deg)` });
+  css($('#dov'), { boxShadow: soft(0, kD, 12, 24, 'i') });
+  css($('#knob'), { boxShadow: soft(1 - .85 * g2, kD, 11, 22) });
+  css($('#dish'), { boxShadow: soft(0, kD, 8, 16) });
+  $('#rot').style.transform = `rotate(${th}deg)`;
+  $('#nt').style.background = mix(SHD, ACC, on);
+  $('#num').textContent = val(th) + '°';
+  $('#num').style.transform = `scale(${1 + .09 * bump(seg(t, 4.95, 5.4))})`;                   // the number lands
+  ticks.forEach((l, i) => l.setAttribute('stroke', mix(SHD, ACC, on * clamp((vf - 12 - i) / .5 + 1))));
+  // slider: knob sinks, travels the groove, fills it as it goes
+  const ky = sy(t), on3 = seg(t, 5.35, 5.55);
+  css($('#sf'), { top: ky - 280 + 'px', height: 752 - ky + 'px', opacity: on3 });
+  css($('#go'), { boxShadow: soft(0, kS, 6, 12, 'i') });
+  css($('#sk'), { top: ky - 60 + 'px', boxShadow: soft(1 - .85 * held(t, 2), kS, 10, 20) });
+  $('#sd').style.background = mix(SHD, ACC, on3);
+  // the cursor, and a ring that spreads from every press and release
+  const [cx, cy] = curPos(t), c = Math.max(held(t, 0), held(t, 1), held(t, 2));
+  css($('#cur'), { opacity: seg(t, 2.7, 2.95) * out, transform: `translate(${cx + 2 * c}px,${cy + 3 * c}px) scale(${1 - .1 * c})` });
+  rings.forEach((r, i) => { const p = seg(t, EV[i][0], EV[i][0] + .5), s = lerp(110, 300, p);
+    css(r, { width: s + 'px', height: s + 'px', left: EV[i][1][0] - s / 2 - 160 + 'px', top: EV[i][1][1] - s / 2 - 140 + 'px', opacity: p > 0 && p < 1 ? out : 0,
+      boxShadow: `0 0 0 6px rgba(45,52,64,${.3 * (1 - p)})` }); });
+  // end card: line rises, then the address pill, which breathes between raised and pressed while the LED follows
+  Y.forEach((w, i) => rise(w, seg(t, 7.4 + .2 * i, 8.1 + .2 * i)));
+  const pk = eo(seg(t, 8, 8.5));
+  css($('#pill'), { opacity: seg(t, 7.95, 8.5), transform: `translateY(${(1 - pk) * 20}px)`, boxShadow: soft(1 - .45 * br, pk, 14, 28) });
+  $('#led').style.background = mix(SHD, ACC, br);
+}
+window.render = render;
+window.ready = Promise.all([document.fonts.load('700 40px "Inter"'), document.fonts.load('400 40px "Inter"'), document.fonts.load('700 40px "Space Grotesk"'), document.fonts.ready]).then(() => render(0));
+</script></body></html>

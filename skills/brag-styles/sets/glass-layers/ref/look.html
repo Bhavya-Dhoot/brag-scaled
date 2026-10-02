@@ -1,0 +1,168 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; background:#0B1020; }
+body { font-family:'Inter',sans-serif; color:#fff; }
+#stage { position:absolute; inset:0; overflow:hidden; background:#0B1020; }
+.field, .orb { position:absolute; left:0; top:0; border-radius:50%; z-index:0; }
+/* frosted glass: white 12%, a 1px edge, a dark scrim under the text, a bright top edge */
+.glass { position:absolute; left:0; top:0; border-radius:28px; overflow:hidden; z-index:1;
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.30); }
+.scrim { position:absolute; inset:0; background:#0B1020; opacity:.46; }
+.edge { position:absolute; left:0; right:0; top:0; height:3px;
+  background:linear-gradient(90deg, rgba(255,255,255,.1), rgba(255,255,255,.8), rgba(255,255,255,.1)); }
+.sheen { position:absolute; top:-30%; left:0; width:240px; height:160%;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.13), transparent); }
+.body { position:absolute; inset:0; }
+.panel { width:600px; height:380px; }
+.label { position:absolute; left:34px; top:28px; font-weight:700; font-size:36px; letter-spacing:-.01em; }
+.pill { position:absolute; right:34px; top:32px; font-size:22px; letter-spacing:.1em; padding:5px 15px;
+  border:1px solid rgba(255,255,255,.55); border-radius:20px; color:rgba(255,255,255,.88); }
+.num { position:absolute; left:34px; top:80px; display:flex; flex-direction:column; white-space:nowrap; }
+#n { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:150px; line-height:.95; font-variant-numeric:tabular-nums; }
+#u { font-size:46px; display:inline-block; transform-origin:0 50%; margin-top:6px; }
+.track { position:absolute; left:34px; right:34px; bottom:38px; height:12px; border-radius:6px; background:rgba(255,255,255,.18); overflow:hidden; }
+#fill { height:100%; min-width:16px; border-radius:6px; background:linear-gradient(90deg,#00C2A8,#3B2BFF); }
+.bub { position:absolute; height:46px; border-radius:23px; background:rgba(255,255,255,.2); }
+.day { position:absolute; width:66px; height:66px; border-radius:14px; }
+.task { position:absolute; left:34px; right:34px; height:44px; display:flex; align-items:center; gap:20px; }
+.task i { width:34px; height:34px; border-radius:50%; border:3px solid rgba(255,255,255,.5); }
+.task i.on { background:#00C2A8; border-color:#00C2A8; }
+.task b { height:20px; border-radius:10px; background:rgba(255,255,255,.2); }
+#hook { left:180px; top:245px; width:1560px; height:470px; }
+.hk { position:absolute; inset:0; padding:0 90px; display:flex; flex-direction:column; justify-content:center; }
+.hk div { font-size:148px; line-height:1.05; letter-spacing:-.035em; font-weight:700; white-space:nowrap; }
+#l1 { font-weight:400; color:rgba(255,255,255,.72); }
+#end { left:220px; top:215px; width:1480px; height:520px; }
+.ec { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:40px; }
+#t1 { font-size:150px; line-height:1.05; letter-spacing:-.035em; font-weight:700; white-space:nowrap; }
+#t2 { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:60px; letter-spacing:.02em; padding:12px 44px;
+  border:2px solid rgba(255,255,255,.55); border-radius:60px; }
+#ring { position:absolute; left:0; top:0; border-radius:50%; border:3px solid #fff; z-index:49; opacity:0; }
+#cur { position:absolute; left:0; top:0; width:46px; height:46px; z-index:50; transform-origin:0 0; opacity:0; }
+</style></head><body>
+<div id="stage">
+  <div id="hook" class="glass"><div class="body hk"><div id="l1">Four inboxes.</div><div id="l2">One calm screen.</div></div></div>
+  <div id="end" class="glass"><div class="body ec" id="ec"><div id="t1">Clear it once.</div><div id="t2">yourbrand.com</div></div></div>
+  <div id="ring"></div>
+  <svg id="cur" viewBox="0 0 46 46"><path d="M4 3 L4 33 L12 25.5 L17.5 38 L23 35.5 L17.5 23.5 L28 23.5 Z" fill="#fff" stroke="#0B1020" stroke-width="2.5" stroke-linejoin="round"/></svg>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+window.DURATION = 10;
+window.SFX = [{t:2.45,type:'whoosh',x:.3},{t:3.2,type:'tick',x:.2},{t:4.2,type:'click',x:-.5},{t:4.3,type:'switch'},
+  {t:4.65,type:'count'},{t:6.3,type:'chime'},{t:7,type:'whoosh'},{t:8.4,type:'ping'}];
+
+// the colour that drifts behind everything: three big fields and some small orbs
+const COL = ['#3B2BFF', '#00C2A8', '#FF5C8A'];
+const stage = $('#stage');
+const FIELDS = COL.map((c, i) => { const d = document.createElement('div'); d.className = 'field';
+  d.style.cssText = `width:1300px;height:1300px;background:radial-gradient(circle,${c} 0%,${c}bb 32%,transparent 68%)`;
+  stage.prepend(d); return d; });
+const ORBS = Array.from({ length: 8 }, (_, i) => { const d = document.createElement('div'); d.className = 'orb';
+  const s = 70 + rnd(i) * 110, c = COL[i % 3];
+  d.style.cssText = `width:${s}px;height:${s}px;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.95),${c} 55%,${c}00 100%)`;
+  stage.prepend(d); return d; });
+
+// four panels: a label and a little sketch of what lives inside
+const rows = (n, f) => Array.from({ length: n }, (_, i) => f(i)).join('');
+const hl = { 4: 'rgba(59,43,255,.7)', 9: 'rgba(255,92,138,.65)', 16: 'rgba(0,194,168,.6)' };
+const BODY = [
+  `<div class="label">Mail</div><div class="pill">sample</div>
+   <div class="num"><span id="n">312</span><span id="u">unread</span></div>
+   <div class="track"><div id="fill"></div></div>`,
+  `<div class="label">Chat</div>` + rows(4, i => `<div class="bub" style="top:${100 + i * 64}px;width:${[300,230,340,190][i]}px;${i % 2 ? 'right:34px;background:rgba(0,194,168,.4)' : 'left:34px'}"></div>`),
+  `<div class="label">Calendar</div>` + rows(21, i => `<div class="day" style="left:${34 + (i % 7) * 78}px;top:${100 + Math.floor(i / 7) * 78}px;background:${hl[i] || 'rgba(255,255,255,.16)'}"></div>`),
+  `<div class="label">Tasks</div>` + rows(4, i => `<div class="task" style="top:${100 + i * 66}px"><i class="${i ? '' : 'on'}"></i><b style="width:${[300,240,330,200][i]}px"></b></div>`)];
+const P = BODY.map(h => { const d = document.createElement('div'); d.className = 'glass panel';
+  d.innerHTML = `<div class="body">${h}</div>`; stage.appendChild(d); return d; });
+const G = [...document.querySelectorAll('.glass')];
+G.forEach(g => { g.insertAdjacentHTML('afterbegin', '<div class="scrim"></div><div class="sheen"></div>'); g.insertAdjacentHTML('beforeend', '<div class="edge"></div>'); });
+
+const IDLE = [[460,360,.98,-2], [820,470,1,1.2], [1130,580,1.02,-1], [1440,690,1.04,1.5]];   // x, y, scale, tilt
+const BACK = [null, [420,320,.8,-3], [1500,320,.8,3], [1490,760,.8,-2]];
+const FRONT = [960, 500, 1.45, 0], IN = [2.4, 2.55, 2.7, 2.85];
+const frost = (el, op, blur) => { el.style.opacity = op; el.style.visibility = op < .01 ? 'hidden' : 'visible';
+  el.style.backdropFilter = op < .01 ? 'none' : `blur(${blur}px) saturate(1.3)`; };
+const blurIn = (el, p) => { el.style.opacity = p; el.style.transform = `translateY(${(1 - p) * 34}px)`; el.style.filter = p < 1 ? `blur(${(1 - p) * 18}px)` : 'none'; };
+const A = [1480, 860], C = [900, 930], B = [335, 335];                                   // cursor path
+
+function render(t) {
+  // colour drifting
+  FIELDS.forEach((d, i) => { d.style.transform = `translate(${960 + 480 * Math.sin(t * .55 + i * 2.1) - 650}px,${540 + 320 * Math.cos(t * .45 + i * 1.3) - 650}px)`; });
+  ORBS.forEach((d, i) => { d.style.transform = `translate(${160 + rnd(i + 10) * 1600 + Math.sin(t * (.4 + rnd(i + 30) * .5) + i * 2) * 170}px,${120 + rnd(i + 20) * 800 + Math.cos(t * (.35 + rnd(i + 40) * .4) + i) * 130}px)`; });
+
+  // hook: two lines sharpen in over a dark frosted panel, then the panel dives away
+  const hp = eo(seg(t, 0, .6)), hx = eio(seg(t, 2.1, 2.65)), hook = $('#hook');
+  hook.style.transform = `translateY(${(1 - hp) * 40}px) scale(${(1 + .035 * seg(t, 0, 2.4)) * (1 + .1 * hx)})`;
+  frost(hook, hp * (1 - hx), 24);
+  blurIn($('#l1'), eo(seg(t, .15, .75)));
+  blurIn($('#l2'), eo(seg(t, .7, 1.3)));
+
+  // rack focus: Mail comes forward and sharpens, the rest shrink, dim and blur
+  const f = eio(seg(t, 4.2, 4.95)), g = eio(seg(t, 7, 7.8)), out = seg(t, 7, 7.5);
+  P.forEach((el, i) => {
+    const to = i ? BACK[i] : FRONT, sl = eo(seg(t, IN[i], IN[i] + .65));
+    let [x, y, s, r] = IDLE[i].map((v, k) => lerp(v, to[k], f));
+    x += (1 - sl) * 560;                                          // slides in from the right
+    y += Math.sin(t * 1.2 + i * 1.9) * 7 * (1 - f);
+    let op = seg(t, IN[i], IN[i] + .35), dim = lerp(.46, i ? .78 : .46, f);
+    if (i === 0) {
+      y -= 10 * eo(seg(t, 3.9, 4.15)) * (1 - f);                  // hover lift, then the press
+      s -= .025 * bump((t - 4.2) / .18);
+      const fl = bump((t - 6.35) / .5);                           // done flash with a teal ring
+      s += fl * .03;
+      el.style.boxShadow = fl ? `0 0 0 ${3 + fl * 9}px rgba(0,194,168,${fl})` : 'none';
+      x = lerp(x, 960, g); y = lerp(y, 540, g); s = lerp(s, 3.8, g);   // grows until its frost fills the frame
+      const c = eo(seg(t, 7.8, 8.5));                             // then the frost clears
+      frost(el, op * (1 - c), 24 * (1 - c));
+      el.querySelector('.body').style.opacity = 1 - seg(t, 7.1, 7.45);
+    } else {
+      s *= 1 - .2 * out;
+      frost(el, op * lerp(1, .85, f) * (1 - out), 24);
+    }
+    el.style.zIndex = i === 0 && t >= 4.25 ? 10 : i + 2;
+    el.style.transform = `translate(${x - 300}px,${y - 190}px) rotate(${r}deg) scale(${s})`;
+    el.querySelector('.scrim').style.opacity = dim;
+    el.querySelector('.body').style.filter = `blur(${lerp(1.5, i ? 8 : 0, f)}px)`;
+  });
+
+  // proof: 312 unread counts down to 9 that matter, then the label flips
+  const n = Math.round(312 - 303 * eo(seg(t, 4.6, 6.2))), fp = seg(t, 6.2, 6.5), u = $('#u');
+  $('#n').textContent = n; $('#n').style.color = n <= 12 ? '#00C2A8' : '#fff';
+  $('#fill').style.width = n / 312 * 100 + '%';
+  u.textContent = fp < .5 ? 'unread' : 'that matter';
+  u.style.transform = `scaleY(${fp < .5 ? 1 - 2 * fp : 2 * fp - 1})`;
+
+  // cursor: crosses the frame in an arc, clicks Mail, and leaves
+  const k = eio(seg(t, 3.2, 4.1)), q = 1 - k, cur = $('#cur'), ring = $('#ring'), rp = seg(t, 4.2, 4.8), rs = 20 + 160 * eo(rp);
+  cur.style.opacity = eo(seg(t, 3, 3.4)) * (1 - seg(t, 4.5, 4.9));
+  cur.style.transform = `translate(${q*q*A[0] + 2*q*k*C[0] + k*k*B[0]}px,${q*q*A[1] + 2*q*k*C[1] + k*k*B[1]}px) scale(${1 - .15 * bump((t - 4.2) / .2)})`;
+  ring.style.opacity = rp > 0 && rp < 1 ? (1 - rp) * .9 : 0;
+  ring.style.width = ring.style.height = rs + 'px';
+  ring.style.transform = `translate(${B[0] - rs / 2}px,${B[1] - rs / 2}px)`;
+
+  // end card: sharpens as the frost clears, then only floats and catches the light
+  const E = $('#end');
+  E.style.transform = `translateY(${Math.sin(t * 1.1) * 5}px) scale(${1 + .04 * (1 - eo(seg(t, 7.6, 8.5)))})`;
+  frost(E, eo(seg(t, 7.55, 8.1)), 24);
+  E.style.zIndex = 6;
+  const eb = 1 - eo(seg(t, 7.8, 8.5));
+  $('#ec').style.filter = eb > .001 ? `blur(${eb * 18}px)` : 'none';
+
+  // a slow sheen sweeps every glass surface
+  G.forEach((el, i) => { el.querySelector('.sheen').style.transform = `translateX(${lerp(-400, el.offsetWidth + 200, (t * .3 + i * .37) % 1)}px) rotate(16deg)`; });
+}
+window.render = render;
+window.ready = Promise.all([document.fonts.load('700 40px "Inter"'), document.fonts.load('400 40px "Inter"'),
+  document.fonts.load('700 40px "Space Grotesk"'), document.fonts.ready]).then(() => render(0));
+</script></body></html>

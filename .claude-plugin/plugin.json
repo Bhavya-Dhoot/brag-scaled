@@ -1,7 +1,7 @@
 {
   "name": "brag-scaled",
   "description": "/brag with a fast renderer and a motion kit: turn a project, a script, screenshots or a recorded clip into a short video that moves like a demo, drawn on the GPU in parallel browsers.",
-  "version": "0.6.2-scaled",
+  "version": "0.7.0-scaled",
   "author": {
     "name": "Bhavya Dhoot",
     "url": "https://github.com/Bhavya-Dhoot"

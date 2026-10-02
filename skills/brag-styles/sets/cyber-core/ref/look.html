@@ -1,0 +1,180 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; background:#050608; }
+#stage { position:absolute; inset:0; overflow:hidden; background:#050608; color:#32FF7E; font:30px/38px 'JetBrains Mono',monospace; }
+.a { position:absolute; white-space:pre; }
+#grid { inset:0; background-image:linear-gradient(rgba(50,255,126,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(50,255,126,.6) 1px,transparent 1px); background-size:96px 96px; -webkit-mask-image:radial-gradient(ellipse at 50% 50%,#000 25%,transparent 80%); }
+#pane { left:120px; top:130px; width:1680px; height:800px; background:rgba(5,6,8,.8); }
+#mid, #frame, #fx, #hudc, #endc { position:absolute; inset:0; }
+.br, #fo { stroke-dasharray:1 1; }
+.hk { left:160px; top:440px; height:120px; font-size:92px; line-height:120px; }
+#bd { left:160px; top:168px; width:290px; height:76px; display:flex; align-items:center; justify-content:center; font-size:44px; color:#050608; background:#FF2BD6; }
+#hx { right:160px; top:182px; font-size:40px; color:#00E5FF; }
+#tg { left:422px; top:470px; font-size:64px; line-height:80px; }
+#sk { left:422px; top:507px; height:6px; background:#32FF7E; }
+#tm { left:160px; top:716px; font-size:170px; line-height:170px; transform-origin:0 50%; }
+#smp { left:1050px; top:728px; font-size:28px; line-height:36px; letter-spacing:.2em; color:#00E5FF; border:2px solid #00E5FF; padding:2px 14px; }
+#tc { left:1050px; top:799px; font-size:64px; line-height:80px; color:#00E5FF; }
+#sl { left:160px; top:190px; font:280px/280px 'Archivo Black'; transform-origin:0 50%; }
+#wk { left:160px; top:500px; font-size:96px; line-height:110px; }
+#dm { left:160px; top:740px; font-size:64px; line-height:80px; color:#00E5FF; }
+#cu { left:672px; top:746px; width:34px; height:66px; background:#00E5FF; }
+#ul { left:160px; top:830px; height:5px; background:#00E5FF; }
+#sweep { left:0; width:1920px; height:220px; background:linear-gradient(transparent,rgba(50,255,126,.07),transparent); }
+#scan { inset:0; background:repeating-linear-gradient(0deg,rgba(0,0,0,.3) 0 2px,transparent 2px 4px),radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,.65)); }
+</style></head><body>
+<div id="stage">
+<canvas id="rain" class="a" width="1920" height="1080"></canvas>
+<div id="grid" class="a"></div><div id="pane" class="a"></div>
+<div class="a hk" id="hk"></div>
+<div id="mid">
+ <svg id="frame" width="1920" height="1080" viewBox="0 0 1920 1080" fill="none">
+  <path id="fo" pathLength="1" d="M120 130H1800V930H120Z" stroke="#00E5FF" stroke-opacity=".35" stroke-width="2"/>
+  <path class="br" pathLength="1" d="M120 250V130H240"/><path class="br" pathLength="1" d="M1680 130H1800V250"/>
+  <path class="br" pathLength="1" d="M1800 810V930H1680"/><path class="br" pathLength="1" d="M240 930H120V810"/>
+ </svg>
+ <div id="hudc"><div class="a" id="bd"></div><div class="a" id="hx"></div><div class="a" id="tg"></div><div class="a" id="sk"></div>
+  <div class="a" id="tm"></div><div class="a" id="smp">sample</div><div class="a" id="tc">to contain</div></div>
+ <svg id="fx" viewBox="0 0 1920 1080" fill="none" stroke-width="4">
+  <g id="fxh">
+   <rect id="band" x="160" width="1600" height="44" fill="#00E5FF" fill-opacity=".1" stroke="none"/>
+   <path id="lock" stroke="#FF2BD6" stroke-width="7"/>
+   <g id="ret" stroke="#00E5FF"><g id="rr"><circle r="64" stroke-dasharray="36 22"/></g><circle r="20"/><path d="M-110 0H-40M40 0H110M0 -110V-40M0 40V110"/></g>
+  </g>
+  <g transform="translate(1480 520)" id="seal"><g id="sr" stroke-width="3"><circle r="230" stroke="#32FF7E" stroke-opacity=".6" stroke-dasharray="14 18"/>
+   <circle r="170" stroke="#00E5FF" stroke-opacity=".7" stroke-dasharray="120 40"/><path d="M-270 0H-200M200 0H270M0 -270V-200M0 200V270" stroke="#32FF7E"/></g></g>
+ </svg>
+ <div id="endc"><div class="a" id="sl">Sleep.</div><div class="a" id="wk"></div><div class="a" id="dm"></div><div class="a" id="cu"></div><div class="a" id="ul"></div></div>
+</div>
+<div id="bars"></div><div class="a" id="fl" style="inset:0;background:#32FF7E;opacity:0"></div><div class="a" id="sweep"></div><div class="a" id="scan"></div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));                         // 0..1 progress between two times
+const eo = x => 1 - Math.pow(1 - x, 3);                                     // ease out: fast, then settles
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;          // ease in and out: for travel
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);   // overshoots, then settles
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);            // 0 -> 1 -> 0, for a pulse
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+window.DURATION = 10;
+
+// helpers: element lookup, palette, and text that decodes from random characters
+const E = {}; document.querySelectorAll('[id]').forEach(e => E[e.id] = e);
+const S = (el, o) => Object.assign(el.style, o);
+const G = '#32FF7E', C = '#00E5FF', M = '#FF2BD6', HEXS = '0123456789ABCDEF', GL = HEXS + '01{}<>/=+*#%$';
+const pick = (s, k) => s[Math.floor(rnd(k) * s.length)];
+const dec = (s, p, f, k = 0) => [...s].map((c, i) => c === ' ' || p >= i / s.length * .75 + rnd(i + k) * .25 ? c : p > 0 ? pick(GL, i * 3.1 + f * 7.7 + k) : ' ').join('');
+
+// beats: the hook types itself, the reticle visits four spots, locks, then the count runs
+const HK = '> someone is in your logs.', TT = []; let ta = .45;
+HK.split('').forEach((_, i) => TT.push(ta += .03 + .05 * rnd(i + 3) + (i === 1 ? .25 : 0)));
+const WP = [[3.3, 260, 335], [3.65, 1480, 345], [3.95, 520, 640], [4.25, 1380, 590], [4.55, 960, 510]];
+const LK = 4.55, FL = 5.05, ST = 5.2, C0 = 5.05, C1 = 6.2;
+const retPos = t => { for (let i = 1; i < WP.length; i++) if (t <= WP[i][0]) { const p = eio(seg(t, WP[i-1][0], WP[i][0])); return [lerp(WP[i-1][1], WP[i][1], p), lerp(WP[i-1][2], WP[i][2], p)]; } return [WP[4][1], WP[4][2]]; };
+window.SFX = [...TT.filter((_, i) => i % 2 === 0).map(x => ({ t: x, type: 'type', x: -.3 })),
+  { t: 2.35, type: 'glitch', x: 0 }, { t: 2.6, type: 'whoosh', x: 0 }, { t: 3.0, type: 'alert', x: -.6 },
+  { t: 3.65, type: 'ping', x: .5 }, { t: 3.95, type: 'ping', x: -.3 }, { t: 4.25, type: 'ping', x: .4 }, { t: LK, type: 'lock', x: 0 },
+  { t: FL, type: 'switch', x: -.5 }, { t: ST + .1, type: 'success', x: 0 },
+  ...[1, 2, 3, 4, 5, 6, 7].map(k => ({ t: C0 + (C1 - C0) * k / 7.999, type: 'count', x: .3 })),
+  { t: 6.9, type: 'glitch', x: 0 }, { t: 7.25, type: 'thud', x: 0 }, { t: 7.6, type: 'type', x: -.2 }, { t: 8.0, type: 'type', x: -.2 }, { t: 8.4, type: 'chime', x: 0 }];
+
+// build: tear slices of the hook line, glitch bars and the decoy hex rows
+const SL = [0, 1, 2, 3, 4].map(j => { const c = E.hk.cloneNode(); c.removeAttribute('id'); c.style.clipPath = `inset(${j * 20}% 0 ${80 - j * 20}% 0)`; E.stage.insertBefore(c, E.mid); return c; });
+const BARS = [0, 1, 2, 3, 4, 5, 6].map(j => { const b = document.createElement('div'); b.style.cssText = `position:absolute;left:0;width:1920px;background:${j % 2 ? 'rgba(0,229,255,.22)' : 'rgba(255,43,214,.25)'}`; E.bars.appendChild(b); return b; });
+const ROWY = [292, 342, 392, 604, 652];
+const DR = ROWY.map(y => { const d = document.createElement('div'); d.className = 'a'; d.style.cssText = `left:160px;top:${y}px`; E.hudc.insertBefore(d, E.bd); return d; });
+const rowStr = (k, t) => Array.from({ length: 88 }, (_, i) => i % 5 === 4 ? ' ' : pick(HEXS, k * 97 + i * 1.7 + (rnd(i * .31 + k) < .07 ? Math.floor(t * 12) * 3.3 : 0))).join('');
+const BRK = [...document.querySelectorAll('.br')], cx = E.rain.getContext('2d');
+
+// code columns falling: each column is a head and a fading trail of glyphs
+function rain(t, amp) {
+  cx.clearRect(0, 0, 1920, 1080); cx.font = '30px "JetBrains Mono"'; cx.textBaseline = 'top';
+  for (let c = 0; c < 60; c++) {
+    if (rnd(c * 3.3) < .35) continue;
+    const sp = 6 + rnd(c) * 9, len = 8 + Math.floor(rnd(c + 50) * 12), cyc = 34 + len, head = (t * sp + rnd(c + 9) * cyc) % cyc;
+    for (let k = 0; k < len; k++) {
+      const r = Math.floor(head) - k; if (r < 0 || r >= 34) continue;
+      const a = (1 - k / len) * amp;
+      cx.fillStyle = k === 0 ? `rgba(200,255,220,${a})` : `rgba(50,255,126,${a * .6})`;
+      cx.fillText(pick(GL, c * 131 + r * 17 + Math.floor(t * 5 + rnd(c) * 5) * 3.7), c * 32 + 1, r * 32);
+    }
+  }
+}
+
+function render(t) {
+  const f = Math.floor(t * 24), pw = eo(seg(t, 0, .35));
+  // power-on and the glitch tear that ends each scene
+  S(E.stage, { transform: `scaleY(${.012 + .988 * pw})`, filter: pw < 1 ? `brightness(${1 + (1 - pw) * 2.5})` : 'none' });
+  const gl = Math.max(bump(seg(t, 2.35, 2.75)), bump(seg(t, 6.9, 7.3)));
+  S(E.mid, { transform: `translateX(${(rnd(f * 1.3) - .5) * 70 * gl}px)` });
+  BARS.forEach((b, j) => S(b, { display: rnd(j * 1.7 + f * .9) < gl ? 'block' : 'none', top: rnd(j * 9 + f) * 980 + 'px', height: 16 + rnd(j + f * 2) * 80 + 'px' }));
+  // ambient: rain, grid, scanlines, sweep
+  rain(t, seg(t, .1, .5) * lerp(.34, 1, seg(t, 2.2, 2.8)) * lerp(1, .6, seg(t, 7, 7.5)));
+  S(E.grid, { opacity: .08 + .12 * seg(t, 2.5, 3.2), backgroundPosition: `${t * 14}px ${t * 9}px` });
+  S(E.scan, { backgroundPosition: `0 ${t * 24}px, 0 0` });
+  S(E.fl, { opacity: .2 * bump(seg(t, 0, .5)) });
+  S(E.sweep, { top: (t * 300) % 1500 - 220 + 'px' });
+
+  // hook: typed line, magenta flicker on the last word, then it tears into slices
+  const n = TT.filter(x => x <= t).length, mag = t > 1.95 && Math.floor(t * 2.5 * 4) % 2 === 0;
+  const cur = n < HK.length || Math.floor(t * 2.5) % 2 === 0 ? `<i style="display:inline-block;width:50px;height:84px;background:${G};vertical-align:-10px"></i>` : '';
+  const html = HK.slice(0, Math.min(n, 21)) + `<span style="color:${mag ? M : G}">${HK.slice(21, n)}</span>` + cur;
+  E.hk.innerHTML = html; E.hk.style.display = t < 2.35 ? 'block' : 'none';
+  SL.forEach((s, j) => S(s, { display: t >= 2.35 && t < 2.75 ? 'block' : 'none', transform: `translateX(${(rnd(j * 5.1 + f) - .5) * 2 * gl * 160}px)`,
+    opacity: 1 - seg(t, 2.55, 2.75), textShadow: `${gl * 10}px 0 ${M}, ${-gl * 10}px 0 ${C}` }));
+  SL.forEach(s => s.innerHTML = html);
+
+  // frame: pane fades up, outline and corner brackets draw on, brackets go green when secured
+  S(E.pane, { opacity: seg(t, 2.55, 3.1) });
+  E.fo.style.strokeDashoffset = 1 - eo(seg(t, 2.6, 3.4));
+  BRK.forEach((b, i) => S(b, { strokeDashoffset: 1 - eo(seg(t, 2.55 + i * .1, 3.1 + i * .1)), stroke: t < FL ? C : G, strokeWidth: 7 + bump(seg(t, FL, FL + .35)) * 4 }));
+
+  // badge pops in as ALERT, blinks, then flips over to SECURED
+  const fp = seg(t, FL, FL + .28), sec = fp >= .5;
+  E.bd.textContent = sec ? 'SECURED' : 'ALERT';
+  S(E.bd, { background: sec ? G : M, opacity: !sec && t > 3.2 && Math.floor(t * 5) % 2 ? .6 : 1, transform: `scale(${spring((t - 3) * 1.15)}) scaleY(${Math.abs(1 - 2 * fp)})` });
+  E.hx.textContent = t < 3.2 ? '' : '0x' + Math.floor(0x7F3A * eo(seg(t, 3.2, LK))).toString(16).toUpperCase().padStart(4, '0');
+
+  // hex rows decode in, the reticle band lights the row it passes over
+  const [rx, ry] = retPos(t), lp = eo(seg(t, LK, LK + .3)), rv = seg(t, 3.3, 3.45) * (1 - lp);
+  DR.forEach((d, i) => { d.textContent = dec(rowStr(i, t), seg(t, 2.9 + i * .08, 3.5 + i * .08), f, i);
+    d.style.color = rv > 0 && Math.abs(ry - ROWY[i] - 19) < 36 ? C : 'rgba(50,255,126,.5)'; });
+
+  // the claim line: decodes, locks magenta, goes green and gets struck through
+  const sp = eo(seg(t, ST, ST + .4));
+  E.tg.textContent = dec('session 7f3a: unknown origin', seg(t, 3.1, 3.8), f, 99);
+  S(E.tg, { color: t >= LK && t < FL ? M : G, opacity: 1 - .45 * sp, transform: `scale(${1 + bump(seg(t, LK, LK + .3)) * .04})` });
+  S(E.sk, { width: 1075 * sp + 'px' });
+
+  // reticle sweeps between decoys, then the brackets snap out to wrap the line
+  const hw = lerp(80, 568, lp), hh = lerp(80, 48, lp), A = 36, l = 960 - hw, r = 960 + hw, tp = 510 - hh, b = 510 + hh;
+  E.lock.setAttribute('d', `M${l} ${tp + A}V${tp}H${l + A}M${r - A} ${tp}H${r}V${tp + A}M${r} ${b - A}V${b}H${r - A}M${l + A} ${b}H${l}V${b - A}`);
+  S(E.lock, { opacity: t >= LK ? 1 : 0, stroke: t < FL ? M : G });
+  E.ret.setAttribute('transform', `translate(${rx} ${ry}) scale(${1 - .5 * lp})`); E.ret.style.opacity = rv;
+  E.rr.setAttribute('transform', `rotate(${t * 140})`);
+  E.band.setAttribute('y', ry - 22); E.band.style.opacity = rv;
+
+  // proof: stopwatch counts up to 00:00:07, flashing on every tick
+  const cp = seg(t, C0, C1), ph = cp * 7.999 % 1, colon = cp === 0 && Math.floor(t * 2) % 2 ? ' ' : ':';
+  E.tm.textContent = t < 3.6 ? '' : `00${colon}00${colon}0${Math.floor(cp * 7.999)}`;
+  S(E.tm, { opacity: cp > 0 ? 1 : .5, color: cp > 0 && cp < 1 && ph < .3 ? '#D8FFE6' : G, transform: `scale(${1 + bump(seg(t, C1, C1 + .3)) * .05})` });
+  S(E.smp, { opacity: seg(t, 3.6, 3.9), transform: `translateY(${(1 - eo(seg(t, 3.6, 3.9))) * 20}px)` });
+  S(E.tc, { opacity: seg(t, C0, C0 + .4), transform: `translateY(${(1 - eo(seg(t, C0, C0 + .4))) * 30}px)` });
+  const fade = 1 - seg(t, 6.95, 7.2); S(E.hudc, { opacity: fade }); S(E.fxh, { opacity: fade });
+
+  // end card: Sleep. slams in, the rest decodes, cursor and seal keep moving
+  const su = t - 7.25;
+  S(E.sl, { opacity: su > 0 ? 1 : 0, transform: `scale(${su > 0 ? 2.3 - 1.3 * eo(clamp(su / .14)) : 1})` });
+  E.wk.textContent = dec('We watch.', seg(t, 7.55, 8.05), f, 5);
+  E.dm.textContent = dec('yourbrand.com', seg(t, 7.9, 8.4), f, 7);
+  S(E.cu, { display: t > 8.4 && Math.floor(t * 2.5) % 2 === 0 ? 'block' : 'none' });
+  S(E.ul, { width: 500 * eo(seg(t, 8.2, 8.5)) + 'px' });
+  S(E.seal, { opacity: eo(seg(t, 7.3, 7.9)) * .9 }); E.sr.setAttribute('transform', `rotate(${t * 18})`);
+}
+window.render = render;
+window.ready = Promise.all([document.fonts.load('400 40px "JetBrains Mono"'), document.fonts.load('400 40px "Archivo Black"'), document.fonts.ready]).then(() => render(0));
+</script></body></html>

@@ -1,6 +1,6 @@
 ---
 name: brag-styles
-description: Twenty-two art-directed visual systems for launch videos, each with a signature motion trick and a matching sound palette. The general sets are doodle, ops desk (a bento board operated by a cursor), brutal bento (a loud neo-brutalist intro with rooms inside tiles), kinetic type, quant terminal, riso zine, blueprint, stop-motion collage, newsprint, arcade, receipt, transit map, title sequence and museum placard. The royal sets are Mughal court, Jaipur block print, Versailles, illuminated manuscript, Forbidden City, Ottoman firman, Byzantine mosaic and Maharaja Deco. It recommends a set and waits for a pick when asked for options; it builds straight away when told to. Use when /brag-slim gets --style, when the user asks for style options or a recommendation, when they name a look ("make it royal", "like a newspaper", "arcade style"), or when a video needs a stronger identity than the project's own UI.
+description: Thirty-four art-directed visual systems for launch videos, each with a signature motion trick and a matching sound palette. It covers the design styles people ask for by name: claymorphism, glassmorphism, neumorphism, neo-brutalism, bento grid, Swiss and minimal, luxury typography, editorial, cybercore, synthwave, Y2K, pixel art, scrapbook, surreal, ethereal, bohemian, wabi-sabi and sketch. It also has doodle, kinetic type, quant terminal, riso zine, blueprint, receipt, transit map, title sequence, museum placard and eight royal sets from Mughal court to Versailles. It recommends a set and waits for a pick when asked for options; it builds straight away when told to. Use when /brag-slim gets --style, when the user asks for style options or a recommendation, when they name a look or a design style ("make it glassmorphism", "like a newspaper", "royal"), or when a video needs a stronger identity than the project's own UI.
 ---
 
 # brag-styles
@@ -15,6 +15,18 @@ sets the pacing.
 | `ops-desk` | Ops Desk | B2B tools, services and automation, dashboards; a demo that is operated on screen |
 | `brutal-bento` | Brutal Bento | personal intros, creators, developer tools, hiring posts; loud, funny, ends on a QR code |
 | `kinetic-type` | Kinetic Type | a script with no footage, hooks, opinions, vertical video for phones |
+| `swiss-grid` | Swiss Grid | B2B, finance, data products, reports; Swiss design and minimalism |
+| `cyber-core` | Cyber Core | security, developer tools, AI infrastructure; cybercore |
+| `glass-layers` | Glass Layers | consumer fintech, AI products, mobile apps; glassmorphism |
+| `clay-toys` | Clay Toys | consumer apps, onboarding, education, family products; claymorphism |
+| `soft-press` | Soft Press | hardware, smart home, control panels; neumorphism |
+| `y2k-chrome` | Y2K Chrome | fashion, music, Gen Z apps, creator drops |
+| `synthwave-drive` | Synthwave Drive | music, games, creator drops, retro tech |
+| `luxe-type` | Luxe Type | fashion, fragrance, jewellery, hotels; luxury typography |
+| `dream-logic` | Dream Logic | art, fashion, creative studios, concept announcements; surrealism |
+| `ethereal-haze` | Ethereal Haze | wellness, beauty, meditation, weddings |
+| `boho-market` | Boho Market | travel, handmade goods, cafes, festivals; bohemian |
+| `wabi-sabi` | Wabi-Sabi | craft, ceramics, wellness, a founder's story |
 | `exchange-floor` | Exchange Floor | fintech, data tools, dev infrastructure, anything with real metrics |
 | `riso-zine` | Riso Zine | indie apps, creative tools, community products, anything with personality |
 | `patent-office` | Patent Office | hardware, APIs, developer tools, anything architectural |
@@ -34,6 +46,36 @@ sets the pacing.
 | `byzantine-gold` | Byzantine Gold | community and social products, "built piece by piece" stories, data made of many parts |
 | `maharaja-deco` | Maharaja Deco | premium launches, hospitality and finance, anything glamorous with rigour |
 
+## Design styles by name
+
+When the request names a design style, this is the set. Say which in one line, then build.
+
+| Asked for | Set |
+|---|---|
+| claymorphism | `clay-toys` |
+| glassmorphism | `glass-layers` |
+| neumorphism (also written neomorphism) | `soft-press` |
+| neo-brutalism | `brutal-bento` |
+| bento grid | `ops-desk` for a calm demo, `brutal-bento` for a loud one |
+| Swiss design, minimalism | `swiss-grid` (`museum-placard` for a gallery feel) |
+| editorial design | `extra-extra` |
+| luxury typography | `luxe-type` |
+| maximalism | `court-of-versailles` or `maharaja-deco` |
+| cybercore, cyberpunk | `cyber-core` |
+| synthwave | `synthwave-drive` |
+| Y2K | `y2k-chrome` |
+| pixel art | `insert-coin` |
+| scrapbook | `stop-motion-collage` |
+| conceptual sketch | `doodle` (`patent-office` for technical drawings) |
+| surrealism | `dream-logic` |
+| ethereal | `ethereal-haze` |
+| bohemian | `boho-market` |
+| wabi-sabi | `wabi-sabi` |
+
+For business buyers, lead with `swiss-grid`, `ops-desk` or `exchange-floor`. `glass-layers`,
+`soft-press`, `clay-toys`, `y2k-chrome`, `ethereal-haze` and `boho-market` are consumer looks: if
+one is asked for on a B2B pitch, say so in one line, then build what was asked for.
+
 ## Choosing: recommend first, build second
 
 Work out which mode the request is in before doing anything else.
@@ -41,6 +83,7 @@ Work out which mode the request is in before doing anything else.
 | The user… | Do this |
 |---|---|
 | names a set (`--style <slug>`, "the receipt one") | Use it. Say which in one line, then build. |
+| names a design style ("glassmorphism", "Swiss", "Y2K") | Use the set in "Design styles by name". Say which in one line, then build. |
 | names a vibe ("royal", "retro", "like a newspaper") | Map it to the closest set, say which in one line, then build. |
 | asks for options in any wording: options, choices, suggestions, "which style/look?", "what would work?", "show me looks", `--style options` | **Recommend, then stop.** Present the options below and wait for their pick. Build nothing. |
 | says to go straight ahead ("just make it", "create it directly", "your call", `--style auto`) | Pick the recommended set, say which and why in one line, then build. |
@@ -59,7 +102,7 @@ Give each option one line: its name, its signature move, and why it fits. End wi
 "Which one? (or say 'go' for the recommendation)". When the user picks, build with that set.
 Don't ask again.
 
-**Reading the fit.** Numbers-heavy fintech, data or infrastructure → `exchange-floor`,
+**Reading the fit.** Enterprise, finance or anything that must look exact → `swiss-grid`. Security or developer infrastructure → `cyber-core`. Numbers-heavy fintech, data or infrastructure → `exchange-floor`,
 `the-receipt`, `patent-office`. A workflow or pipeline → `transit-map`, `patent-office`.
 A pitch, service or explainer → `doodle`. A product or service whose value is something broken now working → `ops-desk`. A person introducing themselves, loudly → `brutal-bento`. A script and nothing else → `kinetic-type`. Consumer, with personality → `riso-zine`,
 `stop-motion-collage`, `insert-coin`. A big announcement → `extra-extra`, `sultans-firman`,

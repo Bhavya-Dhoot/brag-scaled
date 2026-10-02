@@ -1,0 +1,173 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; }
+#stage { position:absolute; inset:0; overflow:hidden; background:#F7F1E5; }
+div, svg, i { position:absolute; }
+.f { left:0; top:0; width:1920px; height:1080px; }
+/* the desert: sky, clouds, moon, haze */
+#world { transform-origin:1290px 665px; }
+#sky { left:0; top:0; width:1920px; height:700px; background:linear-gradient(#7FA6C9,#F2C6A0); }
+#clouds i { left:0; top:0; height:30px; border-radius:15px; background:rgba(242,198,160,.6); }
+.haze { left:0; top:690px; width:1920px; height:120px; background:linear-gradient(#F2C6A0,rgba(242,198,160,0)); }
+/* the door and its leaf */
+#door { left:1205px; top:500px; width:170px; height:330px; }
+#frame { inset:0; background:#F7F1E5; border:3px solid #12343B; box-shadow:11px 0 0 #CDB894, 14px 0 0 #12343B; }
+#hole { left:14px; top:14px; width:142px; height:302px; background:#F4DEC6; }
+#leaf { left:14px; top:14px; width:142px; height:302px; background:#E4572E; transform-origin:0 50%; overflow:hidden; }
+.pn { left:20px; width:102px; border:3px solid rgba(18,52,59,.38); }
+#knob { right:14px; top:150px; width:16px; height:16px; border-radius:50%; background:#F7F1E5; }
+#lite { inset:0; background:linear-gradient(90deg,rgba(18,52,59,.4),rgba(247,241,229,.3)); }
+/* the floating notebook */
+#note { left:0; top:0; width:160px; height:210px; background:#12343B; border-radius:8px 4px 4px 8px;
+  box-shadow:9px 9px 0 #E8D3B0, 9px 9px 0 3px #12343B; }
+#spine { left:0; top:0; width:20px; height:210px; background:#E4572E; border-radius:8px 0 0 8px; }
+#lbl { left:44px; top:26px; width:92px; height:8px; border-radius:4px; background:#E8D3B0; }
+#tal i { top:78px; width:6px; height:58px; border-radius:3px; background:#F7F1E5; }
+/* type: hook, proof, end card */
+#hook { left:0; top:236px; width:1920px; text-align:center; white-space:nowrap;
+  font:italic 400 196px/1 'Instrument Serif'; color:#12343B; }
+#hook span, #h2 span { display:inline-block; }
+#proof { left:140px; top:170px; display:flex; align-items:center; gap:34px; color:#12343B; }
+#proof div { position:static; }
+#num { font:italic 400 300px/.85 'Instrument Serif'; transform-origin:0 50%; min-width:170px; }
+#cap { font:700 27px/1.5 'Inter'; letter-spacing:.2em; text-transform:uppercase; }
+#cap em { display:inline-block; font:700 18px/1 'Inter'; letter-spacing:.24em; background:#12343B; color:#F7F1E5;
+  padding:7px 12px; border-radius:2px; margin-top:16px; }
+#room { transform-origin:960px 540px; }
+#rsky { left:0; top:-700px; width:1920px; height:1400px; background:linear-gradient(#F7F1E5 0,#F7F1E5 700px,#F2C6A0 1390px); }
+#sun { left:1370px; top:0; width:260px; height:260px; border-radius:50%; background:#E4572E; }
+#end { left:0; top:250px; width:1920px; text-align:center; color:#12343B; }
+#h2 { position:static; font:italic 400 132px/1.05 'Instrument Serif'; white-space:nowrap; }
+#url { position:static; margin-top:40px; font:700 30px/1 'Inter'; letter-spacing:.3em; text-transform:uppercase; }
+#veil { background:#F7F1E5; }
+</style></head><body>
+<div id="stage">
+ <div id="world" class="f">
+  <div id="sky"></div>
+  <svg id="moon" width="600" height="600"><circle cx="300" cy="300" r="300" fill="#F7F1E5"/>
+   <g fill="#E8D3B0" opacity=".6"><circle cx="190" cy="210" r="56"/><circle cx="390" cy="340" r="84"/><circle cx="250" cy="450" r="36"/><circle cx="420" cy="165" r="30"/></g></svg>
+  <div id="clouds" class="f"><i style="width:340px"></i><i style="width:470px"></i><i style="width:280px"></i></div>
+  <svg class="f" viewBox="0 0 1920 1080"><rect y="690" width="1920" height="390" fill="#E8D3B0"/><path id="ta" fill="rgba(18,52,59,.82)"/></svg>
+  <div class="haze"></div>
+  <svg class="f" viewBox="0 0 1920 1080" fill="#07181c"><polygon id="s1"/><polygon id="s2"/></svg>
+  <div id="door"><div id="frame"></div><div id="hole"></div>
+   <div id="leaf"><div class="pn" style="top:22px;height:112px"></div><div class="pn" style="top:158px;height:124px"></div><div id="knob"></div><div id="lite"></div></div></div>
+  <div id="note"><div id="spine"></div><div id="lbl"></div><div id="tal"></div></div>
+ </div>
+ <div id="hook"></div>
+ <div id="proof"><div id="num">0</div><div id="cap">nights<br>written down<br><em>sample</em></div></div>
+ <div id="rc" class="f"><div id="room" class="f">
+  <div id="rsky"></div><div id="sun"></div>
+  <svg class="f" viewBox="0 0 1920 1080"><rect y="690" width="1920" height="390" fill="#E8D3B0"/><path id="tb" fill="rgba(18,52,59,.82)"/></svg>
+  <div class="haze"></div>
+  <div id="end"><div id="h2"></div><div id="url">yourbrand.com</div></div>
+ </div></div>
+ <div id="veil" class="f"></div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));                         // 0..1 progress between two times
+const eo = x => 1 - Math.pow(1 - x, 3);                                     // ease out: fast, then settles
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;          // ease in and out: for travel
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);   // overshoots, then settles
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);            // 0 -> 1 -> 0, for a pulse
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+window.DURATION = 10;
+// sound cues: a pad is the music's job; these are the chimes, the ticks and the whoosh through the door
+window.SFX = [{t:.3,type:'chime',x:0},{t:2.7,type:'whoosh',x:0},{t:4.8,type:'chime',x:0},{t:5.3,type:'click',x:.4},{t:6.0,type:'whoosh',x:0},{t:7.2,type:'chime',x:0}];
+for (let i = 0; i < 7; i++) SFX.push({t: 3.7 + i * 1.2 / 7, type:'tick', x:-.5});
+SFX.sort((a, b) => a.t - b.t);
+
+// words as spans, tally strokes as elements
+const words = (el, txt) => { el.innerHTML = txt.split(' ').map(w => '<span>' + w + '</span>').join(' '); return [...el.children]; };
+const hookW = words($('#hook'), 'Where does a day go?'), endW = words($('#h2'), 'Write it down before it leaves.');
+for (let i = 0; i < 7; i++) $('#tal').insertAdjacentHTML('beforeend', '<i style="left:' + (52 + 13 * i) + 'px"></i>');
+const tal = [...$('#tal').children], clouds = [...document.querySelectorAll('#clouds i')];
+
+// checkerboard floor in perspective: dark tiles only, sand shows through
+function tiles(el, z0) {
+  const S = 300, n = Math.floor(z0 / S), off = z0 - n * S, X = (x, z) => (960 + 900 * x / z).toFixed(1);
+  let d = '';
+  for (let k = 0; k < 30; k++) {
+    const za = 520 + k * S - off, zb = za + S, ya = (690 + 225000 / za).toFixed(1), yb = (690 + 225000 / zb).toFixed(1);
+    for (let j = -22; j < 22; j++) if ((j + k + n) & 1)
+      d += `M${X(j*S,za)} ${ya}L${X(j*S+S,za)} ${ya}L${X(j*S+S,zb)} ${yb}L${X(j*S,zb)} ${yb}Z`;
+  }
+  el.setAttribute('d', d);
+}
+tiles($('#ta'), 0);
+
+// camera: a slow push, then the dive through the door aperture
+const cam = t => { const e = eio(seg(t, 6, 7));
+  return { e, s: (1 + .05 * seg(t, 0, 6)) * Math.pow(14, e), cx: 1290 - 330 * e, cy: 665 - 125 * e }; };
+
+// a long shadow on the floor, leaning away from the moon
+const shade = (el, bx, by, w, h, mx, a) => {
+  const dx = (bx - mx) * .5 * h / 330, dy = .36 * h;
+  el.setAttribute('points', `${bx-w/2},${by} ${bx+w/2},${by} ${bx+w/2+dx},${by+dy} ${bx-w/2+dx},${by+dy}`);
+  el.setAttribute('opacity', a);
+};
+
+function render(t) {
+  const k = cam(t);
+  // the light: a moon too large, rising, then crossing the sky behind everything
+  const mx = lerp(420, 1560, eio(seg(t, 2.5, 6)));
+  const my = 700 - 160 * eo(seg(t, 0, 3.5)) - 50 * bump(seg(t, 2.5, 6));
+  $('#moon').style.transform = `translate(${mx - 300}px,${my - 300}px)`;
+  clouds.forEach((c, i) => c.style.transform =
+    `translate(${(rnd(i + 1) * 2400 + t * (24 + 11 * i)) % 2400 - 450}px,${150 + 105 * i + rnd(i + 7) * 50}px)`);
+
+  // the notebook: sits, then gravity lets go of it, and it counts the nights on its cover
+  const lift = eo(seg(t, 2.7, 3.9)), ph = (t - 3.7) * 7 / 1.2, n = Math.ceil(7 * seg(t, 3.7, 4.9));
+  const pul = ph > 0 && ph < 7 ? bump(ph % 1 / .7) : 0;
+  const ny = 755 - 370 * lift + Math.sin(t * 2.1) * 16 * lift, rot = (Math.sin(t * 1.3) * 5 - 11) * lift;
+  $('#note').style.transform = `translate(800px,${ny - 105}px) rotate(${rot}deg) scale(${1 + pul * .05})`;
+  tal.forEach((b, i) => b.style.opacity = i < n ? 1 : 0);
+  shade($('#s1'), 1290, 830, 170, 330, mx, .5);
+  shade($('#s2'), 880 + (880 - mx) * .55 * lift, 858 + 22 * lift, 160, 210, mx, .5 - .22 * lift);
+
+  // the door: lit from the moon's side, then the leaf swings open
+  const a = 100 * eo(seg(t, 5.3, 5.9)), cosA = Math.max(0, Math.cos(a * Math.PI / 180));
+  $('#lite').style.transform = `scaleX(${clamp((mx - 1290) / 380, -1, 1)})`;
+  $('#leaf').style.transform = `scaleX(${cosA})`;
+  $('#world').style.display = t > 7.02 ? 'none' : 'block';
+  $('#world').style.transform = `translate(${k.cx - 1290}px,${k.cy - 665}px) scale(${k.s})`;
+
+  // the next scene shows only through the aperture, then fills the frame
+  const hw = 71 * k.s, hh = 151 * k.s, px = v => Math.max(0, v) + 'px';
+  $('#rc').style.clipPath = `inset(${px(k.cy - hh)} ${px(1920 - k.cx - hw)} ${px(1080 - k.cy - hh)} ${px(k.cx - hw + 2 * hw * cosA)})`;
+  $('#room').style.transform = `translate(${k.cx - 960}px,${k.cy - 540}px) scale(${Math.min(1, .28 * k.s)})`;
+  tiles($('#tb'), 40 * t);
+  $('#sun').style.transform = `translateY(${lerp(650, 510, eo(seg(t, 6.6, 10)))}px)`;
+
+  // hook: each word floats up out of the sand, hangs, then drifts off like the day
+  hookW.forEach((w, i) => {
+    const p = eo(seg(t, .15 + .2 * i, .95 + .2 * i)), q = eio(seg(t, 2.5 + .07 * i, 3.3 + .07 * i));
+    w.style.opacity = p * (1 - q);
+    w.style.transform = `translateY(${(1 - p) * 150 - q * 150 + Math.sin(t * 1.7 + i) * 7 - 12 * seg(t, 1, 2.5)}px)`;
+    w.style.filter = `blur(${(1 - p) * 10}px)`;
+  });
+
+  // proof: the count, the small word "sample", gone before the dive
+  const pi = eo(seg(t, 3.3, 3.9)), po = seg(t, 6, 6.3);
+  $('#proof').style.opacity = pi * (1 - po);
+  $('#proof').style.transform = `translateY(${(1 - pi) * 30 - po * 20}px)`;
+  $('#num').textContent = n;
+  $('#num').style.transform = `scale(${1 + pul * .08})`;
+
+  // end card: words rise in once we are through, the address last, then it only breathes
+  endW.forEach((w, i) => { const p = eo(seg(t, 7.05 + .14 * i, 7.75 + .14 * i));
+    w.style.opacity = p; w.style.transform = `translateY(${(1 - p) * 60}px)`; });
+  const u = eo(seg(t, 8, 8.5));
+  $('#url').style.opacity = u; $('#url').style.transform = `translateY(${(1 - u) * 20}px)`;
+  $('#end').style.transform = `translateY(${Math.sin(t * 1.2) * 3 * seg(t, 8.5, 9)}px)`;
+  $('#veil').style.opacity = 1 - eo(seg(t, 0, .5));
+}
+window.render = render;
+window.ready = Promise.all([document.fonts.load('italic 400 40px "Instrument Serif"'), document.fonts.load('700 30px "Inter"'),
+  document.fonts.ready]).then(() => render(0));
+</script></body></html>
