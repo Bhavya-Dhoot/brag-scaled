@@ -1,0 +1,11 @@
+/* Six open-licence families (SIL OFL 1.1, see OFL.txt), Latin subset, so a render never
+   depends on the network. Copy this folder beside the page and link fonts/fonts.css. */
+@font-face { font-family: 'Archivo Black'; font-weight: 400; font-display: block; src: url(ArchivoBlack-400.woff2) format('woff2'); }
+@font-face { font-family: 'Bricolage Grotesque'; font-weight: 800; font-display: block; src: url(BricolageGrotesque-800.woff2) format('woff2'); }
+@font-face { font-family: 'Instrument Serif'; font-weight: 400; font-style: normal; font-display: block; src: url(InstrumentSerif-400.woff2) format('woff2'); }
+@font-face { font-family: 'Instrument Serif'; font-weight: 400; font-style: italic; font-display: block; src: url(InstrumentSerif-400-italic.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 400; font-display: block; src: url(Inter-400.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 700; font-display: block; src: url(Inter-700.woff2) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 400; font-display: block; src: url(JetBrainsMono-400.woff2) format('woff2'); }
+@font-face { font-family: 'Space Grotesk'; font-weight: 500; font-display: block; src: url(SpaceGrotesk-500.woff2) format('woff2'); }
+@font-face { font-family: 'Space Grotesk'; font-weight: 700; font-display: block; src: url(SpaceGrotesk-700.woff2) format('woff2'); }

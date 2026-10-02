@@ -1,6 +1,6 @@
 ---
 name: narrate
-description: Offline voiceover for launch videos and explainers — a bundled Kokoro-82M TTS model turns a timed script into a narration track, reports each line's real duration so scenes can be fitted to the voice, and ducks the music under it. Use when /brag-slim runs with --voice or narration, or whenever a video needs a spoken track without a cloud TTS API or key.
+description: Offline voiceover for launch videos and explainers — a bundled Kokoro-82M TTS model turns a timed script into a narration track, reports each line's real duration so scenes can be fitted to the voice, and ducks the music under it. Also goes the other way: transcribe.py turns a recorded clip into word-by-word timings, so graphics can start on the exact spoken word. Use when /brag-slim runs with --voice or narration, whenever a video needs a spoken track without a cloud TTS API or key, and whenever graphics or captions must be synced to someone's own recording.
 ---
 
 # narrate
@@ -23,6 +23,9 @@ once (about 350 MB, SHA-256 checked) into `~/.cache/brag-scaled/kokoro`.
    rerun only moves audio.
 4. **Mix:** add `--music score.wav --mix final.wav`. The music is sidechain-ducked under
    the voice and brought back up between lines. Give `final.wav` to the render as its audio.
+
+## From speech to timings
+`python <skill-dir>/scripts/transcribe.py clip.mp4` writes `clip.words.json` and `clip.words.js` with every word's start and end, offline (it needs `pip install faster-whisper`, or uses `openai-whisper` if that is installed). `--find "forty a week"` prints when a phrase is spoken. Timings can be a few tenths of a second off: check the words you build on before placing a graphic on them. The `motion-kit` skill uses this for graphics over footage.
 
 ## Voices
 `--list-voices` prints all 54. Good defaults:

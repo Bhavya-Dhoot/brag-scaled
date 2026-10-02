@@ -1,6 +1,6 @@
 {
   "name": "brag-scaled",
-  "description": "You built it. Now brag. Launch videos with GPU rendering and offline narration.",
+  "description": "You built it. Now brag. Launch videos with GPU rendering, offline narration and a motion kit.",
   "owner": {
     "name": "Bhavya Dhoot",
     "url": "https://github.com/Bhavya-Dhoot"
@@ -9,7 +9,7 @@
     {
       "name": "brag-scaled",
       "source": "./",
-      "description": "Turn the current project into a short, shareable launch video; renders on the GPU in parallel."
+      "description": "Turn a project, a script, screenshots or a recorded clip into a short, shareable video; renders on the GPU in parallel."
     }
   ]
 }

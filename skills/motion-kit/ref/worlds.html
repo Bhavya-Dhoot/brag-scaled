@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Eight rooms: one short world per style, joined by zoom-through dives, one cursor acting in
+     every room, one beat under all of it. Lift the dive (render), the cursor (CUR, HOLD, CLK)
+     and any single room; the copy is one person's intro, so replace every word. -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Permanent+Marker&family=Special+Elite&family=Fredoka:wght@500;600;700&family=Press+Start+2P&family=JetBrains+Mono:wght@500;700;800&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,500&family=Playfair+Display:ital,wght@0,900;1,700&display=block" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:#0b0b0b; }
+  #stage { position:absolute; inset:0; overflow:hidden; }
+  .world { position:absolute; inset:0; overflow:hidden; display:none; transform-origin:50% 50%; will-change:transform, opacity; }
+  .ab { position:absolute; }
+  .grain { position:absolute; inset:0; pointer-events:none; mix-blend-mode:multiply; opacity:.5; }
+  #cursor { position:absolute; left:0; top:0; width:64px; height:64px; z-index:300; transform-origin:8px 5px; }
+  #ring { position:absolute; left:0; top:0; width:10px; height:10px; margin:-5px; border:5px solid #fff; outline:2px solid #111; border-radius:50%; z-index:299; opacity:0; }
+  #cap { position:absolute; left:0; right:0; bottom:40px; text-align:center; z-index:290; }
+  #cap span { display:inline-block; font:800 38px Archivo; padding:11px 28px 13px; background:#0b0b0b; color:#fff; border-radius:14px; border:2px solid rgba(255,255,255,.25); }
+  .cf { position:absolute; left:0; top:0; width:16px; height:16px; z-index:280; opacity:0; }
+
+  /* 1 scrapbook */
+  #scrap { background:#cdb58c; }
+  #scrap .paper { background:#f6f0e2; box-shadow:4px 6px 0 rgba(60,40,10,.18); }
+  #s_pola { width:420px; padding:20px 20px 86px; background:#fbf8f0; box-shadow:8px 12px 0 rgba(60,40,10,.22); }
+  #s_pola img { display:block; width:380px; height:400px; object-fit:cover; object-position:50% 14%; }
+  #s_pola b { position:absolute; left:0; right:0; bottom:18px; text-align:center; font:400 40px 'Permanent Marker'; color:#222; }
+  .tape { width:190px; height:54px; background:rgba(255,224,102,.88); box-shadow:0 2px 0 rgba(0,0,0,.08); }
+  .strip { font:400 54px 'Special Elite'; color:#1c1a17; background:#f6f0e2; padding:18px 30px 10px; white-space:nowrap; box-shadow:4px 6px 0 rgba(60,40,10,.18); transform-origin:left center; }
+  /* 2 clay */
+  #clay { background:linear-gradient(160deg,#ffe0cf,#ffd0e0 55%,#d8ecff); font-family:Fredoka; }
+  .ck { border-radius:44px; display:flex; align-items:center; justify-content:center; text-align:center; font:600 35px Fredoka; color:#4a3b36; line-height:1.05; padding:0 20px;
+        box-shadow:inset -10px -14px 24px rgba(0,0,0,.13), inset 10px 14px 24px rgba(255,255,255,.75), 0 26px 30px -14px rgba(140,80,50,.4); }
+  .cblob { border-radius:50%; box-shadow:inset -18px -24px 40px rgba(0,0,0,.1), inset 18px 24px 40px rgba(255,255,255,.7); }
+  /* 3 pixel */
+  #pixel { background:#1a1c2c; font-family:'Press Start 2P'; color:#f4f4f4; image-rendering:pixelated; }
+  .px { box-shadow:0 -8px 0 0 #f4f4f4, 0 8px 0 0 #f4f4f4, -8px 0 0 0 #f4f4f4, 8px 0 0 0 #f4f4f4; }
+  /* 4 cyber */
+  #cyber { background:#020806; font-family:'JetBrains Mono'; color:#00ff9c; }
+  #cyber .scan { position:absolute; inset:0; background:repeating-linear-gradient(rgba(0,0,0,0) 0 3px, rgba(0,0,0,.35) 3px 5px); pointer-events:none; z-index:5; }
+  /* 5 synth */
+  #synth { background:linear-gradient(#0d0221 0%, #2b0a4f 34%, #7a1a7a 47%, #ff3cac 52%, #0d0221 52.1%); font-family:'JetBrains Mono'; color:#fff; }
+  .gate { position:absolute; left:810px; top:320px; width:300px; height:420px; border:12px solid #00e5ff; border-bottom:0; border-radius:150px 150px 0 0; transform-origin:50% 57%; box-shadow:0 0 0 4px rgba(255,60,172,.9); }
+  /* 6 wabi */
+  #wabi { background:#e6dfd0; color:#2b2a27; }
+  /* 7 brutal */
+  #brut { background:#ffd60a; font-family:Archivo; color:#0b0b0b; }
+  .bb { border:6px solid #0b0b0b; box-shadow:12px 12px 0 #0b0b0b; background:#fff; }
+  /* 8 end */
+  #end { background:#0b0b0b; color:#f3ecdc; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <svg width="0" height="0" style="position:absolute"><filter id="gn"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .33  0 0 0 0 .25  0 0 0 .3 0"/></filter>
+    <filter id="brush" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="3" seed="8"/><feDisplacementMap in="SourceGraphic" scale="14"/></filter></svg>
+
+  <div class="world" id="scrap">
+    <svg class="grain" width="1920" height="1080"><rect width="1920" height="1080" filter="url(#gn)"/></svg>
+    <div class="ab paper" style="left:880px;top:90px;width:930px;height:230px;transform:rotate(-2deg);clip-path:polygon(0 4%,6% 0,22% 5%,41% 0,63% 4%,82% 0,100% 6%,98% 96%,80% 100%,58% 95%,37% 100%,15% 96%,2% 100%)"></div>
+    <div class="ab" id="s_hi" style="left:930px;top:130px;font:400 124px 'Permanent Marker';color:#1c1a17;white-space:nowrap;transform:rotate(-2deg)">hi. I'm Bhavya.</div>
+    <div class="ab strip" id="s_col" style="left:960px;top:370px;transform:rotate(1.5deg)"><span id="s_hl" style="position:absolute;left:14px;right:14px;top:36px;height:40px;background:#ffe066;z-index:-1;transform-origin:left"></span><span style="position:relative">STILL IN COLLEGE</span></div>
+    <div class="ab" id="s_colN" style="left:1520px;top:462px;font:400 38px 'Permanent Marker';color:#1c1a17;transform:rotate(-4deg)">(true.)</div>
+    <div class="ab strip" id="s_badge" style="left:1000px;top:560px;transform:rotate(2deg)">BIG-COMPANY BADGE</div>
+    <div class="ab strip" id="s_yrs" style="left:920px;top:738px;transform:rotate(-1.5deg)">10 YEARS OF EXPERIENCE</div>
+    <svg class="ab" width="1920" height="1080" style="left:0;top:0;pointer-events:none">
+      <path id="s_x1" d="M985 632 C 1150 590, 1300 650, 1470 600 S 1640 610 1690 592" fill="none" stroke="#e03131" stroke-width="16" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1"/>
+      <path id="s_x2" d="M905 800 C 1100 770, 1300 820, 1500 780 S 1700 790 1760 772" fill="none" stroke="#e03131" stroke-width="16" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1"/>
+    </svg>
+    <div class="ab" id="s_so" style="left:170px;top:800px;font:400 78px 'Permanent Marker';color:#1c1a17;white-space:nowrap;transform-origin:left center">so what DO I have?  ↓</div>
+    <div class="ab" id="s_pola"><img src="photo.svg"><b>me. no filter.</b></div>
+    <div class="ab tape" id="s_t1" style="left:150px;top:150px"></div><div class="ab tape" id="s_t2" style="left:470px;top:650px"></div>
+  </div>
+
+  <div class="world" id="clay">
+    <div class="ab cblob" style="left:-120px;top:-160px;width:520px;height:520px;background:#ffc9b5"></div>
+    <div class="ab cblob" style="left:1560px;top:720px;width:560px;height:560px;background:#c9e4ff"></div>
+    <div class="ab" style="left:200px;top:92px;font:700 150px Fredoka;color:#4a3b36;letter-spacing:-.02em;text-shadow:0 8px 0 rgba(255,255,255,.7), 0 18px 24px rgba(140,80,50,.25)"><span id="c_n">0</span> tools.</div>
+    <div class="ab" id="c_sub" style="left:210px;top:286px;font:500 44px Fredoka;color:#7a655d">built inside one food business</div>
+    <div id="c_keys"></div>
+    <div class="ab ck" id="c_tog" style="left:560px;top:812px;width:230px;height:104px;border-radius:60px;background:#f1e3dc;padding:0"><i id="c_knob" class="ck" style="position:absolute;left:10px;top:10px;width:84px;height:84px;border-radius:50%;background:#fff"></i></div>
+    <div class="ab" id="c_live" style="left:830px;top:812px;font:700 92px Fredoka;color:#2f9e6b;text-shadow:0 6px 0 rgba(255,255,255,.7);transform-origin:left center">7+ live</div>
+  </div>
+
+  <div class="world" id="pixel">
+    <div class="ab" style="left:120px;top:110px;font-size:40px;color:#94b0c2">COMMITS, BY HAND</div>
+    <div class="ab" id="p_n" style="left:112px;top:190px;font-size:230px;color:#ffcd75;letter-spacing:-.06em">000</div>
+    <div id="p_weeks"></div>
+    <div class="ab" id="p_sprite" style="left:1540px;top:262px;z-index:6"></div>
+    <div class="ab" style="left:120px;top:520px;font-size:22px;color:#94b0c2">XP</div>
+    <div id="p_bar" class="ab" style="left:120px;top:560px"></div>
+    <div class="ab px" id="p_btn" style="left:620px;top:710px;width:680px;height:110px;background:#41a6f6;color:#1a1c2c;font-size:34px;display:flex;align-items:center;justify-content:center">HOLD TO COMMIT</div>
+    <div class="ab" id="p_lvl" style="left:0;right:0;top:168px;height:330px;line-height:330px;background:#1a1c2c;z-index:4;text-align:center;font-size:130px;color:#38b764;text-shadow:10px 10px 0 #1a1c2c, 14px 14px 0 #f4f4f4">LEVEL UP!</div>
+  </div>
+
+  <div class="world" id="cyber">
+    <div class="ab" id="y_rain" style="left:0;top:-1080px;width:1920px;height:3240px;font:500 30px 'JetBrains Mono';line-height:44px;color:#00ff9c;opacity:.13;white-space:pre;overflow:hidden"></div>
+    <div class="ab" id="y_big" style="left:0;right:0;top:250px;text-align:center;font:800 420px 'JetBrains Mono';letter-spacing:-.06em;color:#ff2bd6;opacity:0">FALSE</div>
+    <div class="scan"></div>
+    <div id="y_lines" class="ab" style="left:150px;top:130px;font-size:50px;font-weight:700;line-height:1.55"></div>
+    <div class="ab" id="y_btn" style="left:150px;top:420px;width:560px;height:96px;border:4px solid #00ff9c;font-size:38px;font-weight:800;display:flex;align-items:center;justify-content:center;letter-spacing:.06em">[ CHECK TWICE ]</div>
+    <div id="y_pass" class="ab" style="left:150px;top:570px;font-size:42px;font-weight:700;line-height:1.7"></div>
+    <div class="ab" id="y_ver" style="left:860px;top:330px;font:800 190px 'JetBrains Mono';letter-spacing:-.06em">VERIFIED</div>
+    <div class="ab" id="y_sub" style="left:872px;top:560px;font-size:34px;color:#00e5ff;font-weight:700">two passes · worked out separately</div>
+  </div>
+
+  <div class="world" id="synth">
+    <div class="ab" style="left:740px;top:150px;width:440px;height:440px;border-radius:50%;background:linear-gradient(#ffe066,#ff3cac 70%);-webkit-mask-image:repeating-linear-gradient(#000 0 34px, transparent 34px 44px), linear-gradient(#000 55%, transparent 55%);-webkit-mask-composite:source-over"></div>
+    <div class="ab" id="n_floor" style="left:-960px;top:562px;width:3840px;height:900px;transform-origin:50% 0;transform:perspective(520px) rotateX(64deg);background-image:linear-gradient(#ff3cac 4px, transparent 4px), linear-gradient(90deg, #ff3cac 4px, transparent 4px);background-size:120px 120px"></div>
+    <div id="n_gates"></div>
+    <div class="ab" id="n_hud" style="left:90px;top:70px;font-size:46px;font-weight:800;color:#00e5ff;text-shadow:3px 3px 0 #ff3cac">GATES <span id="n_cnt">0</span>/9</div>
+    <div class="ab" style="left:90px;top:136px;font-size:26px;font-weight:700;color:#ffe066">TRADING DESK · NSE</div>
+    <div class="ab" id="n_mode" style="left:1470px;top:62px;width:360px;height:96px;border:4px solid #00e5ff;border-radius:50px;background:rgba(13,2,33,.7)"><i id="n_mk" style="position:absolute;top:8px;width:72px;height:72px;border-radius:50%;background:#ffe066"></i><span id="n_mt" style="position:absolute;top:26px;font-size:32px;font-weight:800"></span></div>
+    <div class="ab" id="n_kill" style="left:720px;top:600px;width:480px;height:300px;border:5px solid #ffe066;border-radius:22px;background:rgba(13,2,33,.88);text-align:center">
+      <div style="font-size:30px;font-weight:800;color:#ffe066;margin-top:20px">KILL SWITCH</div>
+      <div style="position:absolute;left:220px;top:78px;width:40px;height:190px;border-radius:20px;background:#2b0a4f;border:3px solid #ffe066"></div>
+      <i id="n_lev" style="position:absolute;left:192px;width:96px;height:66px;border-radius:16px;background:#ff3cac;border:4px solid #fff"></i>
+      <div id="n_rdy" style="position:absolute;left:300px;top:150px;font-size:26px;font-weight:800;color:#00ff9c;text-align:left">READY ✓</div>
+    </div>
+  </div>
+
+  <div class="world" id="wabi">
+    <svg class="grain" width="1920" height="1080" style="opacity:.6"><rect width="1920" height="1080" filter="url(#gn)"/></svg>
+    <div class="ab" id="w_t" style="left:170px;top:130px;font:italic 400 92px 'Cormorant Garamond'">I give tools away.</div>
+    <div class="ab" id="w_tag" style="left:176px;top:310px;font:500 24px 'JetBrains Mono';letter-spacing:.2em;color:#8a8375">OPEN SOURCE · MIT</div>
+    <svg class="ab" width="1920" height="1080" style="left:0;top:0"><g filter="url(#brush)"><path id="w_line" d="M170 268 C 420 250, 660 290, 900 262 S 1020 268 1060 258" fill="none" stroke="#2b2a27" stroke-width="20" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1"/><path id="w_enso" d="M1290 250 C 1560 210, 1760 420, 1700 640 C 1640 860, 1360 930, 1160 800 C 980 680, 990 430, 1140 310 C 1190 272, 1250 252, 1320 248" fill="none" stroke="#2b2a27" stroke-width="38" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1"/></g></svg>
+    <div class="ab" id="w_cmd" style="left:176px;top:430px;font:500 46px 'JetBrains Mono';white-space:nowrap;overflow:hidden">$ noarb chain.csv</div>
+    <div class="ab" id="w_out" style="left:176px;top:510px;font:500 46px 'JetBrains Mono'"></div>
+    <div class="ab" id="w_key" style="left:176px;top:640px;width:230px;height:92px;border-radius:14px;background:#d6cdb9;border:2px solid #2b2a27;box-shadow:0 8px 0 #2b2a27;font:500 30px 'JetBrains Mono';display:flex;align-items:center;justify-content:center">enter ⏎</div>
+    <div class="ab" id="w_no" style="left:1205px;top:500px;width:420px;text-align:center;font:italic 500 84px 'Cormorant Garamond'">nothing.</div>
+    <div class="ab" id="w_why" style="left:176px;top:800px;font:italic 400 52px 'Cormorant Garamond';color:#55514a">not sure? it says nothing.</div>
+    <div class="ab" id="w_seal" style="left:1640px;top:770px;width:110px;height:110px;background:#b3261e;color:#e6dfd0;font:900 44px Archivo;display:flex;align-items:center;justify-content:center;border-radius:10px">BD</div>
+  </div>
+
+  <div class="world" id="brut">
+    <div class="ab" id="b_not" style="left:110px;top:70px;font:900 150px Archivo;letter-spacing:-.045em;white-space:nowrap;transform-origin:left center">NOT A PORTFOLIO.</div>
+    <svg class="ab" width="1920" height="300" style="left:0;top:0"><path id="b_x" d="M600 150 L1560 160" stroke="#e03131" stroke-width="26" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1" fill="none"/></svg>
+    <div class="ab" id="b_bld" style="left:110px;top:250px;font:900 200px Archivo;letter-spacing:-.05em;background:#0b0b0b;color:#ffd60a;padding:0 34px 14px;white-space:nowrap;transform-origin:left center">A BUILDER.</div>
+    <div class="ab bb" id="b_mach" style="left:780px;top:590px;width:380px;height:330px;background:#0b0b0b;color:#ffd60a;text-align:center"><div style="font:900 44px Archivo;margin-top:26px">BHAVYA</div><svg id="b_gear" width="170" height="170" viewBox="-100 -100 200 200" style="margin-top:16px"><g fill="none" stroke="#ffd60a" stroke-width="14"><circle r="52"/><circle r="18"/><path d="M0 -52V-92 M0 52V92 M-52 0H-92 M52 0H92 M-37 -37L-65 -65 M37 37L65 65 M-37 37L-65 65 M37 -37L65 -65"/></g></svg></div>
+    <div class="ab bb" id="b_in" style="left:120px;top:610px;width:360px;height:290px;z-index:3"><svg width="348" height="200" viewBox="0 0 348 200"><path d="M40 100 C 80 10, 140 190, 180 60 S 260 180, 300 80 S 120 20, 90 150 S 250 10, 280 160 S 60 60, 150 110" fill="none" stroke="#0b0b0b" stroke-width="9" stroke-linecap="round"/></svg><div style="font:900 32px Archivo;text-align:center">YOUR PROCESS</div><div style="font:800 18px 'JetBrains Mono';text-align:center;color:#e03131">LEAKING TIME + MONEY</div></div>
+    <div class="ab" id="b_arw" style="left:1180px;top:700px;font:900 110px Archivo">→</div>
+    <div class="ab bb" id="b_out" style="left:1330px;top:610px;width:470px;height:290px;background:#2fd47a;text-align:center"><div style="font:900 78px Archivo;margin-top:42px;letter-spacing:-.03em;line-height:.95">THE<br>RESULT ✓</div><div style="font:800 20px 'JetBrains Mono';margin-top:14px">CHECKED TWICE · KEEPS RUNNING</div></div>
+  </div>
+
+  <div class="world" id="end">
+    <img id="e_ph" src="photo.svg" class="ab" style="left:150px;top:130px;width:470px;height:640px;object-fit:cover;object-position:50% 14%;border:2px solid #f3ecdc">
+    <div class="ab" id="e_k" style="left:700px;top:150px;font:700 24px 'JetBrains Mono';letter-spacing:.3em;color:#ffd60a">FORWARD DEPLOYED ENGINEER · DUBAI</div>
+    <div class="ab" id="e_n" style="left:690px;top:200px;font:italic 700 210px 'Playfair Display';line-height:.88;letter-spacing:-.03em">Bhavya<br>Dhoot</div>
+    <div class="ab" id="e_r" style="left:700px;top:600px;width:1060px;height:2px;background:#f3ecdc;transform-origin:left"></div>
+    <div class="ab" id="e_c" style="left:700px;top:632px;font:500 34px 'JetBrains Mono';line-height:1.5">example.com<br>you@example.com</div>
+    <div class="ab" id="e_b" style="left:1420px;top:640px;width:340px;height:104px;border-radius:60px;background:#ffd60a;color:#0b0b0b;font:900 46px Archivo;display:flex;align-items:center;justify-content:center">say hi →</div>
+  </div>
+
+  <div id="ring"></div>
+  <svg id="cursor" viewBox="0 0 46 46"><path d="M6 4 L6 36 L15 28 L21 42 L27 39.5 L21 26 L33 26 Z" fill="#111" stroke="#fff" stroke-width="3.2" stroke-linejoin="round"/></svg>
+  <div id="cap"><span></span></div>
+</div>
+<script src="layout.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);
+let _s = 77; const rnd = () => (_s = (_s * 16807) % 2147483647) / 2147483647;
+const S = LAYOUT.scenes, B = LAYOUT.beat, SFX = [], sfx = (t, type, x) => SFX.push({ t, type, x });
+const T0 = id => S[id].t0, A = (id, f) => S[id].lines[0].t + S[id].lines[0].dur * f;
+const pop = (el, x, rot = 0) => { el.style.opacity = x > 0 ? 1 : 0; el.style.transform = `rotate(${rot}deg) scale(${(x <= 0 ? 0 : spring(x * 1.15)).toFixed(3)})`; };
+const slam = (el, x, rot = 0) => { el.style.opacity = x > 0 ? 1 : 0; el.style.transform = `rotate(${rot}deg) scale(${(2.4 - 1.4 * eo(clamp(x / .14))).toFixed(3)})`; };
+
+// cursor and confetti
+const CUR = [{ t: -1, d: 0, x: -120, y: 520 }], CLK = [], HOLD = [], BURST = [];
+const curTo = (t, x, y, d = .45) => CUR.push({ t, d, x, y });
+const click = t => { CLK.push(t); sfx(t, 'click'); };
+function cur(t) { let s = CUR[0]; for (const k of CUR.slice(1)) { if (t >= k.t + k.d) { s = k; continue; } if (t > k.t) { const p = eio((t - k.t) / k.d); return { x: s.x + (k.x - s.x) * p, y: s.y + (k.y - s.y) * p }; } break; } return s; }
+function burst(t, x, y, n, cols, pw = 1) {
+  const ps = []; for (let i = 0; i < n; i++) { const el = document.createElement('i'); el.className = 'cf'; el.style.background = cols[i % cols.length]; $('stage').append(el); const a = -Math.PI / 2 + (rnd() - .5) * 2.8; ps.push({ el, vx: Math.cos(a) * (260 + rnd() * 460) * pw, vy: Math.sin(a) * (320 + rnd() * 560) * pw, r: rnd() * 720 - 360 }); }
+  BURST.push({ t, x, y, ps }); sfx(t, 'confetti');
+}
+
+// ------------------------------------------------------------------ static builds
+const KEYS = ['Sales intel', 'Root-cause', 'Materials plan', 'Receipts', 'Production plan', 'Recipes', 'Ad monitor', 'HR notices', 'Runway', 'Volume'], KC = ['#ffb4a2', '#ffd98a', '#b5ead7', '#a8d8ff', '#ffc8dd'];
+$('c_keys').innerHTML = KEYS.map((n, i) => `<div class="ab ck" style="left:${210 + (i % 5) * 305}px;top:${405 + Math.floor(i / 5) * 195}px;width:280px;height:170px;background:${KC[i % 5]}">${n}</div>`).join('');
+const cks = [...$('c_keys').children];
+$('p_bar').innerHTML = [...Array(60)].map((_, i) => `<i style="position:absolute;left:${i * 28}px;top:0;width:22px;height:64px;background:#333c57"></i>`).join('');
+$('p_weeks').innerHTML = [...Array(6)].map((_, i) => `<div class="ab px" style="left:${1030 + i * 130}px;top:130px;z-index:6;width:92px;height:92px;font-size:22px;display:flex;align-items:center;justify-content:center;background:#333c57">W${i + 1}</div>`).join('');
+const pbs = [...$('p_bar').children], pws = [...$('p_weeks').children];
+const SPR = ['..hhhhhhhh..', '.hhhhhhhhhh.', '.hhsssssshh.', '.hssssssssh.', '.gggssgggss.', '.gegssgegss.', '.gggssgggss.', '.ssssssssss.', '..sssmmsss..', '...ssssss...', '..bbbbbbbb..', '.bbbbbbbbbb.'], SPC = { h: '#566c86', s: '#f4c9a0', g: '#f4f4f4', e: '#1a1c2c', m: '#b13e53', b: '#41a6f6' };
+$('p_sprite').innerHTML = SPR.map((r, y) => [...r].map((c, x) => c === '.' ? '' : `<i style="position:absolute;left:${x * 20}px;top:${y * 20}px;width:20px;height:20px;background:${SPC[c]}"></i>`).join('')).join('');
+const YL = [['> trust(numbers)', 'False', 0], ['> trust(yours)', 'False', .3], ['> trust(mine)', 'False', .46]];
+$('y_lines').innerHTML = YL.map(([a, b]) => `<div><span class="yq" style="display:inline-block;white-space:nowrap;overflow:hidden;vertical-align:bottom">${a}</span> <span class="ya" style="color:#ff2bd6">${b}</span></div>`).join('');
+$('y_pass').innerHTML = ['PASS 1', 'PASS 2'].map(n => `<div>${n} <span class="yb" style="display:inline-block;width:300px;height:30px;border:3px solid #00ff9c;vertical-align:middle;margin:0 18px"><i style="display:block;height:100%;background:#00ff9c;width:0"></i></span><span class="yr">1,204 ✓</span></div>`).join('');
+{ let r = ''; for (let y = 0; y < 74; y++) { for (let x = 0; x < 30; x++) r += ((x * 7919 + y * 104729) % 9973 % 2 ? '1,204' : (x + y) % 5 ? '1,187' : '  ?  ') + '   '; r += String.fromCharCode(10); } $('y_rain').textContent = r; }
+const yqs = [...document.querySelectorAll('.yq')], yas = [...document.querySelectorAll('.ya')], ybs = [...document.querySelectorAll('.yb i')], yrs = [...document.querySelectorAll('.yr')];
+$('n_gates').innerHTML = [...Array(9)].map((_, i) => `<div class="gate"><span style="position:absolute;left:0;right:0;top:-70px;text-align:center;font-size:44px;font-weight:800;color:#ffe066">${i + 1}</span></div>`).join('');
+const gates = [...$('n_gates').children];
+
+// ------------------------------------------------------------------ timeline (absolute seconds, screen pixels)
+{ // scrapbook: slap the photo down, cross out what he is not
+  HOLD.push([.1, .62]); curTo(.1, 400, 430, .5); sfx(.1, 'whoosh'); sfx(.62, 'thud'); sfx(.7, 'pop', 0); sfx(.8, 'pop', 1); curTo(.7, 760, 520, .4);
+  sfx(A('scrap', 0), 'scribble', .6); sfx(A('scrap', .2), 'pop', 2);
+  sfx(A('scrap', .46), 'pop', 1); curTo(A('scrap', .46), 990, 640, .35); HOLD.push([A('scrap', .56), A('scrap', .68)]); curTo(A('scrap', .56), 1690, 600, S.scrap.lines[0].dur * .12); sfx(A('scrap', .56), 'scribble', .5);
+  sfx(A('scrap', .74), 'pop', 0); curTo(A('scrap', .74), 910, 808, .3); HOLD.push([A('scrap', .83), A('scrap', .95)]); curTo(A('scrap', .83), 1760, 780, S.scrap.lines[0].dur * .12); sfx(A('scrap', .83), 'scribble', .5); }
+const TAPS = KEYS.map((_, k) => A('clay', .03) + k * .25);
+{ TAPS.forEach((t, k) => { curTo(t - .17, 350 + (k % 5) * 305, 510 + Math.floor(k / 5) * 195, .15); click(t); sfx(t, 'pop', k); });
+  curTo(A('clay', .7), 610, 866, .4); click(A('clay', .8)); sfx(A('clay', .8) + .1, 'success', 2); burst(A('clay', .8) + .12, 1000, 850, 22, ['#ffb4a2', '#ffd98a', '#b5ead7', '#a8d8ff', '#fff']); }
+const pH0 = A('pixel', .12), pH1 = A('pixel', .93);
+{ curTo(T0('pixel') + .05, 960, 772, .45); HOLD.push([pH0, pH1]); sfx(pH0, 'click'); for (let k = 0; k < 24; k++) sfx(pH0 + (pH1 - pH0) * k / 24, 'tick', k); sfx(pH1 + .05, 'success', 3); burst(pH1 + .05, 960, 420, 40, ['#38b764', '#ffcd75', '#41a6f6', '#f4f4f4', '#b13e53'], 1.3); }
+{ YL.forEach(([a, b, f]) => { sfx(A('cyber', f), 'type', .4); sfx(A('cyber', f) + .45, 'alert'); }); curTo(A('cyber', .5), 440, 472, .5); click(A('cyber', .66)); for (let k = 0; k < 8; k++) sfx(A('cyber', .68) + k * .09, 'tick', k); sfx(A('cyber', .93), 'success', 4); sfx(A('cyber', .93), 'glitch'); }
+const gT = k => A('synth', .5) + k * S.synth.lines[0].dur * .03;
+{ curTo(A('synth', .12), 1660, 114, .5); click(A('synth', .36)); sfx(A('synth', .36), 'pop', 2); sfx(A('synth', .46), 'whoosh'); for (let k = 0; k < 9; k++) sfx(gT(k) + .22, 'tick', k + 2);
+  curTo(A('synth', .78), 960, 700, .4); HOLD.push([A('synth', .9), A('synth', 1)]); curTo(A('synth', .9), 960, 830, S.synth.lines[0].dur * .08); sfx(A('synth', .98), 'thud'); sfx(A('synth', .98), 'success', 1); }
+{ sfx(A('wabi', .3), 'type', .5); curTo(A('wabi', .3), 300, 690, .5); click(A('wabi', .43)); sfx(A('wabi', .46), 'brush', 2); sfx(A('wabi', .9), 'thud'); }
+{ sfx(A('brut', 0), 'thud'); curTo(A('brut', .02), 600, 160, .35); HOLD.push([A('brut', .08), A('brut', .15)]); curTo(A('brut', .08), 1560, 168, S.brut.lines[0].dur * .07); sfx(A('brut', .08), 'scribble', .5); sfx(A('brut', .2), 'thud');
+  sfx(A('brut', .38), 'pop', 0); curTo(A('brut', .4), 300, 760, .5); HOLD.push([A('brut', .54), A('brut', .68)]); sfx(A('brut', .54), 'click'); curTo(A('brut', .54), 970, 760, S.brut.lines[0].dur * .14); sfx(A('brut', .68), 'thud');
+  for (let k = 0; k < 8; k++) sfx(A('brut', .69) + k * .1, 'tick', k); sfx(A('brut', .84), 'success', 5); burst(A('brut', .84), 1560, 620, 40, ['#0b0b0b', '#fff', '#2fd47a', '#e03131'], 1.4); curTo(A('brut', .8), 1500, 960, .5); }
+const tHi = A('end', 1) + .25;
+{ curTo(T0('end') + .1, 1590, 700, .7); click(tHi); sfx(tHi, 'final'); burst(tHi + .05, 1590, 660, 60, ['#ffd60a', '#f3ecdc', '#fff'], 1.6); curTo(tHi + .6, 1720, 900, .8); }
+LAYOUT.order.slice(1).forEach(id => sfx(T0(id) - .2, 'dive'));
+
+// ------------------------------------------------------------------ per-world updates (u = seconds since the world began)
+const U = {
+  scrap(u, t, at) { const c = cur(t), drag = t >= .1 && t < .62, p = $('s_pola');
+    const px = drag ? c.x - 200 : t < .1 ? -520 : 200, py = drag ? c.y - 260 : 170;
+    p.style.left = px + 'px'; p.style.top = py + 'px'; p.style.transform = `rotate(${drag ? -12 + 7 * seg(t, .1, .62) : -5}deg) scale(${1 + bump((t - .62) / .25) * .05})`;
+    pop($('s_t1'), t - .7, -32); pop($('s_t2'), t - .8, 24);
+    const h = $('s_hi'), hp = seg(u, at(0), at(.12) + .25); h.style.clipPath = `inset(-20% ${(1 - hp) * 100}% -20% 0)`;
+    pop($('s_col'), u - at(.2), 1.5); $('s_hl').style.transform = `scaleX(${eo(seg(u, at(.28), at(.36)))})`; pop($('s_colN'), u - at(.34), -4);
+    pop($('s_badge'), u - at(.46), 2); $('s_x1').style.strokeDashoffset = 1 - seg(u, at(.56), at(.68)); $('s_badge').style.opacity = u > at(.46) ? 1 - .45 * seg(u, at(.66), at(.7)) : 0;
+    pop($('s_so'), u - at(.99), -3); pop($('s_yrs'), u - at(.74), -1.5); $('s_x2').style.strokeDashoffset = 1 - seg(u, at(.83), at(.95)); $('s_yrs').style.opacity = u > at(.74) ? 1 - .45 * seg(u, at(.93), at(.97)) : 0; },
+  clay(u, t, at) { let n = 0; cks.forEach((k, i) => { const x = t - TAPS[i]; if (x >= 0) n++; const rip = t > TAPS[9] + .3 && t < A('clay', .8) ? Math.max(0, Math.sin((t - TAPS[9]) * 7 - i * .7)) * .5 : 0, sq = bump(x / .22) + rip; k.style.transform = `translateY(${sq * 12}px) scale(${1 - sq * .05},${1 - sq * .16})`; k.style.filter = x >= 0 ? 'saturate(1.25)' : 'saturate(.55) brightness(1.04)'; });
+    $('c_n').textContent = n; $('c_n').style.display = 'inline-block'; $('c_n').style.transform = `scale(${1 + Math.max(...TAPS.map(a => bump((t - a) / .2))) * .14})`;
+    $('c_sub').style.opacity = seg(u, at(.4), at(.46));
+    const on = eo(seg(u, at(.8), at(.8) + .2)); $('c_knob').style.left = 10 + 126 * on + 'px'; $('c_tog').style.background = on > .5 ? '#9be3bd' : '#f1e3dc'; $('c_tog').style.transform = `scale(${1 - bump((u - at(.8)) / .2) * .06})`;
+    pop($('c_live'), u - at(.8) - .12); },
+  pixel(u, t, at) { const p = seg(t, pH0, pH1), n = Math.floor(p * 60), held = t >= pH0 && t < pH1, done = t - pH1;
+    pbs.forEach((b, i) => b.style.background = i < n ? (i >= n - 2 && held ? '#ffcd75' : '#38b764') : '#333c57');
+    $('p_n').textContent = p >= 1 ? '600+' : String(n * 10).padStart(3, '0');
+    pws.forEach((w, i) => { const ok = p >= (i + 1) / 6; w.style.background = ok ? '#38b764' : '#333c57'; w.style.transform = `translateY(${-bump((p - (i + 1) / 6) * 14) * 14}px)`; });
+    const b = $('p_btn'); b.style.transform = `translate(${held ? 6 : 0}px,${held ? 6 : 0}px)`; b.style.background = held ? '#ffcd75' : '#41a6f6'; b.textContent = done >= 0 ? 'DONE' : held ? 'COMMITTING' + '.'.repeat(1 + Math.floor(t * 6) % 3) : 'HOLD TO COMMIT';
+    $('p_lvl').style.opacity = done >= 0 && done < 1.0 && Math.floor(done * 7) % 2 === 0 ? 1 : 0; $('p_lvl').style.transform = `scale(${done >= 0 ? 1 + .1 * bump(done / .3) : 0})`;
+    $('p_sprite').style.transform = `translateY(${(held ? -Math.abs(Math.sin(t * 9)) * 16 : 0) - (done >= 0 ? Math.abs(Math.sin(done * 8)) * 70 * Math.exp(-done * 1.5) : 0)}px) scale(1.2)`; },
+  cyber(u, t, at) { $('y_rain').style.transform = `translateY(${((t * 160) % 1080).toFixed(1)}px)`;
+    const hit = Math.max(...YL.map(([a, b, f]) => bump((u - at(f) - .45) / .5))); $('y_big').style.opacity = hit * .5; $('y_big').style.transform = `translateX(${(Math.sin(t * 90) * 14 * hit).toFixed(1)}px) scale(${(1 + hit * .12).toFixed(3)})`;
+    YL.forEach(([a, b, f], i) => { const x = u - at(f); yqs[i].style.width = clamp(x / .4) * a.length + 'ch'; yas[i].style.opacity = x > .45 ? 1 : 0; yas[i].style.transform = `translateX(${x > .45 && x < .7 ? Math.sin(x * 90) * 6 : 0}px)`; });
+    const c = u - at(.66), b = $('y_btn'); b.style.opacity = u > at(.5) ? 1 : 0; b.style.background = c > 0 ? '#00ff9c' : 'transparent'; b.style.color = c > 0 ? '#020806' : '#00ff9c'; b.style.transform = `scale(${1 - bump(c / .18) * .06})`;
+    [0, 1].forEach(i => { const p = seg(c, .05 + i * .4, .4 + i * .4); ybs[i].style.width = p * 100 + '%'; ybs[i].parentNode.parentNode.style.opacity = c > i * .4 ? 1 : 0; yrs[i].style.opacity = p >= 1 ? 1 : 0; });
+    const v = u - at(.93), g = v > 0 && v < .5 ? (1 - v / .5) * 22 : 2 + Math.sin(t * 40) * 1.2;
+    $('y_ver').style.opacity = v > 0 ? 1 : 0; $('y_ver').style.textShadow = `${g}px 0 0 #ff2bd6, ${-g}px 0 0 #00e5ff`; $('y_ver').style.transform = `skewX(${v > 0 && v < .3 ? Math.sin(v * 80) * 8 : 0}deg)`; $('y_sub').style.opacity = seg(v, .2, .4); },
+  synth(u, t, at) { $('n_floor').style.backgroundPosition = `0 ${(t * 520) % 120}px`;
+    const m = eo(seg(u, at(.36), at(.36) + .2)); $('n_mk').style.left = 8 + 268 * m + 'px'; $('n_mt').textContent = m > .5 ? 'PAPER' : 'LIVE?'; $('n_mt').style.left = m > .5 ? '40px' : '120px'; $('n_mt').style.color = m > .5 ? '#00ff9c' : '#ff3cac'; $('n_mode').style.transform = `scale(${1 - bump((u - at(.36)) / .2) * .06})`;
+    let n = 0; gates.forEach((g, i) => { const x = t - gT(i), sc = Math.exp(x * 5.2) * .5; const on = sc > .05 && sc < 9; g.style.opacity = on ? clamp(sc * 3) * (1 - seg(sc, 5, 9)) : 0; g.style.transform = `scale(${sc.toFixed(3)})`; if (x > .22) n++; g.style.borderColor = x > .22 ? '#00ff9c' : '#00e5ff'; });
+    $('n_cnt').textContent = n; $('n_hud').style.transform = `scale(${1 + Math.max(...gates.map((g, i) => bump((t - gT(i) - .22) / .15))) * .1})`; $('n_hud').style.transformOrigin = 'left center';
+    const k = $('n_kill'), kin = u - at(.78); k.style.opacity = kin > 0 ? 1 : 0; k.style.transform = `translateY(${(1 - eo(clamp(kin / .3))) * 420}px)`;
+    const lv = seg(u, at(.9), at(.98)); $('n_lev').style.top = 84 + 112 * eio(lv) + 'px'; $('n_lev').style.background = lv >= 1 ? '#00ff9c' : '#ff3cac'; $('n_rdy').style.opacity = lv >= 1 ? 1 : 0; },
+  wabi(u, t, at) { $('w_t').style.opacity = seg(u, at(0) - .2, at(0) + .4); $('w_line').style.strokeDashoffset = 1 - eio(seg(u, at(0), at(.26))); $('w_line').style.opacity = u > at(0) ? 1 : 0; $('w_tag').style.opacity = seg(u, at(.12), at(.2));
+    $('w_cmd').style.width = clamp((u - at(.3)) / .5) * 17 + 'ch'; const k = $('w_key'), c = u - at(.43), d = bump(c / .2) * 7; k.style.opacity = seg(u, at(.26), at(.3)); k.style.transform = `translateY(${d}px)`; k.style.boxShadow = `0 ${8 - d}px 0 #2b2a27`;
+    $('w_out').textContent = c > 0 ? (Math.floor(t * 2.5) % 2 ? '▌' : ' ') : ''; $('w_enso').style.strokeDashoffset = 1 - eio(seg(u, at(.46), at(.78))); $('w_enso').style.opacity = u > at(.46) ? 1 : 0;
+    $('w_no').style.opacity = seg(u, at(.5), at(.6)); $('w_why').style.opacity = seg(u, at(.62), at(.7)); slam($('w_seal'), u - at(.9), -6); },
+  brut(u, t, at) { slam($('b_not'), u - at(0) + .1); $('b_x').style.strokeDashoffset = 1 - seg(u, at(.08), at(.15)); slam($('b_bld'), u - at(.2), -2.5);
+    const c = cur(t), i = $('b_in'), drag = u >= at(.54) && u < at(.68), gone = u >= at(.68);
+    pop(i, u - at(.38)); i.style.left = (drag ? c.x - 180 : 120) + 'px'; i.style.top = (drag ? c.y - 150 : 610) + 'px';
+    i.style.transform = gone ? `scale(${1 - eo(seg(u, at(.68), at(.68) + .18))})` : `rotate(${drag ? -5 : Math.sin(t * 11) * (u > at(.38) ? 1.4 : 0)}deg) scale(${u > at(.38) ? spring((u - at(.38)) * 1.15) * (drag ? 1.05 : 1) : 0})`;
+    const w = seg(u, at(.68), at(.84)), m = $('b_mach'); pop(m, u - at(.36)); if (u > at(.5)) m.style.transform = `translate(${w > 0 && w < 1 ? Math.sin(t * 70) * 6 : 0}px,${w > 0 && w < 1 ? Math.cos(t * 55) * 4 : 0}px) scale(${1 + bump((u - at(.68)) / .25) * .08})`;
+    $('b_gear').style.transform = `rotate(${(w * 540 + t * 20).toFixed(1)}deg)`;
+    pop($('b_arw'), u - at(.8)); pop($('b_out'), u - at(.84), 2); },
+  end(u, t, at) { const e = k => eo(seg(u, k, k + .45)); $('e_ph').style.opacity = e(.1); $('e_ph').style.transform = `translateY(${(1 - e(.1)) * 40}px)`;
+    $('e_k').style.opacity = e(.25); const n = $('e_n'); n.style.clipPath = `inset(-10% ${(1 - eo(seg(u, .3, 1.0))) * 100}% -10% 0)`;
+    $('e_r').style.transform = `scaleX(${e(.8)})`; $('e_c').style.opacity = e(1.0); const b = $('e_b'), x = t - tHi; pop(b, u - .9); if (u > 1.5) b.style.transform = `scale(${1 - bump(x / .2) * .1 + (x < 0 ? Math.sin(t * 5) * .02 : 0)})`; b.textContent = x > .1 ? 'hi, Bhavya ✓' : 'say hi →'; },
+};
+const WORLDS = LAYOUT.order.map(id => { const sc = S[id], l = sc.lines[0]; return { id, el: $(id), t0: sc.t0, t1: sc.t1, at: f => l.t - sc.t0 + l.dur * f }; });
+
+const CAPS = [];
+for (const id of LAYOUT.order) for (const ln of S[id].lines) {
+  const tx = ln.text.replace(/\bten tools\b/, '10 tools').replace('More than seven', '7+').replace('six hundred', '600').replace('six weeks', '6 weeks').replace('nine safety', '9 safety').replace('ten years', '10 years');
+  const out = []; for (const p of tx.split(/(?<=[.,!?])\s+/)) { if (out.length && (out[out.length - 1] + ' ' + p).length <= 44) out[out.length - 1] += ' ' + p; else out.push(p); }
+  const tot = out.join(' ').length; let acc = 0;
+  out.forEach((c, i) => { const a = ln.t + ln.dur * acc / tot; acc += c.length + 1; CAPS.push({ a, b: i === out.length - 1 ? ln.t + ln.dur + .35 : ln.t + ln.dur * acc / tot, text: c.replace(/,$/, '') }); });
+}
+
+const DURATION = LAYOUT.dur, TR = .26;
+function render(t) {
+  WORLDS.forEach((w, k) => {
+    const last = k === WORLDS.length - 1, vis = t >= w.t0 - TR && (last || t < w.t1 + TR);
+    w.el.style.display = vis ? 'block' : 'none'; if (!vis) return;
+    const pin = k ? seg(t, w.t0 - TR, w.t0 + TR) : 1, pout = last ? 0 : seg(t, w.t1 - TR, w.t1 + TR);
+    // dive: the old world rushes past the camera, the new one settles from slightly too close
+    const sc = (1.28 - .28 * eo(pin)) * (1 + 4.2 * pout * pout) * (1 + .03 * seg(t, w.t0, w.t1));
+    w.el.style.transform = `scale(${sc.toFixed(4)}) rotate(${(pout * pout * 5).toFixed(2)}deg)`; w.el.style.opacity = last ? 1 : 1 - seg(t, w.t1 - .02, w.t1 + TR * .8); w.el.style.zIndex = 100 - k;
+    U[w.id](t - w.t0, t, w.at);
+  });
+  for (const b of BURST) { const x = t - b.t; for (const p of b.ps) { const on = x > 0 && x < 1.5; p.el.style.opacity = on ? 1 - seg(x, 1, 1.5) : 0; if (on) p.el.style.transform = `translate(${(b.x + p.vx * x * (1 - .25 * x)).toFixed(1)}px,${(b.y + p.vy * x + 900 * x * x).toFixed(1)}px) rotate(${(p.r * x).toFixed(0)}deg)`; } }
+  const c = cur(t); let dn = HOLD.some(([a, b]) => t >= a && t < b) ? 1 : 0, rp = 0; for (const k of CLK) { dn = Math.max(dn, bump((t - k + .04) / .2)); if (t >= k && t < k + .4) rp = (t - k) / .4; }
+  $('cursor').style.transform = `translate(${(c.x - 8).toFixed(1)}px,${(c.y - 5).toFixed(1)}px) scale(${(1 - .2 * dn).toFixed(3)})`;
+  const r = $('ring'); r.style.opacity = rp > 0 ? 1 - rp : 0; r.style.transform = `translate(${c.x.toFixed(1)}px,${c.y.toFixed(1)}px) scale(${(1 + eo(rp) * 10).toFixed(2)})`;
+  const cp = CAPS.find(k => t >= k.a && t < k.b), ce = $('cap'); ce.style.opacity = cp ? 1 : 0; if (cp) ce.firstChild.textContent = cp.text;
+}
+window.render = render; window.DURATION = DURATION; window.SFX = SFX.sort((a, b) => a.t - b.t);
+window.MARKS = { starts: LAYOUT.order.map(T0), hi: tHi };
+window.ready = document.fonts.ready
+  .then(() => Promise.all(['900 60px Archivo', '800 30px Archivo', '400 60px "Permanent Marker"', '400 40px "Special Elite"', '600 30px Fredoka', '700 60px Fredoka', '500 30px Fredoka', '400 30px "Press Start 2P"', '700 30px "JetBrains Mono"', '800 30px "JetBrains Mono"', '500 30px "JetBrains Mono"', 'italic 400 60px "Cormorant Garamond"', 'italic 500 60px "Cormorant Garamond"', 'italic 700 100px "Playfair Display"'].map(f => document.fonts.load(f))))
+  .then(() => Promise.all([...document.images].map(i => i.decode().catch(() => {}))));
+</script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Ops desk: one board, one cursor, five problems fixed on screen. The camera, the cursor,
+     the clicks and the beat grid are in the timeline section; the copy is one person's pitch,
+     so replace every word. Timings come from layout.js (see lines.py in motion-kit). -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=JetBrains+Mono:wght@500;700;800&display=block" rel="stylesheet">
+<style>
+  :root { --ink:#0a0a0a; --bg:#f0ede8; --y:#c8ff00; --c:#ff4d3d; --m:#c8ff00; --b:#0a0a0a; --w:#fffefb; --g:#7d796f; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:var(--bg); color:var(--ink); font-family:'Archivo', sans-serif; }
+  #view { position:absolute; inset:0; overflow:hidden; background:var(--bg); }
+  #world { position:absolute; left:0; top:0; width:1920px; height:1080px; transform-origin:0 0; will-change:transform; }
+  #world::before { content:''; position:absolute; inset:-1400px; background-image:linear-gradient(rgba(10,10,10,.055) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(10,10,10,.055) 1.5px, transparent 1.5px); background-size:60px 60px; }
+  .mono { font-family:'JetBrains Mono', monospace; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+  .nb { position:absolute; background:var(--w); border:2px solid var(--ink); border-radius:18px; box-shadow:0 16px 30px -22px rgba(10,10,10,.5); }
+  .tile { overflow:visible; }
+  .tt { position:absolute; left:22px; top:16px; font-size:15px; color:var(--g); }
+  .badge { position:absolute; right:18px; top:12px; height:30px; }
+  .badge span { position:absolute; right:0; top:0; white-space:nowrap; font:800 14px 'JetBrains Mono'; letter-spacing:.08em; padding:6px 12px; border:2.5px solid var(--ink); border-radius:999px; }
+  .badge .old { background:var(--c); color:#fff; } .badge .new { background:var(--m); }
+  .ab { position:absolute; }
+  .btn { position:absolute; display:flex; align-items:center; justify-content:center; font-weight:900; border:2.5px solid var(--ink); border-radius:12px; box-shadow:5px 5px 0 var(--ink); background:var(--y); white-space:nowrap; }
+  .chip { position:absolute; font:800 13px 'JetBrains Mono'; letter-spacing:.06em; text-transform:uppercase; padding:6px 10px; border:2.5px solid var(--ink); border-radius:8px; background:var(--w); white-space:nowrap; }
+  .card { position:absolute; border:2.5px solid var(--ink); border-radius:10px; background:#fff; }
+  .lines { background:repeating-linear-gradient(rgba(17,17,17,.28) 0 4px, transparent 4px 13px); }
+  .stampx { position:absolute; font:900 30px 'Archivo'; letter-spacing:.04em; color:var(--c); border:5px solid var(--c); border-radius:8px; padding:2px 14px; background:rgba(255,253,247,.92); white-space:nowrap; }
+  #cursor { position:absolute; left:0; top:0; width:62px; height:62px; z-index:80; transform-origin:6px 4px; will-change:transform; }
+  #ring { position:absolute; left:0; top:0; width:10px; height:10px; margin:-5px; border:5px solid var(--ink); border-radius:50%; z-index:79; opacity:0; }
+  #hud { position:absolute; left:50%; top:26px; margin-left:-230px; width:460px; height:60px; display:flex; align-items:center; gap:12px; padding:0 20px; z-index:70; border-radius:999px; }
+  #hud .pip, #status .pip { width:26px; height:26px; border:3px solid var(--ink); border-radius:7px; background:var(--w); }
+  #cap { position:absolute; left:0; right:0; bottom:38px; text-align:center; z-index:75; }
+  #cap span { display:inline-block; font:700 38px 'Archivo'; padding:12px 30px 13px; background:var(--ink); color:var(--bg); border-radius:14px; }
+  #hook { position:absolute; left:210px; top:300px; width:1500px; padding:38px 60px 46px; background:var(--ink); color:var(--bg); border-radius:26px; z-index:55; font:900 118px Archivo; line-height:.98; letter-spacing:-.035em; transform-origin:50% 0; }
+  #hook b { color:var(--y); font-weight:900; }
+  #dim { position:absolute; inset:0; background:#111; opacity:0; z-index:60; }
+  #end { position:absolute; left:360px; top:190px; width:1200px; height:600px; z-index:65; border-width:3px; box-shadow:0 40px 70px -40px rgba(0,0,0,.8); border-radius:26px; opacity:0; }
+  .cf { position:absolute; left:0; top:0; width:16px; height:16px; z-index:78; border:2.5px solid var(--ink); opacity:0; }
+  #shock { position:absolute; border:8px solid var(--ink); border-radius:50%; opacity:0; }
+</style>
+</head>
+<body>
+<div id="view">
+  <div id="world">
+    <div id="shock"></div>
+    <!-- header -->
+    <div class="nb" id="hdr" style="left:40px;top:40px;width:1840px;height:100px">
+      <div class="ab" style="left:16px;top:14px;width:120px;height:66px;background:var(--ink);color:var(--y);border-radius:12px;font:900 38px Archivo;display:flex;align-items:center;justify-content:center">RaaS</div>
+      <div class="ab" id="hTitle" style="left:156px;top:14px;font:900 40px Archivo;letter-spacing:-.02em">Ops desk</div>
+      <div class="ab mono" style="left:158px;top:62px;font-size:15px;color:var(--g)">Monday · 09:00 · sample data</div>
+      <div class="ab" id="status" style="left:560px;top:26px;height:48px;display:flex;align-items:center;gap:10px">
+        <span class="mono" id="stTxt" style="font-size:20px;margin-right:8px">5 problems open</span>
+        <i class="pip"></i><i class="pip"></i><i class="pip"></i><i class="pip"></i><i class="pip"></i>
+      </div>
+      <div class="btn" id="go" style="left:1440px;top:13px;width:380px;height:68px;font-size:32px"><span id="goTxt">AUTOMATE ▸</span></div>
+    </div>
+
+    <!-- 01 reports -->
+    <div class="nb tile" id="T1" style="left:40px;top:160px;width:660px;height:380px">
+      <div class="tt mono">01 · Reports</div><div class="badge"><span class="old">LATE</span><span class="new">SENT ✓</span></div>
+      <div class="ab" id="dz" style="left:300px;top:58px;width:336px;height:104px;border:3px dashed var(--ink);border-radius:12px;display:flex;align-items:center;justify-content:center"><span class="mono" style="font-size:15px;color:var(--g)" id="dzT">drop the export here</span></div>
+      <div class="ab" id="sticky" style="left:24px;top:136px;width:236px;padding:12px 14px;background:var(--c);color:#fff;border:2.5px solid var(--ink);border-radius:8px;font:700 19px Archivo;line-height:1.15;transform:rotate(-3deg)">Daily report due 9:00.<br>Nobody has started.</div>
+      <div class="ab" style="left:300px;top:178px;width:336px;height:20px;border:2.5px solid var(--ink);border-radius:999px;overflow:hidden;background:#fff"><div id="pg" style="height:100%;width:0;background:var(--b)"></div></div>
+      <div class="ab mono" id="pgT" style="left:300px;top:204px;font-size:13px;color:var(--g)"></div>
+      <div class="card" id="rep" style="left:24px;top:228px;width:388px;height:134px;padding:12px 14px">
+        <div class="mono" style="font-size:12px;color:var(--g)">Daily report · built 08:59</div>
+        <div id="bars" style="position:absolute;left:14px;bottom:12px;height:78px;display:flex;align-items:flex-end;gap:9px"></div>
+        <div style="position:absolute;right:14px;top:36px;width:150px"><div style="font:900 38px Archivo;line-height:1">1,204</div><div class="mono" style="font-size:11px;color:var(--g)">units · checked ✓</div><div class="lines" style="height:22px;margin-top:8px"></div></div>
+      </div>
+      <div class="ab" id="bub" style="left:430px;top:246px;width:206px;padding:10px 14px;background:var(--m);border:2.5px solid var(--ink);border-radius:14px 14px 4px 14px;transform-origin:right bottom"><div style="font:700 18px Archivo">Daily report</div><div class="mono" style="font-size:13px;margin-top:3px">sent 09:00 ✓✓</div></div>
+      <div class="chip" id="file" style="left:24px;top:62px;width:250px;height:54px;display:flex;align-items:center;gap:10px;z-index:5;background:#fff;box-shadow:3px 3px 0 var(--ink)"><b style="display:inline-block;width:26px;height:32px;border:2.5px solid var(--ink);border-radius:4px;background:var(--y)"></b>sales_export_v7.csv</div>
+    </div>
+
+    <!-- 02 paperwork -->
+    <div class="nb tile" id="T2" style="left:720px;top:160px;width:580px;height:380px">
+      <div class="tt mono">02 · Paperwork</div><div class="badge"><span class="old" id="blog">BACKLOG 23</span><span class="new">BACKLOG 0 ✓</span></div>
+      <div class="card" id="doc" style="left:24px;top:58px;width:210px;height:254px;transform:rotate(-2deg);overflow:hidden;background:#f4efe2">
+        <div style="position:absolute;left:14px;top:14px;width:90px;height:22px;background:var(--ink)"></div>
+        <div class="lines" style="position:absolute;left:14px;top:52px;right:14px;height:180px"></div>
+        <div id="scan" style="position:absolute;left:0;right:0;height:10px;background:var(--b);opacity:0"></div>
+      </div>
+      <div class="btn" id="read" style="left:24px;top:322px;width:210px;height:42px;font-size:19px">READ IT ▸</div>
+      <div class="card" style="left:258px;top:58px;width:298px;height:306px;overflow:hidden" id="tbl"></div>
+    </div>
+
+    <!-- 03 numbers -->
+    <div class="nb tile" id="T3" style="left:1320px;top:160px;width:560px;height:380px">
+      <div class="tt mono">03 · Numbers</div><div class="badge"><span class="old">3 ANSWERS</span><span class="new">1 ANSWER ✓</span></div>
+      <div id="srcs"></div>
+      <div class="btn" id="rec" style="left:24px;top:176px;width:512px;height:46px;font-size:21px">RECONCILE ▸</div>
+      <div class="ab" id="r1" style="left:24px;top:240px;font:700 22px Archivo"><span style="background:var(--m);border:2.5px solid var(--ink);border-radius:6px;padding:1px 8px">A = C</span> &nbsp;1,204 on both ✓</div>
+      <div class="ab" id="r2" style="left:24px;top:286px;font:700 22px Archivo"><span style="background:var(--c);color:#fff;border:2.5px solid var(--ink);border-radius:6px;padding:1px 8px">B</span> &nbsp;is 17 short. Flagged.</div>
+      <div class="stampx" id="caught" style="left:350px;top:312px">CAUGHT</div>
+      <div class="ab mono" id="which" style="left:24px;top:244px;font-size:17px;color:var(--c)">which one is right?!</div>
+    </div>
+
+    <!-- 04 stock -->
+    <div class="nb tile" id="T4" style="left:40px;top:560px;width:720px;height:380px">
+      <div class="tt mono">04 · Stock</div><div class="badge"><span class="old">GUESSING</span><span class="new">KNOWN ✓</span></div>
+      <div class="ab mono" style="left:24px;top:58px;font-size:14px;color:var(--g)">Orders this week</div>
+      <div class="ab" style="left:24px;top:94px;width:430px;height:16px;border:2.5px solid var(--ink);border-radius:999px;background:#fff;overflow:hidden"><div id="trk" style="height:100%;background:var(--y)"></div></div>
+      <div class="ab" id="knob" style="top:82px;width:40px;height:40px;margin-left:-20px;background:var(--w);border:3px solid var(--ink);border-radius:50%;box-shadow:3px 3px 0 var(--ink)"></div>
+      <div class="ab" id="mult" style="left:476px;top:78px;font:900 40px Archivo"></div>
+      <div id="mats"></div>
+      <div class="chip" id="out" style="left:24px;top:312px;font-size:15px;padding:9px 14px"></div>
+      <div class="chip" id="reo" style="left:392px;top:312px;font-size:15px;padding:9px 14px;background:var(--c);color:#fff">Reorder today</div>
+      <div class="card" style="left:520px;top:136px;width:176px;height:152px;text-align:center;background:var(--w)"><div id="days" style="font:900 96px Archivo;line-height:1;margin-top:10px"></div><div class="mono" style="font-size:12px;color:var(--g)">days of cover</div></div>
+    </div>
+
+    <!-- 05 money -->
+    <div class="nb tile" id="T5" style="left:780px;top:560px;width:520px;height:380px">
+      <div class="tt mono">05 · Money</div><div class="badge"><span class="old" style="background:var(--w);color:var(--ink)">ON HOLD</span><span class="new">APPROVED ✓</span></div>
+      <div class="card" style="left:24px;top:58px;width:472px;height:112px;padding:14px 18px"><div class="mono" style="font-size:13px;color:var(--g)">Payment run · 14 invoices</div><div style="font:900 54px Archivo;line-height:1.1;letter-spacing:-.02em">AED 48,200</div></div>
+      <div class="ab" style="left:24px;top:186px;display:flex;align-items:center;gap:12px"><i id="dot" style="display:block;width:18px;height:18px;border:2.5px solid var(--ink);border-radius:50%;background:var(--y)"></i><span id="wait" style="font:700 22px Archivo"></span></div>
+      <div class="btn" id="apv" style="left:24px;top:232px;width:300px;height:64px;font-size:28px;background:var(--m)">APPROVE ✓</div>
+      <div class="btn" style="left:340px;top:232px;width:156px;height:64px;font-size:22px;background:var(--w)">REJECT</div>
+      <div class="ab mono" style="left:24px;top:318px;font-size:13px;color:var(--g)">Nothing moves until someone says so.</div>
+      <div class="stampx" id="hum" style="left:214px;top:86px;font-size:26px">HUMAN APPROVED</div>
+    </div>
+
+    <!-- 06 the record -->
+    <div class="nb tile" id="T6" style="left:1320px;top:560px;width:560px;height:380px;background:var(--y)">
+      <div class="tt mono" style="color:var(--ink)">The record · real work</div>
+      <div class="ab" id="q" style="left:0;right:0;top:110px;text-align:center;font:900 150px Archivo;opacity:.25">?</div>
+      <div class="ab" id="dd1" style="left:24px;top:70px;white-space:nowrap;font:900 76px Archivo;letter-spacing:-.04em;line-height:1;transform-origin:left center">Drawn demo.</div>
+      <div class="ab" id="dd2" style="left:24px;top:158px;white-space:nowrap;font:900 76px Archivo;letter-spacing:-.04em;line-height:1;transform-origin:left center;background:var(--ink);color:var(--y);padding:0 14px 6px;border-radius:12px">Real work.</div>
+      <div class="ab" id="st1" style="left:24px;top:52px"><span id="n10" style="font:900 132px Archivo;line-height:1;letter-spacing:-.04em">0</span><span style="font:900 34px Archivo;margin-left:12px">tools built</span></div>
+      <div class="ab" id="st2" style="left:24px;top:188px;display:flex;align-items:baseline;gap:12px"><span style="font:900 68px Archivo;line-height:1;background:var(--ink);color:var(--y);padding:0 14px 4px;border-radius:10px">7+</span><span style="font:900 34px Archivo">live</span><span class="mono" style="font-size:14px;margin-left:8px">one food business</span></div>
+      <div class="ab" id="st3" style="left:24px;top:286px;display:flex;align-items:center;gap:14px">
+        <img src="photo.svg" style="width:70px;height:70px;object-fit:cover;object-position:50% 18%;border:3px solid var(--ink);border-radius:50%">
+        <div><div style="font:900 26px Archivo">Bhavya Dhoot</div><div class="mono" style="font-size:13px">forward deployed engineer · Dubai</div></div></div>
+    </div>
+  </div>
+
+  <div class="nb" id="hud"><span class="mono" style="font-size:17px">Fixed</span><i class="pip"></i><i class="pip"></i><i class="pip"></i><i class="pip"></i><i class="pip"></i><span class="mono" id="hudN" style="font-size:22px;margin-left:auto">0/5</span></div>
+  <div id="hook">Monday, 9:00.<br>Three reports.<br><b>Three different numbers.</b></div>
+  <div id="dim"></div>
+  <div class="nb" id="end">
+    <img src="photo.svg" style="position:absolute;left:44px;top:44px;width:380px;height:512px;object-fit:cover;object-position:50% 16%;border:4px solid var(--ink);border-radius:14px">
+    <div class="ab mono" style="left:470px;top:54px;font-size:22px;background:var(--y);border:3px solid var(--ink);border-radius:8px;padding:6px 14px">Results as a Service</div>
+    <div class="ab" style="left:466px;top:118px;font:900 128px Archivo;line-height:.92;letter-spacing:-.04em">Ask for<br>Bhavya.</div>
+    <div class="ab" style="left:470px;top:372px;font:700 30px Archivo;line-height:1.25;width:680px">You bring the process that leaks time or money. You get the result.</div>
+    <div class="ab" style="left:470px;top:456px;display:flex;gap:10px"><span class="chip" style="position:static;font-size:15px">On your stack</span><span class="chip" style="position:static;font-size:15px">Checked twice</span><span class="chip" style="position:static;font-size:15px;background:var(--y)">A human approves the money</span></div>
+    <div class="ab mono" style="left:470px;top:508px;font-size:22px;line-height:1.5;text-transform:none;letter-spacing:.01em">example.com &nbsp;·&nbsp; you@example.com</div><div style="display:none">example.com<br>you@example.com</div>
+  </div>
+  <div id="ring"></div>
+  <svg id="cursor" viewBox="0 0 46 46"><path d="M6 4 L6 36 L15 28 L21 42 L27 39.5 L21 26 L33 26 Z" fill="#111" stroke="#fffdf7" stroke-width="3" stroke-linejoin="round"/></svg>
+  <div id="cap"><span></span></div>
+</div>
+<script src="layout.js"></script>
+<script>
+// ------------------------------------------------------------------ helpers
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);
+let _s = 1002; const rnd = () => (_s = (_s * 16807) % 2147483647) / 2147483647;
+const S = LAYOUT.scenes, SFX = [], sfx = (t, type, x) => SFX.push({ t, type, x });
+const L = id => S[id].lines[0].t, D = id => S[id].lines[0].dur, at = (id, f) => L(id) + D(id) * f;
+const pop = (el, x, rot = 0) => { el.style.opacity = x > 0 ? 1 : 0; el.style.transform = `rotate(${rot}deg) scale(${(x <= 0 ? 0 : spring(x * 1.15)).toFixed(3)})`; };
+const press = (el, x) => { const d = bump(x / .2) * 4; el.style.transform = `translate(${d.toFixed(1)}px,${d.toFixed(1)}px)`; el.style.boxShadow = `${(5 - d).toFixed(1)}px ${(5 - d).toFixed(1)}px 0 #111`; };
+
+// ------------------------------------------------------------------ static tile content
+const TILE = { 1: [40, 160, 660, 380], 2: [720, 160, 580, 380], 3: [1320, 160, 560, 380], 4: [40, 560, 720, 380], 5: [780, 560, 520, 380], 6: [1320, 560, 560, 380] };
+const BARS = [.45, .62, .5, .78, .66, .9, .74, 1];
+$('bars').innerHTML = BARS.map((h, i) => `<i style="display:block;width:16px;height:${Math.round(h * 78)}px;background:${i === 7 ? 'var(--b)' : 'var(--ink)'};border-radius:3px 3px 0 0;transform-origin:bottom"></i>`).join('');
+const FIELDS = [['Supplier', 'Supplier Co.', 66], ['Invoice', 'INV-2041', 110], ['Quantity', '1,200 kg', 154], ['Amount', 'AED 18,400', 198]];
+$('tbl').innerHTML = FIELDS.map(([k], i) => `<div style="position:absolute;left:0;right:0;top:${i * 76}px;height:76px;border-bottom:${i < 3 ? 2.5 : 0}px solid var(--ink);padding:10px 14px"><div class="mono" style="font-size:12px;color:var(--g)">${k}</div><div class="mono fv" style="position:absolute;right:12px;top:26px;font-size:22px;opacity:0">✓</div></div>`).join('');
+FIELDS.forEach(([k, v, y], i) => {
+  $('doc').insertAdjacentHTML('beforeend', `<div class="hl" style="position:absolute;left:10px;top:${y - 58}px;width:150px;height:24px;background:var(--y);border:2px solid var(--ink);opacity:0"></div>`);
+  $('T2').insertAdjacentHTML('beforeend', `<div class="fly" style="position:absolute;left:0;top:0;font:700 22px Archivo;white-space:nowrap;background:var(--y);border:2.5px solid var(--ink);border-radius:6px;padding:1px 8px;opacity:0;z-index:6">${v}</div>`);
+});
+$('srcs').innerHTML = [['A', '1,204'], ['B', '1,187'], ['C', '1,204']].map(([n, v], i) => `<div class="card src" style="left:${24 + i * 176}px;top:60px;width:160px;height:100px;padding:10px 12px"><div class="mono" style="font-size:12px;opacity:.6">Source ${n}</div><div style="font:900 44px Archivo;letter-spacing:-.03em;line-height:1.15">${v}</div></div>`).join('') +
+  `<div id="link" style="position:absolute;left:104px;top:38px;width:352px;height:18px;border:3.5px solid var(--ink);border-bottom:0;border-radius:10px 10px 0 0;transform-origin:left center"></div>`;
+const MATS = [['M1', 12], ['M2', 9], ['M3', 20]];
+$('mats').innerHTML = MATS.map(([n], i) => `<div class="ab mono" style="left:24px;top:${146 + i * 50}px;font-size:16px">${n}</div><div class="ab" style="left:66px;top:${140 + i * 50}px;width:330px;height:30px;border:2.5px solid var(--ink);border-radius:6px;background:#fff;overflow:hidden"><div class="lv" style="height:100%;background:var(--m)"></div></div><div class="ab mono dl" style="left:408px;top:${146 + i * 50}px;font-size:15px"></div>`).join('');
+
+// ------------------------------------------------------------------ camera, cursor, confetti
+const CAM = [{ t: -1, d: 0, x: 960, y: 520, z: 1.14 }], CUR = [{ t: -1, d: 0, x: 1250, y: 640 }], CLK = [], HOLD = [];
+const camTo = (t, x, y, z, d = .75) => { CAM.push({ t, d, x, y, z }); sfx(t, 'whoosh'); };
+const camTile = (t, k, d = .75) => { const [x, y, w, h] = TILE[k], z = Math.min(1760 / w, 800 / h); camTo(t, x + w / 2, y + h / 2 + 34 / z, z, d); };
+const curTo = (t, x, y, d = .5) => CUR.push({ t, d, x, y });
+const click = t => { CLK.push(t); sfx(t, 'click'); };
+function track(K, t, zoom) {
+  let s = K[0];
+  for (const k of K.slice(1)) {
+    if (t >= k.t + k.d) { s = k; continue; }
+    if (t > k.t) { const p = eio((t - k.t) / k.d), r = { x: s.x + (k.x - s.x) * p, y: s.y + (k.y - s.y) * p }; if (zoom) r.z = s.z * Math.pow(k.z / s.z, p); return r; }
+    break;
+  }
+  return s;
+}
+const cam = t => { const c = track(CAM, t, 1); return { x: c.x + Math.sin(t * .8) * 2.5 / c.z, y: c.y + Math.cos(t * .63) * 2 / c.z, z: c.z * (1 + .006 * Math.sin(t * .5)) }; };
+const toScreen = (c, x, y) => [(x - c.x) * c.z + 960, (y - c.y) * c.z + 540];
+const BURST = [];
+function burst(t, bx, by, n = 14, pw = 1) {
+  const cols = ['#c8ff00', '#0a0a0a', '#c8ff00', '#ff4d3d', '#fffefb'], ps = [];
+  for (let i = 0; i < n; i++) { const el = document.createElement('i'); el.className = 'cf'; el.style.background = cols[i % 5]; if (i % 3 === 0) el.style.borderRadius = '50%'; $('view').append(el); const a = -Math.PI / 2 + (rnd() - .5) * 2.6; ps.push({ el, vx: Math.cos(a) * (260 + rnd() * 420) * pw, vy: Math.sin(a) * (300 + rnd() * 520) * pw, r: rnd() * 720 - 360 }); }
+  BURST.push({ t, bx, by, ps }); sfx(t, 'confetti');
+}
+
+// ------------------------------------------------------------------ the timeline
+// Every tile is 8 beats. The cursor moves while the camera travels, the fix lands on beat 7,
+// and the camera leaves one beat later, so nothing ever sits still waiting.
+const B = LAYOUT.beat, T0 = id => S[id].t0, tGo = LAYOUT.go, FIX = 6 * B;
+camTo(0, 960, 540, 1, .9);
+camTo(at('hook', .42), 1600, 330, 1.95, .55); curTo(at('hook', .42), 1560, 300, .5);
+[1, 2, 3, 4, 5].forEach((k, i) => sfx(.45 + i * .1, 'alert', i));
+camTo(T0('click'), 1520, 150, 1.65, .7); curTo(T0('click') + .05, 1640, 92, .75);
+click(tGo); sfx(tGo, 'drop'); camTo(tGo + .08, 960, 520, 1, .4);
+const DONE = {};
+{ const t = T0('t1'); camTile(t, 1, .55); curTo(t + .08, 190, 250, .45); HOLD.push([t + .55, t + 1.15]); sfx(t + .55, 'click'); curTo(t + .6, 508, 270, .5); sfx(t + 1.15, 'pop', 0); for (let k = 0; k < 6; k++) sfx(t + 1.22 + k * .1, 'tick', k); sfx(t + 1.9, 'pop', 2); sfx(t + 2.25, 'ding'); curTo(t + 1.3, 560, 420, .5); DONE[1] = t + FIX; }
+{ const t = T0('t2'); camTile(t, 2, .55); curTo(t + .08, 850, 502, .5); click(t + .6); sfx(t + .65, 'sweep'); FIELDS.forEach((f, i) => sfx(t + .75 + i * .38 + .36, 'pop', i)); curTo(t + .8, 930, 520, .4); DONE[2] = t + FIX; }
+{ const t = T0('t3'); camTile(t, 3, .55); curTo(t + .08, 1600, 358, .5); click(t + .6); sfx(t + .8, 'pop', 1); sfx(t + 1.15, 'alert', 2); sfx(t + 1.4, 'pop', 2); sfx(t + 1.7, 'pop', 3); sfx(t + 2.1, 'stamp'); curTo(t + .8, 1700, 470, .4); DONE[3] = t + FIX; }
+const SL = u => u < .6 ? 0 : u < 1.1 ? .75 * eio(seg(u, .6, 1.1)) : u < 1.4 ? .75 - .22 * eio(seg(u, 1.1, 1.4)) : .53 + .47 * eio(seg(u, 1.4, 2.0));
+{ const t = T0('t4'); camTile(t, 4, .55); curTo(t + .08, 154, 664, .45); HOLD.push([t + .55, t + 2.05]); sfx(t + .55, 'click'); for (let k = 0; k < 13; k++) sfx(t + .65 + k * .105, 'tick', k); sfx(t + 2.05, 'drop'); sfx(t + 2.2, 'alert', 3); CUR.push({ t: t + 2.1, d: .01, x: 404, y: 664 }); curTo(t + 2.15, 470, 760, .4); DONE[4] = t + FIX; }
+{ const t = T0('t5'); camTile(t, 5, .55); curTo(t + .08, 954, 830, .6); click(t + 1.95); sfx(t + 2.03, 'stamp'); DONE[5] = t + FIX; }
+[1, 2, 3, 4, 5].forEach(k => { const [x, y, w] = TILE[k]; burst(DONE[k], x + w - 60, y + 26, 18); sfx(DONE[k], 'success', k); });
+{ const t = T0('record'); camTile(t, 6, .55); curTo(t + .08, 1250, 900, .5); sfx(at('record', .31), 'count'); sfx(at('record', .84), 'stamp'); camTo(at('record', .58), 960, 540, 1, 1.0); }
+const tAsk = at('cta', .95);
+{ const t = T0('cta'); camTo(t + .02, 1520, 150, 1.65, .6); curTo(t + .05, 1640, 94, .7); click(tAsk); sfx(tAsk + .1, 'final'); camTo(tAsk + .1, 960, 540, 1.04, .7); burst(tAsk + .12, 960, 300, 60, 1.7); }
+CUR.push({ t: tAsk + .5, d: .8, x: 1700, y: 900 });
+
+// ------------------------------------------------------------------ captions
+const CAPS = [];
+for (const id of LAYOUT.order) for (const ln of S[id].lines) {
+  const tx = ln.text.replace(/\bten\b/, '10').replace('More than seven', '7+').replace('nine A.M.', '9 AM.');
+  const out = []; for (const p of tx.split(/(?<=[.,!?])\s+/)) { if (out.length && (out[out.length - 1] + ' ' + p).length <= 46) out[out.length - 1] += ' ' + p; else out.push(p); }
+  const tot = out.join(' ').length; let acc = 0;
+  out.forEach((c, i) => { const a = ln.t + ln.dur * acc / tot; acc += c.length + 1; CAPS.push({ a, b: i === out.length - 1 ? ln.t + ln.dur + .4 : ln.t + ln.dur * acc / tot, text: c.replace(/,$/, '') }); });
+}
+
+// ------------------------------------------------------------------ render
+const tiles = [1, 2, 3, 4, 5, 6].map(k => $('T' + k)), pipsH = [...document.querySelectorAll('#status .pip')], pipsU = [...document.querySelectorAll('#hud .pip')];
+const flies = [...document.querySelectorAll('.fly')], hls = [...document.querySelectorAll('.hl')], fvs = [...document.querySelectorAll('.fv')], srcs = [...document.querySelectorAll('.src')], lvs = [...document.querySelectorAll('.lv')], dls = [...document.querySelectorAll('.dl')], barEls = [...$('bars').children];
+const DURATION = LAYOUT.dur;
+
+function render(t) {
+  const c = cam(t);
+  $('world').style.transform = `translate(${(960 - c.x * c.z).toFixed(2)}px,${(540 - c.y * c.z).toFixed(2)}px) scale(${c.z.toFixed(4)})`;
+  const fixed = [1, 2, 3, 4, 5].filter(k => t >= DONE[k]).length, live = t >= tGo;
+
+  // board assembly, chaos wobble, the done flash
+  tiles.forEach((el, i) => {
+    const k = i + 1, a = spring((t - .08 - i * .09) * 1.1), dn = k < 6 ? t - DONE[k] : t - T0('record'), sc = k < 6 ? T0('t' + k) : T0('record');
+    const wob = k < 6 && dn < 0 ? Math.sin(t * 7 + k * 2) * .5 * (1 - seg(t, sc, sc + .5)) : 0;
+    const jolt = bump((t - tGo - .05 - i * .05) / .3) * .04, fl = bump(dn / .45), beat = t > DONE[5] + .3 && t < tAsk ? bump(((((t - tGo) / B - i * .5) % 4 + 4) % 4) / .6) * .014 : 0;
+    el.style.transform = `rotate(${wob.toFixed(2)}deg) scale(${(a * (1 - jolt) * (1 + fl * .03 + beat)).toFixed(4)})`;
+    el.style.boxShadow = (dn >= 0 && k < 6 ? `0 0 0 ${(5 + fl * 7).toFixed(1)}px #c8ff00, ` : '') + '0 16px 30px -22px rgba(10,10,10,.5)';
+    const b = el.querySelector('.badge'); if (b) {
+      const p = seg(dn, 0, .28), o = b.children[0], n = b.children[1], show = seg(t, .5 + i * .13, .5 + i * .13 + .01);
+      o.style.transform = `scale(${(spring((t - .5 - i * .13) * 1.2) * (1 + .08 * Math.max(0, Math.sin(t * 9 + k)) * (dn < 0 ? 1 : 0))).toFixed(3)},${p < .5 ? 1 - 2 * p : 0})`; o.style.opacity = show;
+      n.style.transform = `scaleY(${p > .5 ? 2 * p - 1 : 0})`;
+    }
+  });
+  $('hdr').style.transform = `scale(${spring(t * 1.1 + .15).toFixed(4)})`;
+
+  // header
+  const go = $('go'), hov = seg(t, tGo - .7, tGo - .5) * (t < tGo ? 1 : 0) + seg(t, tAsk - .6, tAsk - .4) * (t < tAsk ? 1 : 0);
+  press(go, t >= tAsk ? t - tAsk : t - tGo);
+  if (hov > 0) { go.style.transform = `translate(${-3 * hov}px,${-3 * hov}px)`; go.style.boxShadow = `${5 + 3 * hov}px ${5 + 3 * hov}px 0 #111`; }
+  const cta = t >= T0('cta') + .1;
+  $('goTxt').textContent = cta ? 'ASK FOR BHAVYA ▸' : fixed === 5 ? 'ALL FIXED ✓' : live ? 'AUTOMATING' + '.'.repeat(1 + Math.floor(t * 3) % 3) : 'AUTOMATE ▸';
+  go.style.background = live && fixed < 5 ? 'var(--w)' : 'var(--y)';
+  $('goTxt').style.transform = `scale(${(1 + bump((t - T0('cta') - .1) / .3) * .12).toFixed(3)})`; $('goTxt').style.display = 'inline-block';
+  $('stTxt').textContent = `${5 - fixed} problem${fixed === 4 ? '' : 's'} open`; $('stTxt').style.color = fixed === 5 ? '#111' : 'var(--c)';
+  [pipsH, pipsU].forEach(ps => ps.forEach((p, i) => { const x = t - DONE[i + 1]; p.style.background = x >= 0 ? 'var(--m)' : 'var(--w)'; p.style.transform = `scale(${(1 + bump(x / .35) * .5).toFixed(3)})`; }));
+  $('hudN').textContent = fixed + '/5';
+  const hudIn = eo(seg(t, T0('t1') + .1, T0('t1') + .45)) - eo(seg(t, at('record', .58), at('record', .58) + .4));
+  $('hud').style.transform = `translateY(${((1 - hudIn) * -110).toFixed(1)}px) scale(${(1 + [1, 2, 3, 4, 5].reduce((m, k) => Math.max(m, bump((t - DONE[k]) / .35)), 0) * .06).toFixed(3)})`;
+  const sh = $('shock'), sp = seg(t, tGo, tGo + .9), sr = eo(sp) * 2300;
+  Object.assign(sh.style, { left: 1670 - sr + 'px', top: 87 - sr + 'px', width: sr * 2 + 'px', height: sr * 2 + 'px', opacity: sp > 0 && sp < 1 ? (1 - sp) * .9 : 0 });
+
+  // 01 reports: drag the export in, the report builds and sends itself
+  { const u = t - T0('t1'), cb = track(CUR, t), f = $('file');
+    const drag = u >= .55 && u < 1.15, dropped = u >= 1.15;
+    const fx = drag ? cb.x - 40 - 125 : dropped ? 343 : 24, fy = drag ? cb.y - 160 - 27 : dropped ? 83 : 62;
+    f.style.left = fx + 'px'; f.style.top = fy + 'px'; f.style.transform = `rotate(${drag ? -4 : 0}deg) scale(${dropped ? 1 - .12 * eo(seg(u, 1.15, 1.3)) : drag ? 1.06 : 1})`; f.style.boxShadow = drag ? '9px 9px 0 #111' : '3px 3px 0 #111';
+    $('dz').style.background = dropped ? 'var(--y)' : u > .8 && drag ? 'rgba(200,255,0,.4)' : 'transparent'; $('dz').style.transform = `scale(${1 + bump((u - 1.15) / .3) * .06})`; $('dzT').style.opacity = dropped ? 0 : 1;
+    $('sticky').style.opacity = 1 - seg(u, 1.8, 1.95); $('sticky').style.transform = `rotate(-3deg) translateY(${seg(u, 1.8, 1.95) * 20}px)`;
+    const p = seg(u, 1.2, 1.85); $('pg').style.width = (eio(p) * 100).toFixed(1) + '%'; $('pgT').textContent = p <= 0 ? '' : p < 1 ? `building report… ${Math.round(eio(p) * 100)}%` : 'built · nobody typed anything';
+    pop($('rep'), u - 1.9); barEls.forEach((b, i) => b.style.transform = `scaleY(${eo(seg(u, 1.95 + i * .03, 2.2 + i * .03)).toFixed(3)})`);
+    pop($('bub'), u - 2.25); }
+
+  // 02 paperwork: one click, the fields read themselves into the table
+  { const u = t - T0('t2'); press($('read'), u - .6);
+    const sp = seg(u, .65, 2.25); $('scan').style.opacity = sp > 0 && sp < 1 ? .85 : 0; $('scan').style.top = sp * 244 + 'px';
+    FIELDS.forEach(([k, v, y], i) => {
+      const a = .75 + i * .38, p = eo(seg(u, a + .08, a + .36));
+      hls[i].style.opacity = u > a ? 1 : 0; hls[i].style.transform = `scaleX(${eo(seg(u, a, a + .12)).toFixed(3)})`; hls[i].style.transformOrigin = 'left';
+      const x0 = 40, y0 = y, x1 = 272, y1 = 58 + i * 76 + 32;
+      flies[i].style.opacity = u > a + .08 ? 1 : 0; flies[i].style.left = x0 + (x1 - x0) * p + 'px'; flies[i].style.top = y0 + (y1 - y0) * p - Math.sin(p * Math.PI) * 26 + 'px';
+      flies[i].style.background = p >= 1 ? 'transparent' : 'var(--y)'; flies[i].style.borderColor = p >= 1 ? 'transparent' : '#111';
+      pop(fvs[i], u - a - .36);
+    });
+    $('blog').textContent = 'BACKLOG ' + Math.round(23 * (1 - eo(seg(u, .7, 2.3)))); }
+
+  // 03 numbers: reconcile, the odd one out gets caught
+  { const u = t - T0('t3'); press($('rec'), u - .6);
+    const hookLook = bump(seg(t, at('hook', .5), at('hook', 1)));
+    srcs.forEach((s, i) => {
+      const odd = i === 1, x = u - (odd ? 1.15 : .8);
+      s.style.background = x > 0 ? (odd ? 'var(--c)' : 'var(--m)') : '#fff'; s.style.color = x > 0 && odd ? '#fff' : '#111';
+      s.style.transform = `translateX(${(odd && x > 0 && x < .4 ? Math.sin(x * 60) * 5 * (1 - x / .4) : 0).toFixed(1)}px) scale(${(1 + bump(x / .3) * .08 + hookLook * .05 * Math.max(0, Math.sin(t * 8 - i * 1.3))).toFixed(3)})`;
+    });
+    $('link').style.transform = `scaleX(${eo(seg(u, .8, 1.1)).toFixed(3)})`; $('link').style.opacity = u > .8 ? 1 : 0;
+    $('which').style.opacity = 1 - seg(u, .65, .8); $('which').style.transform = `rotate(${Math.sin(t * 6) * 1.5}deg)`;
+    pop($('r1'), u - 1.4); $('r1').style.transformOrigin = 'left center'; pop($('r2'), u - 1.7); $('r2').style.transformOrigin = 'left center';
+    const x = u - 2.1; $('caught').style.opacity = x > 0 ? 1 : 0; $('caught').style.transform = `rotate(-8deg) scale(${(2.2 - 1.2 * eo(clamp(x / .14))).toFixed(3)})`; }
+
+  // 04 stock: drag the slider, the runway answers live
+  { const u = t - T0('t4'), p = SL(u), m = 1 + 1.4 * p, kx = 24 + 90 + 250 * p, held = u >= .55 && u < 2.05;
+    $('knob').style.left = kx + 'px'; $('knob').style.transform = `scale(${held ? 1.18 : 1})`; $('knob').style.background = held ? 'var(--y)' : 'var(--w)'; $('trk').style.width = kx - 24 + 'px';
+    $('mult').textContent = '×' + m.toFixed(1);
+    let lo = 99; MATS.forEach(([n, base], i) => { const d = base / m; lo = Math.min(lo, d); lvs[i].style.width = clamp(d / 20) * 100 + '%'; lvs[i].style.background = d < 5 ? 'var(--c)' : '#0a0a0a'; dls[i].textContent = d.toFixed(0) + ' days'; });
+    $('days').textContent = Math.round(lo); $('days').style.color = lo < 5 ? 'var(--c)' : '#111'; $('days').style.transform = `scale(${1 + .06 * Math.abs(Math.sin(p * 30)) * (held ? 1 : 0)})`;
+    $('out').textContent = `M2 runs out in ${Math.round(lo)} days`; pop($('reo'), u - 2.2, -3); }
+
+  // 05 money: it waits, a human presses approve
+  { const u = t - T0('t5'), ok = u >= 1.95, ap = $('apv');
+    press(ap, u - 1.95); const hv = seg(u, .7, .85) * (ok ? 0 : 1); if (hv > 0) { ap.style.transform = `translate(${-3 * hv}px,${-3 * hv}px)`; ap.style.boxShadow = `${5 + 3 * hv}px ${5 + 3 * hv}px 0 #111`; }
+    $('wait').textContent = ok ? 'Approved by a human · 09:02' : 'Waiting for a human' + '.'.repeat(1 + Math.floor(Math.max(0, t) * 2.5) % 3);
+    $('dot').style.background = ok ? 'var(--m)' : 'var(--y)'; $('dot').style.transform = `scale(${ok ? 1 : 1 + .35 * Math.abs(Math.sin(t * 4))})`;
+    const x = u - 2.02; $('hum').style.opacity = x > 0 ? 1 : 0; $('hum').style.transform = `rotate(-7deg) scale(${(2.2 - 1.2 * eo(clamp(x / .14))).toFixed(3)})`; }
+
+  // 06 the record
+  { const a = at('record', .04), b = at('record', .42), c2 = at('record', .84);
+    $('q').style.opacity = .25 * (1 - seg(t, a - .3, a - .1)); const off = 1 - seg(t, at('record', .25), at('record', .29)); pop($('dd1'), t - at('record', 0)); pop($('dd2'), t - at('record', .12), -2); $('dd1').style.opacity = t > at('record', 0) ? off : 0; $('dd2').style.opacity = t > at('record', .12) ? off : 0; pop($('st3'), t - a + .2); $('st3').style.transformOrigin = 'left center';
+    pop($('st1'), t - at('record', .3)); $('st1').style.transformOrigin = 'left center'; $('n10').textContent = Math.round(1 + 9 * eo(seg(t, at('record', .31), b + .25)));
+    const x = t - c2; $('st2').style.opacity = x > 0 ? 1 : 0; $('st2').style.transform = `scale(${(2 - 1 * eo(clamp(x / .16))).toFixed(3)})`; $('st2').style.transformOrigin = 'left center'; }
+
+  { const x = seg(t, at('hook', .36), at('hook', .36) + .35), h = $('hook'); h.style.opacity = x < 1 ? 1 : 0; h.style.transform = `rotate(-1.5deg) translateY(${(-eio(x) * 420).toFixed(1)}px) scale(${(spring(t * 1.2 + .25) * (1 - eio(x) * .85)).toFixed(4)})`; }
+
+  // end card
+  { const x = t - tAsk - .18; $('dim').style.opacity = .62 * seg(x, 0, .3); const e = $('end'); e.style.opacity = x > 0 ? 1 : 0; e.style.transform = `rotate(${(-1.5 * (x > 0 ? 1 : 0)).toFixed(1)}deg) scale(${(x <= 0 ? 0 : spring(x * .9)).toFixed(3)})`; }
+
+  // confetti
+  for (const b of BURST) { const x = t - b.t, [ox, oy] = toScreen(c, b.bx, b.by); for (const p of b.ps) { const on = x > 0 && x < 1.5; p.el.style.opacity = on ? 1 - seg(x, 1.0, 1.5) : 0; if (on) p.el.style.transform = `translate(${(ox + p.vx * x * (1 - .25 * x)).toFixed(1)}px,${(oy + p.vy * x + 900 * x * x).toFixed(1)}px) rotate(${(p.r * x).toFixed(0)}deg)`; } }
+
+  // cursor
+  { const cb = track(CUR, t); let [sx, sy] = toScreen(c, cb.x, cb.y);
+    const t4 = t - T0('t4'); if (t4 >= .55 && t4 < 2.1) [sx, sy] = toScreen(c, 40 + 24 + 90 + 250 * SL(t4), 560 + 102 + 6);
+    let dn = HOLD.some(([a, b]) => t >= a && t < b) ? 1 : 0, rp = 0, rx = 0; for (const k of CLK) { dn = Math.max(dn, bump((t - k + .04) / .2)); if (t >= k && t < k + .45) { rp = (t - k) / .45; } }
+    $('cursor').style.transform = `translate(${(sx - 6).toFixed(1)}px,${(sy - 4).toFixed(1)}px) scale(${(1 - .2 * dn).toFixed(3)})`; $('cursor').style.opacity = seg(t, .9, 1.2);
+    const r = $('ring'); r.style.opacity = rp > 0 ? 1 - rp : 0; r.style.transform = `translate(${sx.toFixed(1)}px,${sy.toFixed(1)}px) scale(${(1 + eo(rp) * 11).toFixed(2)})`; }
+
+  const cp = CAPS.find(k => t >= k.a && t < k.b), ce = $('cap'); ce.style.opacity = cp && t < tAsk + .1 ? 1 : 0; if (cp) ce.firstChild.textContent = cp.text;
+}
+window.render = render;
+window.DURATION = DURATION;
+window.SFX = SFX.sort((a, b) => a.t - b.t);
+window.MARKS = { go: tGo, ask: tAsk, done: DONE };
+window.ready = document.fonts.ready
+  .then(() => Promise.all(['900 60px Archivo', '700 30px Archivo', '500 30px Archivo', '700 20px "JetBrains Mono"', '800 20px "JetBrains Mono"', '500 20px "JetBrains Mono"'].map(f => document.fonts.load(f))))
+  .then(() => Promise.all([...document.images].map(i => i.decode().catch(() => {}))));
+</script>
+</body>
+</html>

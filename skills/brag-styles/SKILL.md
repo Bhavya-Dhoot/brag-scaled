@@ -1,6 +1,6 @@
 ---
 name: brag-styles
-description: Nineteen art-directed visual systems for launch videos, each with a signature motion trick and a matching sound palette. The general sets are doodle, quant terminal, riso zine, blueprint, stop-motion collage, newsprint, arcade, receipt, transit map, title sequence and museum placard. The royal sets are Mughal court, Jaipur block print, Versailles, illuminated manuscript, Forbidden City, Ottoman firman, Byzantine mosaic and Maharaja Deco. It recommends a set and waits for a pick when asked for options; it builds straight away when told to. Use when /brag-slim gets --style, when the user asks for style options or a recommendation, when they name a look ("make it royal", "like a newspaper", "arcade style"), or when a video needs a stronger identity than the project's own UI.
+description: Twenty-one art-directed visual systems for launch videos, each with a signature motion trick and a matching sound palette. The general sets are doodle, ops desk (a bento board operated by a cursor), kinetic type, quant terminal, riso zine, blueprint, stop-motion collage, newsprint, arcade, receipt, transit map, title sequence and museum placard. The royal sets are Mughal court, Jaipur block print, Versailles, illuminated manuscript, Forbidden City, Ottoman firman, Byzantine mosaic and Maharaja Deco. It recommends a set and waits for a pick when asked for options; it builds straight away when told to. Use when /brag-slim gets --style, when the user asks for style options or a recommendation, when they name a look ("make it royal", "like a newspaper", "arcade style"), or when a video needs a stronger identity than the project's own UI.
 ---
 
 # brag-styles
@@ -12,6 +12,8 @@ sets the pacing.
 | slug | set | best for |
 |---|---|---|
 | `doodle` | Doodle | pitches, services and consulting, how-it-works explainers, friendly B2B, education |
+| `ops-desk` | Ops Desk | B2B tools, services and automation, dashboards; a demo that is operated on screen |
+| `kinetic-type` | Kinetic Type | a script with no footage, hooks, opinions, vertical video for phones |
 | `exchange-floor` | Exchange Floor | fintech, data tools, dev infrastructure, anything with real metrics |
 | `riso-zine` | Riso Zine | indie apps, creative tools, community products, anything with personality |
 | `patent-office` | Patent Office | hardware, APIs, developer tools, anything architectural |
@@ -58,7 +60,7 @@ Don't ask again.
 
 **Reading the fit.** Numbers-heavy fintech, data or infrastructure → `exchange-floor`,
 `the-receipt`, `patent-office`. A workflow or pipeline → `transit-map`, `patent-office`.
-A pitch, service or explainer → `doodle`. Consumer, with personality → `riso-zine`,
+A pitch, service or explainer → `doodle`. A product or service whose value is something broken now working → `ops-desk`. A script and nothing else → `kinetic-type`. Consumer, with personality → `riso-zine`,
 `stop-motion-collage`, `insert-coin`. A big announcement → `extra-extra`, `sultans-firman`,
 `title-sequence`. Premium or luxury → `court-of-versailles`, `maharaja-deco`,
 `museum-placard`. An Indian audience → `shahi-darbar`, `jaipur-block-print`,
@@ -71,11 +73,15 @@ On a tie, prefer the set whose signature move acts out the project's core action
 the rest only when you need it: the webp frames for composition, `DESIGN.md` for an exact
 token, and `ref/*.html` to lift an ornament. Never load another set.
 
+**A set is the look, not the motion.** Every build also follows the `motion-kit` skill beside
+this one: a performer in every scene, nothing waiting after its payoff, an activity audit
+before the render. A set applied to still pages is a slideshow in costume.
+
 ## Rules
 - **It's a video, not a website.** The Stitch frames are dressed as web pages. Drop their
   chrome: navigation, buttons, tiny labels, side panels, "dossier" and spec blocks.
   Keep the palette, type, ornament and composition.
-- **Frame:** 1920x1080. Every reference frame the audit flagged as overflowing must be recomposed.
+- **Frame:** 1920x1080 unless the brief is vertical (1080x1920; `kinetic-type` and the motion-kit safe zones cover it). Every reference frame the audit flagged as overflowing must be recomposed.
   Don't shrink them to fit. Readable text is at least 28px, mono labels at least 22px. Keep
   about 12 words on screen per beat, and one focal element per frame.
 - **Copy:** every word and number comes from the project. The Stitch copy is placeholder
@@ -111,7 +117,7 @@ token, and `ref/*.html` to lift an ornament. Never load another set.
   first frame.
 - Use static textures: grain, paper, halftone and mosaic as a single pre-rendered image or
   canvas drawn once. Don't animate an SVG filter over the whole frame. Keep to one canvas at most.
-- Render stills and the final video with the `fast-render` skill.
+- Render stills and the final video with the `fast-render` skill, and run its `--audit` first.
 
 ## Adding a set
 Write a Stitch prompt modelled on any `sets/*/stitch.md` and export the result from Stitch.

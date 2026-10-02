@@ -1,6 +1,6 @@
 # Third-party notices
 
-The MIT licence in `LICENSE` covers the code and skill text. It does not cover the bundled audio or the downloaded TTS model, which carry their own terms:
+The MIT licence in `LICENSE` covers the code and skill text. It does not cover the bundled audio, the bundled fonts or the downloaded TTS model, which carry their own terms:
 
 | Files | Source | Licence |
 |---|---|---|
@@ -9,6 +9,14 @@ The MIT licence in `LICENSE` covers the code and skill text. It does not cover t
 | `skills/brag/assets/sfx/keyboard/` | Not documented | Unknown. Replace them if you need a verified licence. |
 
 The music terms were checked against ende.app's FAQ on 2026-09-29.
+
+## Fonts (`skills/motion-kit/fonts/`)
+
+| Files | Source | Licence |
+|---|---|---|
+| `Inter-*.woff2`, `ArchivoBlack-400.woff2`, `InstrumentSerif-*.woff2`, `BricolageGrotesque-800.woff2`, `SpaceGrotesk-*.woff2`, `JetBrainsMono-400.woff2` | Google Fonts, Latin subset | [SIL Open Font License 1.1](https://openfontlicense.org/). Each family's copyright notice and the full licence are in `skills/motion-kit/fonts/OFL.txt`. |
+
+Every sound made by `skills/motion-kit/scripts/soundkit.py` is synthesised by that script, so its output carries no third-party terms.
 
 ## TTS model (downloaded on first use by `narrate`, not stored in git)
 

@@ -9,15 +9,16 @@ narration from `narrate`, and 1,500 frames at 60 fps rendered by `fast-render` i
 The loop above is a silent preview. **[Play the full 25 s video with sound](https://cdn.jsdelivr.net/gh/Bhavya-Dhoot/brag-scaled@87d204e/docs/assets/brag-scaled.mp4)**,
 or see the [poster frame](docs/assets/brag-scaled.jpg).*
 
-`brag-scaled` is a set of agent skills that turn the project you built into a short, shareable launch video, with music, motion, optional narration and share copy.
+`brag-scaled` is a set of agent skills that turn the project you built into a short, shareable launch video, with music, motion, optional narration and share copy. It also makes text-only videos from a script, promos from screenshots, and motion graphics laid over a clip you recorded.
 
 | Skill | What it does |
 |---|---|
 | `/brag-slim` | The model builds the whole video itself: story, visuals, soundtrack, share copy. It is the default on Claude Opus 5.5. |
 | `/brag` | The classic workflow, which builds and renders through [Hyperframes](https://hyperframes.heygen.com/). |
-| `fast-render` | Renders any `window.render(t)` page to MP4 on the GPU with parallel browsers. `/brag-slim` uses it for stills and the final render. |
-| `narrate` | Offline voiceover with a bundled 82M-parameter TTS model (Kokoro). It gives exact line timings and ducks the music under the voice. |
-| `brag-styles` | 19 art-directed looks, each with a signature motion trick and a matching sound palette. Ask for options and it recommends one before building anything. |
+| `fast-render` | Renders any `window.render(t)` page to MP4 on the GPU with parallel browsers. Also 4K, transparent ProRes, graphics over footage, a setup check and an activity audit. `/brag-slim` uses it for stills and the final render. |
+| `motion-kit` | Keeps a video from playing like a slideshow: 33 named moves, pacing rules, cursor-and-camera demo engines, a beat grid, code-made sound, safe zones, and bundled open-licence fonts. |
+| `narrate` | Offline voiceover with a bundled 82M-parameter TTS model (Kokoro). It gives exact line timings and ducks the music under the voice. `transcribe.py` goes the other way: word timings from a recorded clip. |
+| `brag-styles` | 21 art-directed looks, each with a signature motion trick and a matching sound palette. Ask for options and it recommends one before building anything. |
 
 ## Why it's fast
 
@@ -39,9 +40,42 @@ from 34 s to 22 s. The output decodes within 43.6 dB PSNR of a lossless capture 
 frame. Only the Windows + NVIDIA path is measured so far. The macOS and Linux GPU flags are
 the documented ANGLE backends, and the renderer line shows what actually ran.
 
-## 19 looks, recommended before anything is built
+## It moves like a demo, not a slideshow
 
-![The 19 brag-styles looks](docs/assets/scaled/styles.jpg)
+| Ops Desk: a board operated by a cursor | Kinetic Type: a script, one sentence a screen |
+|---|---|
+| ![A bento board with five tiles fixed by a cursor](skills/brag-styles/sets/ops-desk/frames/f4.webp) | ![Large type with one accent word](skills/brag-styles/sets/kinetic-type/frames/f1.webp) |
+
+A video made of good frames can still be a slideshow. `fast-render --audit` samples the page four
+times a second and measures how much of the picture is changing. Four videos made with this repo,
+and what one viewer said about each:
+
+| Video | Median activity | Quiet (under 1% changing) | Verdict from the viewer |
+|---|---|---|---|
+| Doodle intro, scene by scene | 0.9% | 52% of the time | "feels like a slide show" |
+| Newspaper, page by page | 1.2% | 43% | "feels like a slide show" |
+| Ops Desk demo, recut on a beat grid | 6.9% | 5% | accepted |
+| Kinetic Type reference | 4.6% | 2% | not yet judged |
+
+That is one viewer and a handful of videos, so read it as a prompt to look, not a score. `motion-kit`
+holds what changed between the first two and the third: a performer in every scene, effect straight
+after cause, nothing waiting after its payoff, scenes cut to whole bars, a reward for every completion.
+
+## Graphics on your own footage
+
+```text
+/brag-slim clip.mp4 "add graphics to my video"
+```
+
+`transcribe.py` gets word timings offline, the overlay page puts a checklist or a counter on the exact
+spoken word inside the safe zone (off the face, above the captions), and `fast-render --over` lays it on
+the clip with its size, frame rate, cut and audio untouched. An 18 s, 1080x1920 clip (434 frames) was
+composited in 24 s on the reference laptop. For an editor instead, `--transparent` writes ProRes 4444
+with alpha and a PNG sequence.
+
+## 21 looks, recommended before anything is built
+
+![Nineteen of the 21 brag-styles looks; Ops Desk and Kinetic Type are shown above](docs/assets/scaled/styles.jpg)
 
 | You say | brag-scaled does |
 |---|---|
@@ -75,13 +109,22 @@ claude plugin install brag-scaled@brag-scaled
 npx skills add https://github.com/Bhavya-Dhoot/brag-scaled --skill brag-slim
 npx skills add https://github.com/Bhavya-Dhoot/brag-scaled --skill fast-render
 npx skills add https://github.com/Bhavya-Dhoot/brag-scaled --skill narrate
+npx skills add https://github.com/Bhavya-Dhoot/brag-scaled --skill motion-kit
+npx skills add https://github.com/Bhavya-Dhoot/brag-scaled --skill brag-styles
 ```
 
-**Python tools** (`fast-render`, `narrate`):
+**Python tools** (`fast-render`, `narrate`, `motion-kit`):
 
 ```bash
-pip install playwright imageio-ffmpeg kokoro-onnx soundfile
+pip install playwright imageio-ffmpeg kokoro-onnx soundfile numpy scipy pillow
 playwright install chromium
+pip install faster-whisper   # only for graphics on recorded footage
+```
+
+Then check the machine, including whether frames will be drawn on the GPU:
+
+```bash
+python skills/fast-render/scripts/fastrender.py --doctor
 ```
 
 The TTS model (about 120 MB) downloads once on the first narration, from this repo's [`tts-v1` release](https://github.com/Bhavya-Dhoot/brag-scaled/releases/tag/tts-v1). It is checked against a SHA-256 and cached in `~/.cache/brag-scaled/`.
@@ -117,7 +160,13 @@ Steer the tone, or add narration:
 /brag-slim --style options
 /brag-slim --style shahi-darbar
 /brag-slim --style the-receipt --tone deadpan
+/brag-slim --style ops-desk --voice
+/brag-slim "Nobody watches a slideshow. Show the thing working." --format vertical
+/brag-slim screenshots/
+/brag-slim clip.mp4
 ```
+
+After a render, say what to change in plain words ("make the counter start when it says forty", "render it in 4K", "give me a transparent version for Premiere"). One thing changes; the rest stays.
 
 The set list, with what each is best for, is in [`skills/brag-styles/SKILL.md`](skills/brag-styles/SKILL.md). Each set has reference frames, and a Stitch prompt for regenerating it (`sets/<slug>/stitch.md`). Import a new Stitch export with `python scripts/import_stitch.py <export-dir>`.
 
@@ -126,15 +175,16 @@ You get a `brag-output/` folder with the plan, share copy, and the rendered `bra
 ## Requirements
 
 - An agent that supports Agent Skills (Claude Code, opencode, Codex CLI, or any agent with custom instructions)
-- Python 3.9+ for `fast-render` and `narrate`
+- Python 3.9+ for `fast-render`, `narrate` and `motion-kit`
 - Node.js 22+ and the Hyperframes CLI, for the classic `/brag` only
 
 ## What's in this repo
 
 - `skills/brag-slim/`: the single-file skill
 - `skills/fast-render/`: the GPU renderer (`scripts/fastrender.py`)
-- `skills/narrate/`: offline narration (`scripts/narrate.py`)
-- `skills/brag-styles/`: the 19 visual systems. Each has a `set.md`, which is all a run reads, plus reference frames, `DESIGN.md` tokens and reference markup.
+- `skills/motion-kit/`: the moves and pacing rules, `scripts/soundkit.py` (sound made in code), `scripts/fit_scenes.py` (scenes fitted to narration on a beat grid), reference engines in `ref/`, and bundled fonts
+- `skills/narrate/`: offline narration (`scripts/narrate.py`) and word timings from a clip (`scripts/transcribe.py`)
+- `skills/brag-styles/`: the 21 visual systems. Each has a `set.md`, which is all a run reads, plus reference frames, `DESIGN.md` tokens and reference markup.
 - `scripts/import_stitch.py`: turns a Google Stitch export into sanitised sets
 - `skills/brag/`: the classic workflow, with its references and bundled music and SFX
 - `examples/`: fake product sites used as a benchmark suite
@@ -146,10 +196,11 @@ You get a `brag-output/` folder with the plan, share copy, and the rendered `bra
 
 - Music: "Happy Beats / Business Moves" by Sascha Ende, [ende.app](https://ende.app/en) (CC BY 4.0)
 - Sound effects: [Kenney](https://kenney.nl/) (CC0)
+- Fonts in `skills/motion-kit/fonts/`: Inter, Archivo Black, Instrument Serif, Bricolage Grotesque, Space Grotesk and JetBrains Mono (SIL Open Font License 1.1)
 - Voice: [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) (Apache-2.0), run through [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx) (MIT)
 - Video generation, in the classic `/brag`: [Hyperframes](https://hyperframes.heygen.com/)
 
-Licences: the code is MIT (see `LICENSE`). Bundled audio and model terms are in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+Licences: the code is MIT (see `LICENSE`). Bundled audio, font and model terms are in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Contributing
 

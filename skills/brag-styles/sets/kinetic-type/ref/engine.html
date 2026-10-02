@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Kinetic type: the words are the whole video. Give it a script, it gives one sentence per
+     screen, set as large as fits, each word slamming in on the beat. Works at any size
+     (1920x1080, 1080x1920, 1080x1080): pass --width and --height to the renderer.
+     Fonts are the bundled open-licence ones; when you copy this page into a project, copy
+     motion-kit/fonts beside it and point the link at fonts/fonts.css. -->
+<link rel="stylesheet" href="../../../../motion-kit/fonts/fonts.css">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#0a0a0a; }
+  #stage { position:absolute; inset:0; overflow:hidden; background:#0a0a0a; color:#f0ede8; font-family:'Archivo Black', sans-serif; text-transform:uppercase; }
+  .screen { position:absolute; inset:0; display:none; }
+  .echo { position:absolute; top:50%; left:0; white-space:nowrap; line-height:1; color:transparent; -webkit-text-stroke:.35vmin #f0ede8; opacity:0; will-change:transform; }
+  .w { position:absolute; white-space:nowrap; line-height:1; letter-spacing:-.03em; will-change:transform, opacity; }
+  #count { position:absolute; left:6%; bottom:5%; font:400 1.6vmin 'JetBrains Mono'; letter-spacing:.2em; color:#6f6c66; }
+  #bar { position:absolute; left:0; bottom:0; height:.9vmin; background:#c8ff00; }
+</style>
+</head>
+<body>
+<div id="stage"><div id="count"></div><div id="bar"></div></div>
+<script src="layout.js"></script><!-- optional: narration timings; without it the page times itself -->
+<script>
+// ------------------------------------------------------------------ edit these
+// The speaker's exact words, one sentence per screen. *Stars* mark the one word that takes the accent.
+const SCRIPT = [
+  'Nobody watches a *slideshow.*',
+  'Show the thing *working.*',
+  'Cut every *pause.*',
+  'Land each line on the *beat.*',
+  'Then say what to do *next.*',
+];
+const BPM = 120;                 // screens are cut to whole beats
+const INK = '#0a0a0a', PAPER = '#f0ede8', ACCENT = '#c8ff00';
+const SAFE = { w: .80, h: .62 }; // text stays inside the middle of the frame, so phones do not crop it
+
+// ------------------------------------------------------------------ engine
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), seg = (t, a, b) => clamp((t - a) / (b - a));
+const out4 = x => 1 - Math.pow(1 - x, 4), bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);
+const stage = document.getElementById('stage'), BEAT = 60 / BPM, SFX = [];
+const LINES = window.LAYOUT ? LAYOUT.order.flatMap(id => LAYOUT.scenes[id].lines) : null;
+const ctx = document.createElement('canvas').getContext('2d');
+let screens = [], DURATION = 0;
+
+function build() {
+  const W = innerWidth, H = innerHeight; ctx.font = '400 100px "Archivo Black"';
+  const wide = s => ctx.measureText(s.toUpperCase()).width * .97 / 100;      // width of a word at 1px
+  let t = .3;
+  screens = SCRIPT.map((raw, k) => {
+    const words = raw.split(/\s+/).map(w => ({ text: w.replace(/\*/g, ''), hot: w.includes('*') }));
+    // try every way of breaking the sentence into 1..5 balanced lines; keep the largest type that fits
+    let best = null;
+    const lw = l => l.reduce((s, w) => s + wide(w.text), 0) + (l.length - 1) * .28;
+    // every way to cut the sentence into n runs of words; the best cut has the narrowest widest line
+    const cuts = (ws, n) => n === 1 ? [[ws]] : ws.slice(1).flatMap((_, i) => cuts(ws.slice(i + 1), n - 1).map(rest => [ws.slice(0, i + 1), ...rest]));
+    for (let n = 1; n <= Math.min(5, words.length); n++) {
+      const lines = cuts(words, n).reduce((a, b) => Math.max(...b.map(lw)) < Math.max(...a.map(lw)) ? b : a), widths = lines.map(lw);
+      const size = Math.min(W * SAFE.w / Math.max(...widths), H * SAFE.h / (lines.length * .98));
+      if (!best || size > best.size) best = { size, lines, widths };
+    }
+    const el = document.createElement('div'); el.className = 'screen'; stage.append(el);
+    const hotWord = (words.find(w => w.hot) || words[words.length - 1]).text, echo = document.createElement('div');
+    echo.className = 'echo'; echo.textContent = (hotWord + ' ').repeat(4); echo.style.fontSize = Math.min(H * .7, best.size * 2.6) + 'px'; echo.style.marginTop = -Math.min(H * .7, best.size * 2.6) / 2 + 'px'; el.append(echo);
+    const line = LINES && LINES[k], start = line ? line.t - .15 : t;
+    const need = line ? line.dur + .55 : words.length * .13 + .5 + words.length * .3;            // slam in, then about 0.3 s a word to read
+    const len = line ? need : Math.max(4, Math.ceil(need / BEAT)) * BEAT;
+    const items = [], y0 = (H - best.lines.length * best.size * .98) / 2; let i = 0;
+    best.lines.forEach((l, li) => { let x = (W - best.widths[li] * best.size) / 2;
+      l.forEach(w => { const d = document.createElement('div'); d.className = 'w'; d.textContent = w.text; d.style.fontSize = best.size + 'px'; d.style.left = x + 'px'; d.style.top = y0 + li * best.size * .98 + 'px'; if (w.hot) d.style.color = ACCENT; el.append(d);
+        const at = line ? line.dur * .8 * i / words.length + .1 : i * .13;
+        items.push({ d, at, move: (k + i) % 3, hot: w.hot, dir: i % 2 ? 1 : -1 }); if (w.hot) SFX.push({ t: start + at, type: 'thud' }); else SFX.push({ t: start + at, type: 'tick', x: i });
+        x += (wide(w.text) + .28) * best.size; i++; }); });
+    t = start + len; return { el, echo, t0: start, t1: start + len, items, invert: k % 3 === 2 };
+  });
+  DURATION = t + .2;
+}
+
+function draw(t) {
+  let cur = screens[0]; for (const s of screens) { s.el.style.display = 'none'; if (t >= s.t0) cur = s; }
+  cur.el.style.display = 'block';
+  const u = t - cur.t0, leave = seg(t, cur.t1 - .16, cur.t1), hot = cur.items.find(i => i.hot), punch = hot ? bump((u - hot.at) / .28) : 0;
+  stage.style.background = cur.invert ? PAPER : INK; stage.style.color = cur.invert ? INK : PAPER;
+  // a screen never sits still while it is read: it pushes in, and the accent word drifts past behind it in outline
+  cur.el.style.transform = `scale(${(1 + punch * .045 + .05 * seg(t, cur.t0, cur.t1)).toFixed(4)})`;
+  const hu = hot ? u - hot.at : u; cur.echo.style.webkitTextStrokeColor = cur.invert ? INK : PAPER; cur.echo.style.opacity = hu > 0 ? .16 * (1 - leave) : 0; cur.echo.style.transform = `translateX(${(4 - 22 * (t - cur.t0) / (cur.t1 - cur.t0)).toFixed(2)}%)`;
+  for (const it of cur.items) {
+    const p = out4(seg(u, it.at, it.at + .3)), s = it.d.style; s.opacity = u >= it.at ? 1 - leave : 0;
+    if (cur.invert && it.hot) { s.color = INK; s.background = ACCENT; s.padding = '0 .12em'; s.margin = '0 -.12em'; }
+    const exit = `translateY(${(-leave * leave * 90).toFixed(1)}px)`;
+    if (it.move === 0) s.transform = `${exit} scale(${(2.3 - 1.3 * p).toFixed(3)})`;                                        // slam
+    else if (it.move === 1) s.transform = `${exit} translateX(${((1 - p) * 320 * it.dir).toFixed(1)}px) skewX(${((1 - p) * -18 * it.dir).toFixed(1)}deg)`;   // slide
+    else { s.transform = `${exit} scaleY(${(.08 + .92 * p).toFixed(3)})`; s.transformOrigin = '50% 100%'; }               // stretch up
+  }
+  document.getElementById('count').textContent = String(screens.indexOf(cur) + 1).padStart(2, '0') + ' / ' + String(screens.length).padStart(2, '0');
+  document.getElementById('count').style.color = cur.invert ? '#8a8578' : '#6f6c66';
+  document.getElementById('bar').style.width = (t / DURATION * 100).toFixed(2) + '%';
+}
+window.render = t => { if (!screens.length) build(); draw(t); };
+window.SFX = SFX;
+window.ready = document.fonts.ready.then(() => Promise.all(['400 100px "Archivo Black"', '400 20px "JetBrains Mono"'].map(f => document.fonts.load(f)))).then(() => { build(); window.DURATION = DURATION; });
+</script>
+</body>
+</html>
