@@ -63,6 +63,19 @@ That is one viewer and a handful of videos, so read it as a prompt to look, not 
 holds what changed between the first two and the third: a performer in every scene, effect straight
 after cause, nothing waiting after its payoff, scenes cut to whole bars, a reward for every completion.
 
+## Demo mode: the real app, operated on screen
+
+![A site inside a styled window, a cursor pressing one of its controls, and a rail counting the screens shown](docs/assets/scaled/demo-mode.webp)
+
+`/brag-slim <url> --demo` makes a product demo of something that already runs. A walker maps every page of the site and what can be clicked on it; a planned tour is then performed in a real browser, and each view is saved along with where each click landed. The player operates those real screens again with a cursor, inside a window drawn in the look you pick, leaning the camera toward whatever is being clicked or pointed at, and counting the screens as it goes.
+
+```bash
+python skills/motion-kit/scripts/walk.py map https://your-site.com --out walk     # every page, section and clickable thing
+python skills/motion-kit/scripts/walk.py record plan.json --out demo              # perform the tour, save the real views
+```
+
+It is a tour, not a test run: it will not type into a password field or press a submit button on a live site. The reference run toured a three-page portfolio in 12 steps and 33 seconds, 7 of 7 screens, including a click on a live pricing tool. That site is nearly black with thin type, so the activity audit reads it as 36% quiet although no stretch of 1.5 s is still before the end card: on a dark, sparse app, judge by the listed stretches.
+
 ## Graphics on your own footage
 
 ```text
@@ -211,7 +224,7 @@ You get a `brag-output/` folder with the plan, share copy, and the rendered `bra
 
 - `skills/brag-slim/`: the single-file skill
 - `skills/fast-render/`: the GPU renderer (`scripts/fastrender.py`)
-- `skills/motion-kit/`: the moves and pacing rules, `scripts/soundkit.py` (sound made in code), `scripts/fit_scenes.py` (scenes fitted to narration on a beat grid, lines placed on beats), `scripts/qr.py` (a QR grid, and a check that a rendered frame scans), reference engines in `ref/`, and bundled fonts
+- `skills/motion-kit/`: the moves and pacing rules, `scripts/soundkit.py` (sound made in code), `scripts/fit_scenes.py` (scenes fitted to narration on a beat grid, lines placed on beats), `scripts/qr.py` (a QR grid, and a check that a rendered frame scans), `scripts/walk.py` and `ref/demo.html` (demo mode: map a running site, record a tour, play it back in a chosen look), reference engines in `ref/`, and bundled fonts
 - `skills/narrate/`: offline narration (`scripts/narrate.py`) and word timings from a clip (`scripts/transcribe.py`)
 - `skills/brag-styles/`: the 34 visual systems. Each has a `set.md`, which is all a run reads, plus reference frames, `DESIGN.md` tokens and reference markup.
 - `scripts/import_stitch.py`: turns a Google Stitch export into sanitised sets

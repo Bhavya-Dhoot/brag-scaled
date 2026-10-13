@@ -1,6 +1,6 @@
 ---
 name: brag-slim
-description: Turn a project directory, a website URL, a script, a folder of screenshots or a recorded clip into a short, shareable video with music, motion, and share copy. One file, no bundled assets — built entirely by the model with the tools already on the machine. Use when someone says "/brag-slim", "let's /brag about this", "brag about <url>", "make a launch video", or wants to show off what they built. If the /brag skill is also installed, let /brag handle those phrases; it hands off here on Opus 5.5.
+description: Turn a project directory, a website URL, a script, a folder of screenshots or a recorded clip into a short, shareable video with music, motion, and share copy. One file, no bundled assets — built entirely by the model with the tools already on the machine. It also makes product demos of a running site or app (--demo): every screen visited, a cursor operating the real interface, framed in a chosen style. Use when someone says "/brag-slim", "let's /brag about this", "brag about <url>", "make a launch video", "make a demo video", "walk through the app", or wants to show off what they built. If the /brag skill is also installed, let /brag handle those phrases; it hands off here on Opus 5.5.
 ---
 
 # /brag-slim
@@ -17,6 +17,7 @@ Usage: `/brag-slim [input] [options]`. Options (flags or plain language):
 | `--format landscape\|vertical\|square` | landscape (1920×1080; vertical 1080×1920, square 1080×1080), 30fps |
 | `--fps <n>`, `--4k`, `--transparent` | 30 fps, 1080p, opaque MP4. `--4k` renders at twice the size; `--transparent` writes ProRes 4444 with alpha (and a PNG sequence) for an editor |
 | `--duration <s>` | about 20s |
+| `--demo` | off. A product demo of a running site or app: every screen is visited, a cursor operates the real interface, and the chosen style frames it. See "Demo mode" |
 | `--voice [voice]` | off; narration with the `narrate` skill (default voice `af_heart`) |
 | `--style <set \| options \| auto>` | recommend, then wait for a pick. A set name builds with it; `options` only recommends; `auto` picks the best set and builds. There are 34 sets in `brag-styles`. A design style can be named directly (claymorphism, glassmorphism, neumorphism, neo-brutalism, Swiss, cybercore, synthwave, Y2K, surreal, ethereal, bohemian, wabi-sabi, luxury typography). The sets include doodle, ops desk, brutal bento, kinetic type, quant terminal, riso, arcade, Mughal court and Versailles |
 
@@ -132,6 +133,19 @@ Build it with whatever works on this machine. If you draw the video in a browser
 Frame capture is usually the slowest step, so set it up for speed before the full render. If the `fast-render` skill sits beside this one (`../fast-render/scripts/fastrender.py`), use it for stills and the render and skip the rest of this paragraph; it does all of the following. The first render on a machine prints `settings: safe defaults, not calibrated`: tell the user once that a one-off calibration (`fastrender.py --tune`, a minute or two) makes later renders faster, that it uses the whole machine, and that they should restart or close heavy applications first. Run it only when they say to; never start it yourself in the middle of a build. Headless Chromium often rasterizes on the CPU: read the WebGL renderer string, and if it says SwiftShader, relaunch on the GPU (on Windows, `--use-angle=d3d11 --force_high_performance_gpu`; elsewhere, the platform's ANGLE GPU backend) and confirm the string changed. Render contiguous chunks of the timeline in parallel browsers, pipe each captured frame straight into the video tool instead of writing images to disk, and run the final encode after capture finishes — a hardware encoder sharing the GPU with rasterization can cut throughput by more than half.
 
 Before the full render, run `fastrender.py video.html --audit` and fix every quiet stretch it lists that is not the held end card: a video that is quiet a third of the time plays like a slideshow, however good each frame looks. Then look at stills from every scene *and* from mid-transition, and fix overflow, collisions, and low contrast. A plain crossfade between two busy layouts makes a muddy double exposure; stagger it (old content out, then new content in) or dip through the background. Then render `brag.mp4`.
+
+## Demo mode
+
+`--demo` (or "demo video", "walk me through the app", "show every screen") makes a product demo: the real application, operated by a cursor, inside a window drawn in the chosen style. Use it for a site or an app that already runs. The laws, the audit and the deliverables stay the same; what changes is where the pictures come from: real screenshots of every step, taken by `../motion-kit/scripts/walk.py`.
+
+1. **Map it.** `python <motion-kit>/scripts/walk.py map <url> --out walk`. For a project, start its dev server and map the local address. Read `walk/map.md` and look at `walk/map.jpg`: every page, its sections, and every clickable thing with a selector for it.
+2. **Decide the story before the route.** Write one line: what this is and who it is for. Take the first half from the site's own copy and the second from what the user said about their audience; if they said nothing, say who you assumed. The tour then answers that viewer's questions in order. Open on the screen where the product does its job, not on the home page hero.
+3. **Cover every path, briefly.** Every page and every distinct flow in the map goes into the plan, or into `brag-plan.md` under "not shown" with the reason (behind a login, a legal page, the same template as one already shown). One caption a step, seven words or fewer, in the site's own words. Twelve steps is about 33 seconds; past twenty, cut.
+4. **Write `plan.json` and record it.** `python <motion-kit>/scripts/walk.py record plan.json --out demo`, then look at `demo/shots.jpg`. A step that shows an empty or half-faded view is a bad stop: move its scroll offset, or add `"point"` so the cursor shows what the caption means. A page that animates as it scrolls needs `"fade": true` and offsets found by trying a few; probing it one screen at a time at `"scale": 0.5` finds them quickly. At least one step should click something that answers: a tab, a filter, a control on a live tool.
+5. **Pick the look** with the usual `brag-styles` choice, then copy `<motion-kit>/ref/demo.html` beside `demo/` and set `SKIN` and `COPY` at the top. Seven looks are built in; any other set becomes a skin from its `set.md` (background, ink, accent, card, edge, corner, shadow, three fonts, texture). `COPY` is the title, who it is for, the closing line and the address.
+6. **Audit, render, deliver** as usual, and report the coverage in one line: "7 of 7 screens shown", plus anything left out and why.
+
+It is a tour, not a test run. The recorder refuses to type into a password field or to press a submit button on a live site, so logged-in screens need a test account on a local build, or are left out and said to be. It answers cookie banners with the decline button. Never show a real customer's data: if the app holds any, demo a seeded or sample workspace.
 
 ## 4. Deliver
 

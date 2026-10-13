@@ -1,0 +1,184 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; }
+#stage { position:absolute; inset:0; overflow:hidden; background:var(--bg); color:var(--ink); font-family:var(--fb); }
+#tex { position:absolute; inset:0; background:var(--tex); }
+/* the rail: what this is, and which screens have been shown */
+#rail { position:absolute; left:56px; top:92px; width:262px; }
+#brand { font:var(--fw) 33px/1.08 var(--fd); }
+#for { font:400 16px/1.45 var(--fm); margin-top:14px; opacity:.72; }
+#chap { margin-top:40px; }
+.ch { display:flex; align-items:center; gap:12px; font:400 18px/1 var(--fm); height:38px; opacity:.4; transform-origin:0 50%; }
+.ch i { width:15px; height:15px; border:2px solid var(--ink); background:transparent; flex:none; }
+.ch.on { opacity:1; } .ch.on i { background:var(--accent); }
+#count { margin-top:28px; font:var(--fw) 56px/1 var(--fd); }
+#count small { display:block; font:400 15px/1.3 var(--fm); margin-top:8px; opacity:.72; }
+/* the app window */
+#win { position:absolute; left:344px; top:80px; width:1524px; height:905px; background:var(--card); border:var(--edge); border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden; transform-origin:50% 50%; }
+#bar { height:46px; display:flex; align-items:center; gap:9px; padding:0 18px; font:400 16px var(--fm); border-bottom:var(--edge); }
+#bar i { width:13px; height:13px; border-radius:50%; border:2px solid var(--ink); }
+#url { margin-left:14px; padding:5px 16px; border:2px solid var(--ink); border-radius:99px; min-width:440px; white-space:nowrap; }
+#screen { position:absolute; left:0; top:46px; width:1520px; height:855px; overflow:hidden; background:#000; }
+#cam { position:absolute; left:0; top:0; width:1520px; height:855px; transform-origin:0 0; }
+#cam img { position:absolute; left:0; top:0; width:1520px; height:855px; opacity:0; }
+#hit { position:absolute; left:0; top:0; border:4px solid var(--accent); border-radius:8px; opacity:0; box-shadow:0 0 0 2px #0008; }
+#cur { position:absolute; left:0; top:0; width:34px; height:46px; opacity:0; }
+#ring { position:absolute; left:0; top:0; width:90px; height:90px; margin:-45px 0 0 -45px; border-radius:50%; border:5px solid var(--accent); opacity:0; }
+#say { position:absolute; left:344px; top:1000px; width:1524px; text-align:center; }
+#say span { display:inline-block; background:var(--ink); color:var(--bg); font:700 30px/1.2 var(--fb); padding:8px 22px 10px; border-radius:calc(var(--r) / 3); }
+/* title and end cards */
+#title, #end { position:absolute; left:0; top:0; width:1920px; text-align:center; }
+#title h1, #end h1 { font:var(--fw) 104px/1.04 var(--fd); padding:0 160px; }
+#title p, #end p { font:400 26px/1.4 var(--fm); margin-top:26px; }
+#end b { display:inline-block; margin-top:34px; font:700 34px var(--fb); background:var(--accent); color:var(--ink); border:var(--edge); border-radius:99px; padding:12px 34px; }
+</style></head>
+<body>
+<div id="stage"><div id="tex"></div>
+  <div id="rail"><div id="brand"></div><div id="for"></div><div id="chap"></div><div id="count"></div></div>
+  <div id="win"><div id="bar"><i></i><i></i><i></i><div id="url"></div></div>
+    <div id="screen"><div id="cam"><div id="hit"></div></div><div id="ring"></div>
+      <svg id="cur" viewBox="-3 -3 34 46"><path d="M0 0 L0 34 L9 26 L16 41 L22 38 L16 24 L28 24 Z" fill="#0a0a0a" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg></div></div>
+  <div id="say"><span></span></div>
+  <div id="title"><h1></h1><p></p></div>
+  <div id="end"><h1></h1><p></p><b></b></div>
+</div>
+<script src="demo/demo.js"></script>
+<script>
+// Demo-mode player: a real app, recorded by scripts/walk.py as screenshots plus where each click landed, is
+// operated again here by a cursor inside a window drawn in the chosen look. Change SKIN and COPY; the tour
+// itself comes from demo/demo.js. Every frame is a pure function of t.
+const SKINS = {   // the five things a set decides here: colours, edge, corner, shadow, type. Make one from any set.md
+  'ops-desk':     { bg: '#f0ede8', ink: '#0a0a0a', accent: '#c8ff00', card: '#fff', edge: '2px solid #0a0a0a', r: '18px', shadow: '0 18px 40px #0000001f', fd: 'Archivo Black', fw: 400, fb: 'Inter', fm: 'JetBrains Mono', tex: 'linear-gradient(#0a0a0a0d 1px, transparent 1px) 0 0/60px 60px, linear-gradient(90deg, #0a0a0a0d 1px, transparent 1px) 0 0/60px 60px' },
+  'swiss-grid':   { bg: '#fff', ink: '#0a0a0a', accent: '#E10600', card: '#fff', edge: '2px solid #0a0a0a', r: '0px', shadow: 'none', fd: 'Inter', fw: 700, fb: 'Inter', fm: 'JetBrains Mono', tex: 'linear-gradient(90deg, #0a0a0a12 1px, transparent 1px) 56px 0/152px 100%' },
+  'brutal-bento': { bg: '#FDFBF6', ink: '#000', accent: '#32FF00', card: '#fff', edge: '6px solid #000', r: '0px', shadow: '12px 12px 0 #000', fd: 'Archivo Black', fw: 400, fb: 'Space Grotesk', fm: 'JetBrains Mono', tex: 'radial-gradient(#0002 3px, transparent 3.5px) 0 0/48px 48px' },
+  'glass-layers': { bg: '#0B1020', ink: '#fff', accent: '#00C2A8', card: '#ffffff1f', edge: '1px solid #ffffff4d', r: '24px', shadow: '0 30px 80px #0008', fd: 'Inter', fw: 700, fb: 'Inter', fm: 'Space Grotesk', tex: 'radial-gradient(600px 500px at 12% 22%, #3B2BFF99, transparent), radial-gradient(700px 520px at 88% 82%, #FF5C8A66, transparent), radial-gradient(600px 600px at 62% 8%, #00C2A866, transparent)' },
+  'cyber-core':   { bg: '#050608', ink: '#32FF7E', accent: '#FF2BD6', card: '#050608', edge: '2px solid #32FF7E', r: '0px', shadow: 'none', fd: 'Archivo Black', fw: 400, fb: 'JetBrains Mono', fm: 'JetBrains Mono', tex: 'linear-gradient(#32FF7E14 1px, transparent 1px) 0 0/100% 4px' },
+  'clay-toys':    { bg: '#EEF0FF', ink: '#2B2A4C', accent: '#B8A9FF', card: '#fff', edge: '0px solid #0000', r: '44px', shadow: '0 24px 50px #2B2A4C33', fd: 'Bricolage Grotesque', fw: 800, fb: 'Inter', fm: 'Inter', tex: 'none' },
+  'luxe-type':    { bg: '#0B0B0B', ink: '#F3EEE4', accent: '#C8B68A', card: '#0B0B0B', edge: '1px solid #F3EEE466', r: '0px', shadow: 'none', fd: 'Instrument Serif', fw: 400, fb: 'Inter', fm: 'Inter', tex: 'none' },
+};
+const SKIN = SKINS['ops-desk'];
+const COPY = { title: 'A portfolio that runs.', for: 'for teams hiring a builder', end: 'Every tool here is live.', cta: 'bhavya-dhoot.vercel.app' };
+const BPM = 120;                                   // step lengths are rounded up to half beats, so cuts land on the music
+
+const $ = s => document.querySelector(s), mk = (tag, cls, host) => { const e = document.createElement(tag); if (cls) e.className = cls; host.append(e); return e; };
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);
+const lerp = (a, b, p) => a + (b - a) * p;
+for (const [k, v] of Object.entries(SKIN)) document.documentElement.style.setProperty('--' + k, v);
+
+const D = window.DEMO, steps = D.steps, K = 1520 / D.w, SW = 1520, SH = 855, FULL = [D.w / 2, D.h / 2, 1];
+const INTRO = 2.5, OUTRO = 3.5, TRAVEL = .55, PRESS = .2, SWAP = .3, Q = 30 / BPM;
+// one image per screenshot, decoded before the first frame; a second copy where a sticky header must stay put during a pan
+const cam = $('#cam'), imgs = {}, bars = {};
+const load = n => { const im = new Image(); im.src = 'demo/' + n; cam.insertBefore(im, $('#hit')); return im; };
+steps.forEach(s => { if (s.pre) imgs[s.pre] = load(s.pre); s.shots.forEach(n => imgs[n] = load(n)); });
+steps.forEach(s => { if (s.kind === 'scroll' && s.move !== 'fade' && s.bars.top) s.shots.forEach(n => bars[n] = load(n)); });
+
+const aim = (x, y, z) => [clamp(x, D.w / 2 / z, D.w - D.w / 2 / z), clamp(y, D.h / 2 / z, D.h - D.h / 2 / z), z];   // a camera that stays inside the page
+// the timeline: each step takes as long as its action plus the time to read its caption
+const SFX = []; let t = INTRO, prev = null, prevY = 0, cur = [D.w * .6, D.h * .6], prevCam = FULL;
+steps.forEach(s => {
+  s.t0 = t; s.prev = prev; s.y0 = prevY; s.pre_d = s.pre ? .4 : 0;
+  s.own = s.kind === 'scroll' ? (s.move === 'pan' ? s.shots.length * .5 : .5) : s.box ? s.pre_d + TRAVEL + PRESS + (s.kind === 'type' ? s.shots.length * .11 : SWAP) : .5;
+  s.len = Math.ceil(Math.max(s.dur || 0, s.own + (s.say ? s.say.split(' ').length * .24 + .45 : .3)) / Q) * Q;
+  s.cur0 = cur; if (s.box) cur = [s.box[0] + s.box[2] / 2, s.box[1] + s.box[3] / 2]; s.cur1 = cur;
+  // two camera targets a step: where it looks while the action happens, and where it drifts while the caption is read.
+  // A held view that only sits there is a slide, so the rest target is always somewhere: the thing pointed at, or the detail.
+  const p = s.point, f = s.focus;
+  s.camFrom = prevCam; s.cam = s.box && s.zoom !== false ? aim(cur[0], cur[1], 1.38) : FULL;
+  s.rest = s.zoom === false ? s.cam : p ? aim(p[0] + p[2] / 2, p[1] + p[3] / 2, 1.32) : s.box && !s.nav ? [s.cam[0], s.cam[1], s.cam[2] * 1.05] : f ? aim(f[0], f[1], f[2] || 1.22) : [FULL[0], FULL[1], 1.06];
+  prevCam = s.rest; if (p) cur = [p[0] + p[2] / 2, p[1] + p[3] / 2]; s.cur2 = cur;
+  if (s.box) SFX.push({ t: +(t + s.pre_d + TRAVEL + PRESS * .5).toFixed(2), type: 'click' });
+  if (s.kind === 'type') SFX.push({ t: +(t + s.pre_d + TRAVEL + PRESS).toFixed(2), type: 'type', x: s.shots.length * .11 });
+  if (s.kind === 'scroll') SFX.push({ t: +t.toFixed(2), type: s.move === 'pan' ? 'tick' : 'whoosh' });
+  if (s.nav && s.prev) SFX.push({ t: +(t + (s.box ? s.pre_d + TRAVEL + PRESS : 0)).toFixed(2), type: 'whoosh' });
+  t += s.len; prev = s.shots[s.shots.length - 1]; prevY = s.y;
+});
+const END = t; window.DURATION = END + OUTRO;
+const chapters = []; steps.forEach(s => { if (s.chapter && !chapters.some(c => c.name === s.chapter)) { const at = s.t0 + (s.box ? s.pre_d + TRAVEL + PRESS : 0); chapters.push({ name: s.chapter, t: at }); SFX.push({ t: +at.toFixed(2), type: 'pop', x: chapters.length }); } });
+SFX.push({ t: +END.toFixed(2), type: 'final' }); SFX.sort((a, b) => a.t - b.t); window.SFX = SFX; window.MARKS = { intro: INTRO, end: END, steps: steps.map(s => s.t0) };
+$('#brand').textContent = COPY.title; $('#for').textContent = COPY.for;
+chapters.forEach(c => { c.el = mk('div', 'ch', $('#chap')); c.el.innerHTML = '<i></i>'; c.el.append(c.name); });
+$('#title h1').textContent = COPY.title; $('#title p').textContent = COPY.for;
+$('#end h1').textContent = COPY.end; $('#end b').textContent = COPY.cta;
+const stepAt = t => { let i = 0; while (i < steps.length - 1 && t >= steps[i + 1].t0) i++; return i; };
+
+// which screenshots are on screen at t, and how: {n, o: opacity, ty: shift, sc: scale, clip: hide this many px at the top}
+function layers(t) {
+  const s = steps[stepAt(t)], u = t - s.t0, last = s.shots[s.shots.length - 1];
+  if (s.kind === 'scroll') {
+    const n = s.shots.length, seq = [[s.prev, s.y0], ...s.shots.map((x, j) => [x, s.ys[j]])];
+    const q = eio(seg(u, 0, s.own)) * n, j = Math.min(n - 1, Math.floor(q)), f = q - j, [A, ya] = seq[j], [B, yb] = seq[j + 1];
+    if (f >= 1 || ya === yb) return [{ n: B }];
+    if (s.move === 'fade') return [{ n: A }, { n: B, o: f }];
+    if (s.move === 'jump') { const d = Math.sign(yb - ya) * SH; return [{ n: A, ty: -f * d }, { n: B, ty: d - f * d }]; }   // one screen's slide, whatever the distance
+    const d = (yb - ya) * K, top = s.bars.top * K;         // a pan: the two views overlap, and a sticky header stays where it is
+    return [{ n: A, ty: -f * d }, { n: B, ty: d - f * d, clip: top }, { bar: B, clipTo: top }];
+  }
+  if (s.box) {
+    let base = s.prev;
+    if (s.pre) { const p = seg(u, 0, s.pre_d); if (p < 1) return [{ n: s.prev }, { n: s.pre, o: eo(p) }]; base = s.pre; }
+    const ts = s.pre_d + TRAVEL + PRESS, p = seg(u, ts, ts + SWAP);                                // ts: when the page answers
+    if (u < ts) return [{ n: base }];
+    if (s.kind === 'type') return [{ n: s.shots[Math.min(s.shots.length - 1, Math.floor((u - ts) / .11))] }];
+    return p >= 1 ? [{ n: last }] : s.nav ? [{ n: base, o: 1 - p, sc: 1 - .03 * p }, { n: last, o: p, ty: (1 - eo(p)) * 40 }] : [{ n: base }, { n: last, o: p }];
+  }
+  const p = seg(u, 0, .5);
+  return p >= 1 || !s.prev ? [{ n: last, o: s.prev ? 1 : seg(u, 0, .4) }] : [{ n: s.prev, o: 1 - p, sc: 1 - .03 * p }, { n: last, o: p, ty: (1 - eo(p)) * 40 }];
+}
+
+let shown = [];
+function render(t) {
+  const i = stepAt(t), s = steps[i], u = t - s.t0, live = t >= INTRO && t < END;
+  // camera: lean in on the thing being clicked, back out for a new page, and keep pushing while a caption is read
+  let c = s.camFrom.map((v, k) => lerp(v, s.cam[k], eio(seg(u, s.pre_d, s.pre_d + (s.box ? TRAVEL : .5)))));
+  c = c.map((v, k) => lerp(v, s.rest[k], eio(seg(u, s.own, s.len))));
+  const z = c[2];
+  cam.style.transform = `translate(${(SW / 2 - c[0] * K * z).toFixed(2)}px,${(SH / 2 - c[1] * K * z).toFixed(2)}px) scale(${z.toFixed(4)})`;
+  // screenshots
+  for (const e of shown) e.style.opacity = 0; shown = [];
+  if (t >= INTRO) for (const l of layers(Math.min(t, END - .001))) {
+    const e = l.bar ? bars[l.bar] : imgs[l.n]; if (!e) continue; shown.push(e);
+    e.style.opacity = l.o == null ? 1 : l.o; e.style.transform = `translateY(${(l.ty || 0).toFixed(2)}px) scale(${l.sc || 1})`;
+    e.style.clipPath = l.bar ? `inset(0 0 ${SH - l.clipTo}px 0)` : l.clip ? `inset(${l.clip}px 0 0 0)` : 'none'; e.style.zIndex = l.bar ? 3 : 1;
+  }
+  // the target lights up as the cursor arrives, then the cursor presses it
+  const ta = s.pre_d + TRAVEL, hit = $('#hit'), on = s.box && live && u > ta - .14 && u < ta + PRESS + SWAP;
+  const pt = s.point && live && u > s.own + .45;      // the thing the caption is about gets the same outline
+  hit.style.opacity = on || pt ? 1 : 0;
+  if (on || pt) { const b = on ? s.box : s.point, g = 8 - 5 * bump(seg(u, ta, ta + PRESS)); Object.assign(hit.style, { left: b[0] * K - g + 'px', top: b[1] * K - g + 'px', width: b[2] * K + 2 * g + 'px', height: b[3] * K + 2 * g + 'px', zIndex: 5 }); }
+  const cp = s.box ? eio(seg(u, s.pre_d, ta)) : 0, c2 = eio(seg(u, s.own, s.own + .6));   // to the button, then on to what the caption points at
+  const px = lerp(lerp(s.cur0[0], s.cur1[0], cp), s.cur2[0], c2), py = lerp(lerp(s.cur0[1], s.cur1[1], cp), s.cur2[1], c2);
+  const sx = SW / 2 + (px - c[0]) * K * z, sy = SH / 2 + (py - c[1]) * K * z, pr = s.box ? bump(seg(u, ta, ta + PRESS)) : 0;
+  $('#cur').style.opacity = live ? seg(t, INTRO + .2, INTRO + .5) : 0; $('#cur').style.transform = `translate(${sx.toFixed(1)}px,${sy.toFixed(1)}px) scale(${1 - .16 * pr})`;
+  const rp = s.box ? seg(u, ta + PRESS * .5, ta + PRESS * .5 + .45) : 0;
+  Object.assign($('#ring').style, { opacity: rp > 0 && rp < 1 && live ? 1 - rp : 0, transform: `translate(${sx.toFixed(1)}px,${sy.toFixed(1)}px) scale(${.3 + eo(rp) * 1.2})` });
+  // rail, address bar, caption
+  const done = chapters.filter(ch => t >= ch.t).length;
+  chapters.forEach(ch => { ch.el.classList.toggle('on', t >= ch.t); ch.el.style.transform = `scale(${1 + .12 * bump(seg(t, ch.t, ch.t + .4))})`; });
+  $('#count').innerHTML = `${done}/${chapters.length}<small>screens shown</small>`;
+  const answered = !s.box || u >= s.pre_d + TRAVEL + PRESS, at = answered ? s : steps[Math.max(0, i - 1)];
+  $('#url').textContent = D.base.replace(/^https?:\/\//, '') + (at.url === '/' ? '' : at.url);
+  const say = $('#say span'), sa = answered ? u - (s.box ? s.pre_d + TRAVEL + PRESS : 0) : 9;   // the caption changes when the page does, not when the cursor sets off
+  say.textContent = at.say || ''; say.style.opacity = live && at.say && sa > .1 ? 1 : 0; say.style.transform = `scale(${1 + .08 * (1 - eo(seg(sa, .1, .28)))})`;
+  // title card in, window up; window back and end card at the close
+  const ip = eio(seg(t, 1.5, 2.4)), op = eio(seg(t, END, END + .6));
+  $('#title').style.opacity = 1 - seg(t, 1.5, 1.9); $('#title').style.transform = `translateY(${400 - 60 * eo(seg(t, 0, .7)) - 80 * ip}px)`;
+  $('#title h1').style.transform = `scale(${t < .18 ? 2.2 - 1.2 * eo(t / .18) : 1})`;
+  $('#win').style.opacity = ip * (1 - .96 * op); $('#win').style.transform = `translateY(${(1 - ip) * 70}px) scale(${.9 + .1 * ip - .06 * op})`;
+  $('#rail').style.opacity = ip * (1 - op); $('#rail').style.transform = `translateX(${(1 - ip) * -40}px)`;
+  $('#end').style.opacity = seg(t, END + .25, END + .6); $('#end').style.transform = `translateY(${330 + (1 - eo(seg(t, END + .25, END + .8))) * 50}px)`;
+  $('#end p').textContent = `${chapters.length} of ${chapters.length} screens shown`; $('#end b').style.transform = `scale(${spring((t - END - .7) * 1.15)})`;
+}
+window.render = render;
+window.ready = Promise.all([document.fonts.load(`${SKIN.fw} 40px "${SKIN.fd}"`), document.fonts.load(`400 20px "${SKIN.fm}"`), document.fonts.load(`700 30px "${SKIN.fb}"`), document.fonts.ready,
+  ...[...cam.querySelectorAll('img')].map(im => im.decode().catch(() => {}))]).then(() => render(0));
+</script>
+</body></html>

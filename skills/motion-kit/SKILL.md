@@ -88,6 +88,7 @@ timing and the one-line formula, is in `references/moves.md`. The ones that carr
 | `ref/worlds.html` | Eight short worlds in eight styles joined by zoom-through dives, one cursor acting in each. The reference for an intro or a story that changes mood. |
 | `../brag-styles/sets/kinetic-type/ref/engine.html` | A script in, one sentence per screen, set as large as fits, words slamming in on the beat. Works at any frame size. The reference for a text-only video. |
 | `../brag-styles/sets/brutal-bento/ref/engine.html` | A page smashed into shards, a board of live miniature rooms, a camera that flies into a tile until it fills the frame, an indexing conveyor, a readout falling through units, and tiles that fold into a QR code. Every time is in beats. The reference for a loud personal intro. |
+| `ref/demo.html` with `scripts/walk.py` | Demo mode. `walk.py map` finds every page of a running site and what can be clicked on it; `walk.py record` performs a planned tour in a real browser and saves each view and where each click landed; the player then operates those real screens with a cursor inside a window drawn in the chosen look, leaning the camera toward what is clicked or pointed at. The reference for a product demo of something that already runs. |
 | `ref/overlay.html` | Transparent graphics over a recorded clip, each starting on the spoken word. See "Graphics on footage" below. |
 
 Each engine carries its helpers (`seg`, `eo`, `spring`, `bump`, the cursor track, `press`).

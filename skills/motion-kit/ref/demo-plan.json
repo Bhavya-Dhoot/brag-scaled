@@ -1,0 +1,82 @@
+{
+ "base": "https://bhavya-dhoot.vercel.app",
+ "width": 1920,
+ "height": 1080,
+ "scale": 1,
+ "steps": [
+  {
+   "go": "/",
+   "chapter": "Home",
+   "say": "A portfolio that runs",
+   "settle": 1.5
+  },
+  {
+   "scroll": 5400,
+   "jump": true,
+   "chapter": "Reconcile",
+   "say": "The brief, in the client's words",
+   "settle": 1.6
+  },
+  {
+   "scroll": 9180,
+   "jump": true,
+   "say": "Matched, with a reason per exception",
+   "settle": 1.6
+  },
+  {
+   "scroll": 15540,
+   "jump": true,
+   "chapter": "Signal",
+   "say": "Five inputs, one market call",
+   "settle": 1.6
+  },
+  {
+   "scroll": 22800,
+   "jump": true,
+   "chapter": "Options",
+   "say": "Price an option, live",
+   "settle": 1.6
+  },
+  {
+   "scroll": 24400,
+   "fade": true,
+   "say": "Payoff and Greeks on one screen",
+   "settle": 1.6
+  },
+  {
+   "click": "#payoff > div:nth-of-type(1) > button:nth-of-type(2)",
+   "say": "Six regimes, one click",
+   "settle": 1.2
+  },
+  {
+   "scroll": 31350,
+   "jump": true,
+   "chapter": "Solver",
+   "say": "57% fewer solver steps",
+   "settle": 1.6
+  },
+  {
+   "click": "#nav-links > a:nth-of-type(2)",
+   "chapter": "Work",
+   "say": "Four case studies",
+   "settle": 1.5
+  },
+  {
+   "scroll": "#proj-trading",
+   "say": "A trading desk behind nine gates",
+   "settle": 1.2
+  },
+  {
+   "scroll": "#mini-projects",
+   "jump": true,
+   "say": "Fifteen more builds",
+   "settle": 1.2
+  },
+  {
+   "click": "#nav-links > a:nth-of-type(3)",
+   "chapter": "About",
+   "say": "Deployed systems, not prototypes",
+   "settle": 1.5
+  }
+ ]
+}

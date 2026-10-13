@@ -76,6 +76,10 @@ For business buyers, lead with `swiss-grid`, `ops-desk` or `exchange-floor`. `gl
 `soft-press`, `clay-toys`, `y2k-chrome`, `ethereal-haze` and `boho-market` are consumer looks: if
 one is asked for on a B2B pitch, say so in one line, then build what was asked for.
 
+## A set as a demo skin
+
+In demo mode (`/brag-slim --demo`) the pictures are real screenshots of the user's app, so a set does not redraw the content: it dresses the frame around it. `motion-kit/ref/demo.html` takes one `SKIN` object: background, ink, accent, card, edge, corner radius, shadow, display font and weight, body font, mono font, and a background texture. Seven are built in (`ops-desk`, `swiss-grid`, `brutal-bento`, `glass-layers`, `cyber-core`, `clay-toys`, `luxe-type`); make any other from the set's `set.md` palette, type and texture lines. Pick the skin against the app, not only the audience: a dark app reads best in a light frame and a light app in a dark or coloured one.
+
 ## Choosing: recommend first, build second
 
 Work out which mode the request is in before doing anything else.
