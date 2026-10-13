@@ -1,0 +1,44 @@
+{
+  "name": "brag-scaled",
+  "version": "0.1.0",
+  "description": "One-command installer for brag-scaled: agent skills that turn a project, a running site or a script into a short video that moves like a demo, drawn on the GPU in parallel browsers.",
+  "bin": {
+    "brag-scaled": "bin/brag-scaled.mjs"
+  },
+  "files": [
+    "bin"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node scripts/check-installer.mjs",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "agent-skills",
+    "claude-code",
+    "claude-code-plugin",
+    "codex",
+    "demo-video",
+    "gpu",
+    "launch-video",
+    "motion-graphics",
+    "opencode",
+    "render",
+    "skill",
+    "tts",
+    "video"
+  ],
+  "author": "Bhavya Dhoot (https://github.com/Bhavya-Dhoot)",
+  "license": "MIT",
+  "homepage": "https://github.com/Bhavya-Dhoot/brag-scaled#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bhavya-Dhoot/brag-scaled.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Bhavya-Dhoot/brag-scaled/issues"
+  }
+}

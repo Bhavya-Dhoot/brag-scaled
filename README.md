@@ -129,6 +129,16 @@ music under the voice.
 
 ## Install
 
+**One command** (needs Node 18+ and git):
+
+```bash
+npx brag-scaled
+```
+
+With Claude Code on the machine it adds the plugin, then checks the machine: Python, ffmpeg, the browser, and whether frames will be drawn on the GPU. For another agent, name the folder it reads skills from, for example `npx brag-scaled --dir ~/.agents/skills` (Codex, opencode). It never replaces a skill folder it did not put there unless you add `--force`.
+
+The same by hand:
+
 **Claude Code:**
 
 ```bash
