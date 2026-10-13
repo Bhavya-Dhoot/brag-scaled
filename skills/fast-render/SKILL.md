@@ -1,6 +1,6 @@
 ---
 name: fast-render
-description: Render an HTML motion page that exposes window.render(t) to video fast — GPU rasterisation, parallel browsers, frames piped straight to the encoder, hardware H.264 when available. Also exports 4K, transparent ProRes and PNG sequences, lays a page over recorded footage, measures whether a video plays like a slideshow (--audit), and checks the machine's setup (--doctor). Use for every /brag-slim render and any other video drawn frame by frame in a browser (launch videos, animated explainers, motion graphics), for still-frame checks of such a page, and whenever a render is slow, a font is missing or an export format is needed, instead of writing a screenshot loop.
+description: Render an HTML motion page that exposes window.render(t) to video fast — GPU rasterisation, parallel browsers, frames piped straight to the encoder, hardware H.264 when available. Also exports 4K, transparent ProRes and PNG sequences, lays a page over recorded footage, measures whether a video plays like a slideshow (--audit), checks the machine's setup (--doctor), and calibrates itself to the machine once (--tune). Use for every /brag-slim render and any other video drawn frame by frame in a browser (launch videos, animated explainers, motion graphics), for still-frame checks of such a page, and whenever a render is slow, a font is missing or an export format is needed, instead of writing a screenshot loop.
 ---
 
 # fast-render
@@ -27,7 +27,8 @@ python <skill-dir>/scripts/fastrender.py video.html --out brag.mp4 --fps 30 --au
 
 More, each tested on the reference machine:
 ```
-python <skill-dir>/scripts/fastrender.py --doctor                      # what is installed, and is the GPU used
+python <skill-dir>/scripts/fastrender.py --doctor                      # what is installed, is the GPU used, is it calibrated
+python <skill-dir>/scripts/fastrender.py --tune                        # calibrate for this machine, once, on an idle machine
 python <skill-dir>/scripts/fastrender.py video.html --audit            # is the picture changing, or is it a slideshow
 python <skill-dir>/scripts/fastrender.py video.html --dump-sfx sfx.json   # the page's sound cues, for motion-kit's soundkit
 python <skill-dir>/scripts/fastrender.py video.html --out brag-4k.mp4 --scale 2   # 3840x2160 from a 1920x1080 page
@@ -40,6 +41,29 @@ python <skill-dir>/scripts/fastrender.py overlay.html --over clip.mp4 --out with
 `renderer:` names what drew the frames. If it says **SwiftShader**, Chromium is
 rasterising on the CPU and the render will be roughly 10× slower. Tell the user,
 since their GPU flags or drivers need attention; the video still renders correctly.
+
+## Calibrate once per machine
+`--tune` measures the machine and saves the settings every later render uses: the GPU flags
+that give a hardware renderer, the number of parallel browsers where capture stops getting
+faster, and how many encoder sessions the hardware takes. It uses the whole machine for a
+minute or two, and it is only right on an idle machine. So:
+
+- **It never starts by itself.** On a machine that has not been calibrated, a render uses safe
+  defaults and prints `settings: safe defaults, not calibrated`; `--doctor` prints `tuned  no`.
+- **When you see that, tell the user once, in one line:** a one-off calibration makes every later
+  render faster; it takes a minute or two, uses the whole machine, and they should restart the
+  computer or close heavy applications (other renders, games, video calls, big builds) first.
+  Run `--tune` only when they say to. Never run it in the middle of other work, and carry on
+  with the defaults meanwhile.
+- **If the machine is busy** (more than 30% of the CPU in use), `--tune` measures nothing, saves
+  nothing and says so. Pass the message on. Do not retry in a loop.
+- Settings are kept per GPU in `~/.cache/brag-scaled/tune.json`. Run `--tune` again after a GPU or
+  driver change. `--workers` and `--encode-jobs` override them; `--no-tune` ignores them.
+
+Why the idle rule exists: the first calibration on the reference laptop ran while another render
+was going and recorded 9 frames/s at 4 browsers; later it measured 25.6, 39.6, 49.0 and 37.5
+frames/s at 4, 8, 12 and 16 browsers and chose 12. A trial of 16 encoder sessions at once never
+finished, so each trial now has a time limit.
 
 ## The checks it makes for you
 - A page whose script failed, or whose `window.render` throws on some frame, stops the render with the error. It used to capture a stale frame and carry on.
@@ -54,11 +78,10 @@ since their GPU flags or drivers need attention; the video still renders correct
 - `--lufs`: loudness target for `--audio`, default -16; use -14 for YouTube.
 - `--transparent`: the page must leave `html` and `body` without a background. Frosted-glass cards have nothing to blur on a transparent page, so use solid ones. `--out` must end in `.mov`.
 - `--over clip.mp4`: the footage sets the size, frame rate and length; its audio is kept untouched and `--audio` (sound effects) is mixed under it.
-- `--workers N`: parallel browsers. The default is ¾ of the CPU threads, capped at 12.
-  Past that point the CPU saturates.
-- `--encode-jobs N`: parallel encoder sessions, default 4. Consumer GPUs cap
-  hardware sessions. Workstation cards (RTX A-series and similar) can take 12:
-  that took the encode on the reference laptop from 80 s to 54 s.
+- `--workers N`: parallel browsers. The default is the calibrated number, or ¾ of the CPU
+  threads capped at 12 on a machine that has not been calibrated.
+- `--encode-jobs N`: parallel encoder sessions. The default is the calibrated number, or 4.
+  Consumer GPUs cap hardware sessions, and more sessions do not always encode faster.
 - `--encoder`: `auto` tries NVENC, Quick Sync, AMF, VideoToolbox, then libx264, and
   test-encodes each one before using it. Force one with a name.
 - `--capture png`: use it only if JPEG q100 bands a fine gradient. It is about 40% slower.
@@ -77,5 +100,6 @@ Measured on Windows 11 with an i9-11950H (16 threads), an RTX A2000 Laptop GPU a
 - End to end: a 130 s, 60 fps film took about 45 min with screenshots to disk plus x264.
   It takes 4 min 46 s with the defaults, and 3 min 46 s with `--encode-jobs 12`.
 
-The macOS and Linux GPU flags are the documented ANGLE backends but are not yet
-measured. The `renderer:` line tells you what actually ran.
+The macOS and Linux GPU flags are the documented ANGLE backends and were not measured by
+the author. `--tune` tries each of them on the machine it runs on and keeps the first that
+reports a hardware renderer; the `renderer:` line tells you what actually ran.

@@ -148,6 +148,14 @@ Then check the machine, including whether frames will be drawn on the GPU:
 python skills/fast-render/scripts/fastrender.py --doctor
 ```
 
+Calibrate it once. Restart the computer or close heavy applications first: it uses the whole machine for a minute or two, and a busy machine gives wrong numbers (it refuses to run on one).
+
+```bash
+python skills/fast-render/scripts/fastrender.py --tune
+```
+
+It finds the GPU flags that give a hardware renderer, the number of parallel browsers where capture stops getting faster, and how many encoder sessions the hardware takes, and saves them for every later render. It never starts by itself: until it has been run, renders use safe defaults and say so.
+
 The TTS model (about 120 MB) downloads once on the first narration, from this repo's [`tts-v1` release](https://github.com/Bhavya-Dhoot/brag-scaled/releases/tag/tts-v1). It is checked against a SHA-256 and cached in `~/.cache/brag-scaled/`.
 
 ### Also works with

@@ -19,11 +19,20 @@ Reference run (Windows 11, i9-11950H 8C/16T, RTX A2000 Laptop, NVMe): a 130 s, 6
 video (7,800 frames at 1920x1080) went from ~45 min (Playwright PNG screenshots to disk,
 then x264) to 3 min 46 s (capture 162 s at 48 fps, encode 54 s, mux 9 s).
 
+Every machine is different, so `--tune` calibrates this one, once: it finds the GPU flags that
+really put Chromium on the GPU, the number of parallel browsers where capture stops getting
+faster, and how many encoder sessions the hardware takes. It uses the whole machine for a
+minute or two and is only right on an idle one, so it never starts by itself: until it has
+been run, a render uses safe defaults and says so, and `--tune` refuses when the machine is
+busy. Restart or close heavy applications first. Settings live in
+~/.cache/brag-scaled/tune.json, one entry per GPU, and any flag on the command line wins.
+
 Requires: python 3.9+, `pip install playwright imageio-ffmpeg`, `playwright install chromium`.
 `--audit` also needs `pip install pillow`.
 
 Usage:
   python fastrender.py --doctor
+  python fastrender.py --tune
   python fastrender.py video.html --stills 1.5 7 12.25 --still-dir stills
   python fastrender.py video.html --audit
   python fastrender.py video.html --out brag.mp4 --fps 30 --audio score.wav \
@@ -38,13 +47,27 @@ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 COMMON = ["--force-color-profile=srgb", "--font-render-hinting=none", "--allow-file-access-from-files",
           "--disable-background-timer-throttling", "--disable-renderer-backgrounding"]
 GPU = ["--enable-gpu", "--ignore-gpu-blocklist", "--enable-gpu-rasterization", "--enable-zero-copy"]
-# Verified on Windows + NVIDIA. The macOS and Linux backends are the documented ANGLE
-# ones but unmeasured; the renderer check below reports what actually ran.
-PLATFORM_GPU = {
-    "win32": ["--use-angle=d3d11", "--force_high_performance_gpu"],
-    "darwin": ["--use-angle=metal"],
-    "linux": ["--use-angle=vulkan", "--enable-features=Vulkan"],
+# The first entry for each platform is the default. Only Windows + NVIDIA was measured by the
+# author; --tune tries each entry on the machine it runs on and keeps the first one whose
+# renderer is real hardware, so the others are verified where they are used.
+GPU_TRY = {
+    "win32": [["--use-angle=d3d11", "--force_high_performance_gpu"], ["--use-angle=d3d11"], ["--use-angle=gl"], []],
+    "darwin": [["--use-angle=metal"], ["--use-angle=gl"], []],
+    "linux": [["--use-angle=vulkan", "--enable-features=Vulkan"], ["--use-angle=gl-egl"], ["--use-gl=egl"], []],
 }
+PLATFORM_GPU = {k: v[0] for k, v in GPU_TRY.items()}
+SOFTWARE = ("SwiftShader", "llvmpipe", "softpipe", "Basic Render")   # renderer names that mean the CPU is drawing
+TUNE_FILE = pathlib.Path.home() / ".cache" / "brag-scaled" / "tune.json"
+TUNE_V = 1
+# A page of about the weight of a real scene: 96 bordered, shadowed, rotating cards and a counter.
+BENCH = """<!doctype html><meta charset="utf-8"><style>html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#f0ede8;font:700 34px sans-serif}
+.c{position:absolute;width:150px;height:96px;border:3px solid #111;border-radius:14px;background:#fff;box-shadow:8px 8px 0 #111;display:flex;align-items:center;justify-content:center}
+#h{position:absolute;left:80px;top:60px;font-size:120px}</style><div id="h">0</div><script>
+const els=[];for(let i=0;i<96;i++){const e=document.createElement('div');e.className='c';e.textContent=i;document.body.append(e);els.push(e)}
+window.DURATION=4;window.ready=Promise.resolve();
+window.render=t=>{document.getElementById('h').textContent=Math.round(t*1000);els.forEach((e,i)=>{const a=t*2+i*.4;
+e.style.transform=`translate(${885+Math.cos(a)*(200+i*7)}px,${492+Math.sin(a*1.3)*(120+i*4)}px) rotate(${Math.sin(a)*20}deg) scale(${1+.2*Math.sin(a*2)})`;
+e.style.background=`hsl(${(i*9+t*60)%360} 80% 70%)`})};</script>"""
 
 # Captured JPEGs are full-range BT.601. Convert the range only and tag the matrix as BT.601:
 # converting to BT.709 forces a YUV->RGB->YUV path that halved encode throughput on the
@@ -106,8 +129,10 @@ def probe(ff, clip):
 
 
 def launch(p, gpu):
-    args = COMMON + (GPU + PLATFORM_GPU.get(sys.platform, []) if gpu else [])
-    return p.chromium.launch(args=args)
+    """gpu: False for Chromium's default rasteriser, True for this platform's usual GPU flags,
+    or a list of flags (the ones --tune found to work here)."""
+    extra = gpu if isinstance(gpu, list) else PLATFORM_GPU.get(sys.platform, []) if gpu else None
+    return p.chromium.launch(args=COMMON + (GPU + extra if extra is not None else []))
 
 
 def open_page(p, url, w, h, gpu=True, transparent=False):
@@ -226,6 +251,161 @@ def audit(cdp, dur, w, h, step, still, mask_bottom):
     return median, quiet, runs
 
 
+def ram_gb():
+    try:
+        if sys.platform == "win32":
+            import ctypes
+            class Mem(ctypes.Structure):
+                _fields_ = [("size", ctypes.c_ulong), ("load", ctypes.c_ulong)] + [(n, ctypes.c_ulonglong) for n in "abcdefg"]
+            m = Mem(); m.size = ctypes.sizeof(m); ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(m))
+            return m.a / 2 ** 30
+        return os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES") / 2 ** 30
+    except Exception:
+        return None
+
+
+def cpu_busy(sample=0.6):
+    """Share of the CPU already in use (0..1), or None when it cannot be read. Measuring a busy
+    machine saves the wrong settings: the first tuning run on the author's laptop happened while
+    another render was going and recorded 9 frames/s where the idle machine does about 45."""
+    try:
+        if sys.platform == "win32":
+            import ctypes
+            def times():
+                i, k, u = (ctypes.c_ulonglong() for _ in range(3))
+                ctypes.windll.kernel32.GetSystemTimes(ctypes.byref(i), ctypes.byref(k), ctypes.byref(u))
+                return i.value, k.value + u.value                    # kernel time includes idle time
+        elif sys.platform.startswith("linux"):
+            def times():
+                v = [int(x) for x in open("/proc/stat").readline().split()[1:]]
+                return v[3] + v[4], sum(v)
+        else:
+            return min(1.0, os.getloadavg()[0] / (os.cpu_count() or 1))
+        i0, t0 = times(); time.sleep(sample); i1, t1 = times()
+        return 1 - (i1 - i0) / max(1, t1 - t0)
+    except Exception:
+        return None
+
+
+BUSY = 0.30   # above this share of CPU in use, do not measure
+ADVICE = "restart the computer or close heavy applications (other renders, games, video calls, big builds), then run fastrender.py --tune"
+
+
+def fingerprint(rend):
+    return {"platform": sys.platform, "cores": os.cpu_count() or 4, "renderer": rend}
+
+
+def load_tune(rend=None):
+    """Saved settings for this machine: the entry for this renderer when it is known, otherwise
+    the most recent entry (its GPU flags are needed before any renderer can be read)."""
+    try:
+        runs = [r for r in json.loads(TUNE_FILE.read_text()) if r.get("v") == TUNE_V
+                and r["fingerprint"]["platform"] == sys.platform and r["fingerprint"]["cores"] == (os.cpu_count() or 4)]
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return None
+    if rend is not None:
+        runs = [r for r in runs if r["fingerprint"]["renderer"] == rend]
+    return runs[-1] if runs else None
+
+
+def bench_capture(job):
+    """One browser drawing the benchmark page; returns its frames per second inside the capture loop."""
+    url, frames, seg, ff, gpu = job
+    from playwright.sync_api import sync_playwright
+    enc = subprocess.Popen([ff, "-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", "30", "-c:v", "mjpeg",
+                            "-i", "-", "-c:v", "copy", seg], stdin=subprocess.PIPE)
+    with sync_playwright() as p:
+        b, pg, cdp = open_page(p, url, 1920, 1080, gpu)
+        for k in range(6):
+            grab(cdp, k / 30, "jpeg")
+        t0 = time.perf_counter()
+        for i in range(frames):
+            enc.stdin.write(grab(cdp, i / 30, "jpeg"))
+        dt = time.perf_counter() - t0
+        b.close()
+    enc.stdin.close(); enc.wait()
+    return frames / dt
+
+
+def tune(ff):
+    """Measure this machine and save what a render should use here. Three questions, each answered
+    by trying it: which GPU flags give a hardware renderer, how many parallel browsers until capture
+    stops getting faster, and how many encoder sessions the hardware accepts and benefits from.
+    The smallest setting within 5% of the best is kept, since extra browsers only cost memory."""
+    from playwright.sync_api import sync_playwright
+    busy = cpu_busy()
+    if busy is not None and busy > BUSY:
+        print(f"tune: this machine is busy ({busy:.0%} of the CPU in use), so nothing was measured or saved.\n"
+              f"      {ADVICE[0].upper() + ADVICE[1:]}.")
+        return None
+    cpu, t_start = os.cpu_count() or 4, time.perf_counter()
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="fastrender_tune_"))
+    try:
+        page = tmp / "bench.html"; page.write_text(BENCH, encoding="utf-8"); url = page.as_uri()
+        gpu, rend = False, "unknown"
+        with sync_playwright() as p:
+            for flags in GPU_TRY.get(sys.platform, [[]]):
+                try:
+                    b = launch(p, flags); r = renderer_name(b.new_page()); b.close()
+                except Exception:
+                    continue
+                rend = r
+                if r != "unknown" and not any(x in r for x in SOFTWARE):
+                    gpu = flags; break
+        print(f"tune: renderer {rend}" + ("" if gpu is not False else "  (no GPU rasteriser found: frames will be slow)"))
+
+        ram = ram_gb(); top = max(2, min(16, cpu, int(ram) if ram else 16))      # a browser needs most of a gigabyte
+        cap_fps, best = {}, None
+        for w in sorted({max(2, min(top, c)) for c in (cpu // 4, cpu // 2, cpu * 3 // 4, cpu)}):
+            with ProcessPoolExecutor(w) as ex:
+                fps = sum(ex.map(bench_capture, [(url, 24, str(tmp / f"b{w}_{k}.mkv"), ff, gpu) for k in range(w)]))
+            cap_fps[w] = round(fps, 1); print(f"tune: {w:2d} browsers          -> {fps:6.1f} frames/s captured")
+            if best and fps < cap_fps[best] * 1.05:
+                break                                                             # past the knee
+            best = w
+        workers = min(w for w, f in cap_fps.items() if f >= max(cap_fps.values()) * .95)
+
+        encoder, enc_fps, encode_jobs = pick_encoder(ff, "auto"), {}, None
+        if encoder != "libx264":                                                  # x264 uses one process per segment already
+            test = str(tmp / "test.mkv")
+            subprocess.run([ff, "-y", "-loglevel", "error", "-stream_loop", "7", "-i", str(tmp / f"b{best}_0.mkv"), "-c", "copy", test], check=True)
+            one = None                                                            # seconds for a single session
+            for j in [c for c in (1, 2, 4, 8, 12, 16) if c <= max(2, cpu)]:
+                t0 = time.perf_counter()
+                ps = [subprocess.Popen([ff, "-y", "-loglevel", "error", "-i", test, "-vf", TV, "-c:v", encoder, *ENCODERS[encoder],
+                                        "-an", "-f", "null", "-"], stderr=subprocess.DEVNULL) for _ in range(j)]
+                try:  # j sessions that gain nothing take j times as long; well past that, the hardware has stalled
+                    limit = t0 + (one or 60) * j * 1.5 + 10
+                    ok = all([q.wait(timeout=max(1, limit - time.perf_counter())) == 0 for q in ps])
+                except subprocess.TimeoutExpired:
+                    ok = False
+                    for q in ps:
+                        q.kill(); q.wait()
+                if not ok:  # 16 sessions at once never finished on the author's laptop
+                    print(f"tune: {j:2d} encoder sessions  -> refused or stalled"); break
+                dt = time.perf_counter() - t0; one = one or dt
+                enc_fps[j] = round(192 * j / dt, 1)
+                print(f"tune: {j:2d} encoder sessions  -> {enc_fps[j]:6.1f} frames/s encoded")
+                if enc_fps[j] < max(enc_fps.values()) * 1.05 and j > 1 and enc_fps[j] < max(enc_fps.values()):
+                    break                                                         # past the knee
+            if enc_fps:
+                encode_jobs = min(j for j, f in enc_fps.items() if f >= max(enc_fps.values()) * .95)
+
+        out = {"v": TUNE_V, "fingerprint": fingerprint(rend), "gpu_args": gpu if gpu is not False else None, "workers": workers,
+               "encode_jobs": encode_jobs, "encoder": encoder, "measured": {"capture_fps": cap_fps, "encode_fps": enc_fps},
+               "tuned_at": time.strftime("%Y-%m-%d"), "seconds": round(time.perf_counter() - t_start)}
+        try:
+            old = [r for r in json.loads(TUNE_FILE.read_text()) if r.get("fingerprint") != out["fingerprint"]]
+        except (OSError, ValueError, AttributeError):
+            old = []
+        TUNE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        TUNE_FILE.write_text(json.dumps((old + [out])[-4:], indent=1))
+        print(f"tune: {workers} browsers, {encode_jobs or 'one per segment'} encoder sessions, {encoder}; saved to {TUNE_FILE} ({out['seconds']} s)")
+        return out
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def doctor():
     """Report what this machine can do, in plain words. Changes nothing."""
     ok = lambda b: "ok     " if b else "MISSING"
@@ -253,6 +433,9 @@ def doctor():
             print(f"gpu rasteriser  {'NO: frames will be about 10x slower; check GPU drivers' if cpu else 'yes'}")
         except Exception as e:
             print(f"chromium        MISSING  playwright install chromium   ({str(e)[:70]})")
+    t = load_tune()
+    print("tuned           " + (f"yes     {t['workers']} browsers, {t['encode_jobs'] or 'one per segment'} encoder sessions, {t['encoder']} ({t['tuned_at']}); run --tune again after a GPU or driver change"
+                                if t else f"no      renders use safe defaults. To calibrate (a minute or two, once): {ADVICE}"))
     print(f"pillow          {ok(has('PIL'))} (for --audit)")
     print(f"narration       {ok(has('kokoro_onnx') and has('soundfile'))} (narrate skill: pip install kokoro-onnx soundfile)")
     print(f"transcription   {ok(has('faster_whisper') or has('whisper'))} (transcribe script: pip install faster-whisper)")
@@ -261,6 +444,7 @@ def doctor():
 
 def main():
     cpu = os.cpu_count() or 4
+    sys.stdout.reconfigure(line_buffering=True)   # progress line by line, also when the output is piped
     ap = argparse.ArgumentParser(description="Render a window.render(t) page to video, fast.")
     ap.add_argument("page", nargs="?")
     ap.add_argument("--out", default="brag.mp4")
@@ -269,10 +453,10 @@ def main():
     ap.add_argument("--width", type=int, default=1920)
     ap.add_argument("--height", type=int, default=1080)
     ap.add_argument("--scale", type=float, default=1, help="render sharper than the page size: 2 turns a 1920x1080 page into 3840x2160")
-    ap.add_argument("--workers", type=int, default=max(2, min(12, cpu * 3 // 4)),
-                    help="parallel browsers (reference knee: 12 on 16 threads)")
-    ap.add_argument("--encode-jobs", type=int, default=4,
-                    help="parallel encoder sessions; consumer GPUs may cap hardware sessions")
+    ap.add_argument("--workers", type=int, help="parallel browsers (default: what --tune measured, else 3/4 of the cores, up to 12)")
+    ap.add_argument("--encode-jobs", type=int, help="parallel encoder sessions (default: what --tune measured, else 4)")
+    ap.add_argument("--tune", action="store_true", help="calibrate for this machine and save the settings; run it on an idle machine")
+    ap.add_argument("--no-tune", action="store_true", help="ignore saved settings")
     ap.add_argument("--capture", choices=["jpeg", "png"], default="jpeg",
                     help="jpeg q100 is visually lossless and ~40%% faster; png for fine gradients")
     ap.add_argument("--encoder", choices=["auto", *ENCODERS], default="auto")
@@ -296,12 +480,17 @@ def main():
     a = ap.parse_args()
     if a.doctor:
         return doctor()
+    if a.tune:
+        done = tune(ffmpeg_exe())
+        if not a.page:
+            sys.exit(0 if done else 1)
     if not a.page:
         ap.error("page is required")
 
     url = pathlib.Path(a.page).resolve().as_uri()
     ff = ffmpeg_exe()
-    gpu = not a.no_gpu
+    saved = None if a.no_tune else load_tune()
+    gpu = False if a.no_gpu else saved["gpu_args"] if saved and saved.get("gpu_args") is not None else True
     clip_audio = False
     if a.over:  # the footage decides the canvas; the page only adds graphics
         a.width, a.height, a.fps, clip_dur, clip_audio = probe(ff, a.over)
@@ -350,9 +539,14 @@ def main():
     if not dur:
         sys.exit("no duration: pass --duration or set window.DURATION")
 
-    encoder = pick_encoder(ff, a.encoder)
+    saved = None if a.no_tune else load_tune(rend)      # settings measured for this very renderer, if any
+    workers = a.workers or (saved or {}).get("workers") or max(2, min(12, cpu * 3 // 4))
+    encode_jobs = a.encode_jobs or (saved or {}).get("encode_jobs") or 4
+    encoder = saved["encoder"] if a.encoder == "auto" and saved and encoder_works(ff, saved["encoder"]) else pick_encoder(ff, a.encoder)
+    print("settings: " + (f"calibrated for this machine on {saved['tuned_at']}" if saved else "safe defaults" if a.no_tune
+                          else f"safe defaults, not calibrated. For full speed, once: {ADVICE}"))
     # a browser costs ~2 s to start, so give each one 60+ frames
-    n = int(round(dur * a.fps)); W = max(1, min(a.workers, n // 60)); step = -(-n // W)
+    n = int(round(dur * a.fps)); W = max(1, min(workers, n // 60)); step = -(-n // W)
     tmp = pathlib.Path(tempfile.mkdtemp(prefix="fastrender_", dir=pathlib.Path(a.out).resolve().parent))
     jobs = [(url, a.width, a.height, a.fps, a.capture, lo, min(n, lo + step), str(tmp / f"seg{k:03d}.mkv"),
              a.poster if k == 0 else None, ff, gpu, a.scale, a.transparent) for k, lo in enumerate(range(0, n, step))]
@@ -391,7 +585,7 @@ def main():
     else:
         # Encode segments in parallel: decode and the range conversion are single-threaded per
         # ffmpeg process, so one process per segment keeps the cores and the encoder busy.
-        jobs_n = len(jobs) if (encoder == "libx264" or a.transparent) else max(1, min(a.encode_jobs, len(jobs)))
+        jobs_n = len(jobs) if (encoder == "libx264" or a.transparent) else max(1, min(encode_jobs, len(jobs)))
         if a.transparent:
             ext, vargs = ".mov", PRORES
         else:
